@@ -30,5 +30,19 @@ describe Board do
         expect(board_structure[:h4]).to eq('')
       end
     end
+
+    context 'when a coordinate is invalid' do
+      it 'does not contain a poser coordinate' do
+        expect(board_structure[:o9]).to be_nil
+      end
+
+      it 'does not contain a coordinate with only a letter' do
+        expect(board_structure[:e]).to be_nil
+      end
+
+      it 'does not contain a capitalized coordinate' do
+        expect(board_structure[:A3]).to be_nil
+      end
+    end
   end
 end
