@@ -10,11 +10,9 @@ class BoardMaker
   end
 
   def make_with_coordinates
-    file_letters.size.times do |file_index|
-      rank_numbers.size.times do |rank_index|
-        coordinate = file_letters[file_index] + rank_numbers[rank_index]
-        @board_product[coordinate.to_sym] = ''
-      end
+    file_letters.product(rank_numbers) do |combo|
+      coordinate = combo.first + combo.last
+      @board_product[coordinate.to_sym] = ''
     end
 
     return board_product
