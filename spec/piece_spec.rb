@@ -1,0 +1,2 @@
+describe Piece do
+end
