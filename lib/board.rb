@@ -4,6 +4,12 @@ class Board
   attr_reader :board_structure
 
   def initialize
-    @board_structure = BoardMaker.new.make_with_coordinates
+    @board_structure = board_maker.make_with_coordinates
+  end
+
+  private
+
+  def board_maker
+    BoardMaker.new
   end
 end
