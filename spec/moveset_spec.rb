@@ -1,2 +1,0 @@
-describe MoveSet do
-end
