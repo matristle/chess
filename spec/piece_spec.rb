@@ -1,14 +1,14 @@
 require_relative '../lib/piece'
 
 describe Piece do
-  describe '#move_to' do
+  describe '#move' do
     it 'sends message to the board' do
       board = double('board')
-      allow(board).to receive(:transport_to)
+      allow(board).to receive(:transport)
       piece = Piece.new(board:)
       
-      expect(board).to receive(:transport_to)
-      piece.move_to(:h3)
+      expect(board).to receive(:transport)
+      piece.move(:h3)
     end
   end
 end

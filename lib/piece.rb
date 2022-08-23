@@ -5,7 +5,7 @@ class Piece
     @board = board
   end
 
-  def move_to(destination_coordinate)
-    board.transport_to(destination_coordinate)
+  def move(destination_coordinate)
+    board.transport(destination_coordinate)
   end
 end

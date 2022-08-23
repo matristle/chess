@@ -46,5 +46,5 @@ describe Board do
     end
   end
 
-  describe '#transport_to'
+  describe '#transport'
 end
