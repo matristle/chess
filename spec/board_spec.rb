@@ -46,5 +46,17 @@ describe Board do
     end
   end
 
-  describe '#transport'
+  describe '#transport' do
+    it 'transports the rook from a1 to a3' do
+      subject(:board) { Board.new }
+      starting_cell    = :a1
+      destination_cell = :a3
+      rook = double('rook')
+      allow(board).to receive(:selected_piece).and_return(rook)
+
+      expect(board[destination_cell]).to be(rook)
+      expect(board[starting_cell]).to be('')
+      board.transport(destination_cell)
+    end
+  end
 end
