@@ -10,3 +10,9 @@ Style/Documentation:
 
 Style/RedundantReturn:
   Enabled: false
+
+# RSpec Cop Exclusions
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - spec/*
