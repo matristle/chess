@@ -99,7 +99,7 @@ describe Board do
     end
 
     context 'when destination coordinate does not exist' do
-      it 'transports the rook from b1 to b10' do
+      it 'does not transport the rook from b1 to b10' do
         starting_cell    = :b1
         destination_cell = :b10
         rook = double('rook')
