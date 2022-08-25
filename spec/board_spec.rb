@@ -50,65 +50,63 @@ describe Board do
 
     context 'when destination coordinate is valid' do
       it 'transports the rook from a1 to a3' do
-        starting_cell    = :a1
-        destination_cell = :a3
+        starting_coordinate    = :a1
+        destination_coordinate = :a3
         rook = double('rook')
         allow(board).to receive(:selected_piece).and_return(rook)
 
-        board.transport(destination_coordinate: destination_cell)
+        board.transport(destination_coordinate:)
 
-        expect(board[destination_cell]).to be(rook)
-        expect(board[starting_cell]).to eq('')
+        expect(board[destination_coordinate]).to be(rook)
+        expect(board[starting_coordinate]).to eq('')
       end
 
       it 'transports the bishop from c4 to f7' do
-        starting_cell    = :c4
-        destination_cell = :f7
+        starting_coordinate    = :c4
+        destination_coordinate = :f7
         bishop = double('bishop')
         allow(board).to receive(:selected_piece).and_return(bishop)
 
-        board.transport(destination_coordinate: destination_cell)
+        board.transport(destination_coordinate:)
 
-        expect(board[destination_cell]).to be(bishop)
-        expect(board[starting_cell]).to eq('')
+        expect(board[destination_coordinate]).to be(bishop)
+        expect(board[starting_coordinate]).to eq('')
       end
 
       it 'transports the knight from g1 to f3' do
-        starting_cell    = :g1
-        destination_cell = :f3
+        starting_coordinate    = :g1
+        destination_coordinate = :f3
         knight = double('knight')
         allow(board).to receive(:selected_piece).and_return(knight)
 
-        board.transport(destination_coordinate: destination_cell)
+        board.transport(destination_coordinate:)
 
-        expect(board[destination_cell]).to be(knight)
-        expect(board[starting_cell]).to eq('')
+        expect(board[destination_coordinate]).to be(knight)
+        expect(board[starting_coordinate]).to eq('')
       end
 
       it 'transports the pawn from e2 to e4' do
-        starting_cell    = :e2
-        destination_cell = :e4
+        starting_coordinate    = :e2
+        destination_coordinate = :e4
         pawn = double('pawn')
         allow(board).to receive(:selected_piece).and_return(pawn)
 
-        board.transport(destination_coordinate: destination_cell)
+        board.transport(destination_coordinate:)
 
-        expect(board[destination_cell]).to be(pawn)
-        expect(board[starting_cell]).to eq('')
+        expect(board[destination_coordinate]).to be(pawn)
+        expect(board[starting_coordinate]).to eq('')
       end
     end
 
     context 'when destination coordinate does not exist' do
       it 'does not transport the rook from b1 to b10' do
-        starting_cell    = :b1
-        destination_cell = :b10
+        starting_coordinate    = :b1
+        destination_coordinate = :b10
         rook = double('rook')
         allow(board).to receive(:selected_piece).and_return(rook)
 
-        transportation = board.transport(destination_coordinate: destination_cell)
-
-        expect(board[destination_cell]).to be_nil
-        expect { transportation }.to_not change { board[starting_cell] }
+        expect(board[destination_coordinate]).to be_nil
+        expect { board.transport(destination_coordinate:) }.to_not change { board[starting_coordinate] }
       end
     end
   end
