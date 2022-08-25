@@ -8,7 +8,7 @@ describe Piece do
       piece = Piece.new(board:)
 
       expect(board).to receive(:transport)
-      piece.move(:h3)
+      piece.move(destination_coordinate: :h3)
     end
   end
 end
