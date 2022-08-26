@@ -105,8 +105,8 @@ describe Board do
         rook = double('rook')
         allow(board).to receive(:selected_piece).and_return(rook)
 
-        expect(board[destination_coordinate]).to be_nil
         expect { board.transport(destination_coordinate:) }.to_not change { board[starting_coordinate] }
+        expect(board[destination_coordinate]).to be_nil
       end
     end
   end
