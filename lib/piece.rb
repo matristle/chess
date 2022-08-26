@@ -6,6 +6,6 @@ class Piece
   end
 
   def move(destination_coordinate:)
-    board.transport(destination_coordinate)
+
   end
 end
