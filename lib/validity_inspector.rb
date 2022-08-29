@@ -1,1 +1,0 @@
-class ValidityInspector; end
