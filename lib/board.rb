@@ -23,6 +23,10 @@ class Board
     @board_structure[destination_coordinate] = selected_piece if coordinate?(destination_coordinate)
   end
 
+  def perform_move(origin, target)
+    @board_structure[target] = origin if coordinate?(target)
+  end
+
   private
 
   def board_maker
