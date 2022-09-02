@@ -11,6 +11,8 @@ class Validator
 
   private
 
+  def valid_board_move?; end
+
   def valid_piece_move?
     set_attributes
 
@@ -23,10 +25,10 @@ class Validator
       same_file_or_rank? || same_file_rank_steps?
     when King
       (same_file_or_rank? || same_file_rank_steps?) && one_step?
+    when Knight
+      l_shape_step?
     end
   end
-
-  def valid_board_move?; end
 
   def set_attributes
     @selected_piece = board.selected_piece
@@ -39,11 +41,15 @@ class Validator
   end
 
   def same_file_rank_steps?
-    rank_difference.abs == file_difference.abs
+    rank_difference == file_difference
   end
 
   def one_step?
     rank_difference == 1 || file_difference == 1
+  end
+
+  def l_shape_step?
+    (rank_difference == 1 && file_difference == 2) || (rank_difference == 2 && file_difference == 1)
   end
 
   def file_number_mapping
@@ -51,10 +57,10 @@ class Validator
   end
 
   def rank_difference
-    destination_coordinate[1].to_i - current_coordinate[1].to_i
+    destination_coordinate[1].to_i - current_coordinate[1].to_i.abs
   end
 
   def file_difference
-    file_number_mapping[destination_coordinate[0].to_sym] - file_number_mapping[current_coordinate[0].to_sym]
+    (file_number_mapping[destination_coordinate[0].to_sym] - file_number_mapping[current_coordinate[0].to_sym]).abs
   end
 end
