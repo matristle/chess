@@ -114,6 +114,42 @@ describe Validator do
           expect(result).to be(false)
         end
       end
+
+      context 'and piece is queen' do
+        context 'when it moves like a rook' do
+          it 'returns false' do
+            board = double('board')
+            queen = double('queen')
+            allow(board).to receive(:selected_piece).and_return(queen)
+            allow(queen).to receive(:current_coordinate).and_return(:c2)
+            allow(queen).to receive(:destination_coordinate).and_return(:h1)
+            allow(Queen).to receive(:===).with(queen).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(false)
+          end
+        end
+
+        context 'when it moves like a bishop' do
+          it 'returns false' do
+            board = double('board')
+            queen = double('queen')
+            allow(board).to receive(:selected_piece).and_return(queen)
+            allow(queen).to receive(:current_coordinate).and_return(:g4)
+            allow(queen).to receive(:destination_coordinate).and_return(:e5)
+            allow(Queen).to receive(:===).with(queen).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(false)
+          end
+        end
+      end
     end
   end
 end
