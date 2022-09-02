@@ -5,6 +5,7 @@ require_relative '../lib/bishop'
 require_relative '../lib/queen'
 require_relative '../lib/king'
 require_relative '../lib/knight'
+require_relative '../lib/pawn'
 
 
 describe Validator do
@@ -111,6 +112,25 @@ describe Validator do
           result = validator.valid_move?
 
           expect(result).to be(true)
+        end
+      end
+
+      context 'and piece is pawn' do
+        context 'when one step' do
+          it 'returns true' do
+            board = double('board')
+            pawn  = double('pawn')
+            allow(board).to receive(:selected_piece).and_return(pawn)
+            allow(pawn).to receive(:current_coordinate).and_return(:d7)
+            allow(pawn).to receive(:destination_coordinate).and_return(:d6)
+            allow(Pawn).to receive(:===).with(pawn).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(true)
+          end
         end
       end
     end
