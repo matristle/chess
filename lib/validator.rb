@@ -21,6 +21,8 @@ class Validator
       same_file_rank_steps?
     when Queen
       same_file_or_rank? || same_file_rank_steps?
+    when King
+      (same_file_or_rank? || same_file_rank_steps?) && one_step?
     end
   end
 
@@ -38,6 +40,10 @@ class Validator
 
   def same_file_rank_steps?
     rank_difference.abs == file_difference.abs
+  end
+
+  def one_step?
+    rank_difference == 1 || file_difference == 1
   end
 
   def file_number_mapping
