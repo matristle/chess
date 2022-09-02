@@ -37,7 +37,7 @@ class Validator
   end
 
   def same_file_rank_steps?
-    rank_difference == file_difference
+    rank_difference.abs == file_difference.abs
   end
 
   def file_number_mapping
