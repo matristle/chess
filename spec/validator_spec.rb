@@ -2,6 +2,8 @@ require_relative '../lib/validator'
 require_relative '../lib/piece'
 require_relative '../lib/rook'
 require_relative '../lib/bishop'
+require_relative '../lib/queen'
+
 
 describe Validator do
   describe '#valid_move?' do
@@ -37,6 +39,25 @@ describe Validator do
           result = validator.valid_move?
 
           expect(result).to be(true)
+        end
+      end
+
+      context 'and piece is queen' do
+        context 'when it moves like a rook' do
+          it 'returns true' do
+            board = double('board')
+            queen = double('queen')
+            allow(board).to receive(:selected_piece).and_return(queen)
+            allow(queen).to receive(:current_coordinate).and_return(:f3)
+            allow(queen).to receive(:destination_coordinate).and_return(:f8)
+            allow(Queen).to receive(:===).with(queen).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(true)
+          end
         end
       end
     end
