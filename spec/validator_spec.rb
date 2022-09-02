@@ -59,6 +59,23 @@ describe Validator do
             expect(result).to be(true)
           end
         end
+
+        context 'when it moves like a bishop' do
+          it 'returns true' do
+            board = double('board')
+            queen = double('queen')
+            allow(board).to receive(:selected_piece).and_return(queen)
+            allow(queen).to receive(:current_coordinate).and_return(:d1)
+            allow(queen).to receive(:destination_coordinate).and_return(:b3)
+            allow(Queen).to receive(:===).with(queen).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(true)
+          end
+        end
       end
     end
 
