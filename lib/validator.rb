@@ -19,6 +19,8 @@ class Validator
       same_file_or_rank?
     when Bishop
       same_file_rank_steps?
+    when Queen
+      same_file_or_rank? || same_file_rank_steps?
     end
   end
 
