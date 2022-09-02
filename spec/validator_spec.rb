@@ -1,11 +1,10 @@
 require_relative '../lib/validator'
+require_relative '../lib/piece'
 require_relative '../lib/rook'
 require_relative '../lib/bishop'
 
 describe Validator do
   describe '#valid_move?' do
-    subject(:validator) { Validator.new }
-
     context 'when move is valid' do
       context 'and piece is rook' do
         it 'returns true' do
@@ -14,9 +13,11 @@ describe Validator do
           allow(board).to receive(:selected_piece).and_return(rook)
           allow(rook).to receive(:current_coordinate).and_return(:f1)
           allow(rook).to receive(:destination_coordinate).and_return(:f7)
-          allow(rook).to receive(:class).and_return(Rook)
+          allow(Rook).to receive(:===).with(rook).and_return(true)
+          validator = Validator.new(board:)
+          allow(validator).to receive(:valid_board_move?).and_return(true)
 
-          result = validator.valid_move?(board:)
+          result = validator.valid_move?
 
           expect(result).to be(true)
         end
@@ -29,9 +30,11 @@ describe Validator do
           allow(board).to receive(:selected_piece).and_return(bishop)
           allow(bishop).to receive(:current_coordinate).and_return(:c4)
           allow(bishop).to receive(:destination_coordinate).and_return(:f7)
-          allow(bishop).to receive(:class).and_return(Bishop)
+          allow(Bishop).to receive(:===).with(bishop).and_return(true)
+          validator = Validator.new(board:)
+          allow(validator).to receive(:valid_board_move?).and_return(true)
 
-          result = validator.valid_move?(board:)
+          result = validator.valid_move?
 
           expect(result).to be(true)
         end
@@ -46,9 +49,11 @@ describe Validator do
           allow(board).to receive(:selected_piece).and_return(rook)
           allow(rook).to receive(:current_coordinate).and_return(:h1)
           allow(rook).to receive(:destination_coordinate).and_return(:a7)
-          allow(rook).to receive(:class).and_return(Rook)
+          allow(Rook).to receive(:===).with(rook).and_return(true)
+          validator = Validator.new(board:)
+          allow(validator).to receive(:valid_board_move?).and_return(true)
 
-          result = validator.valid_move?(board:)
+          result = validator.valid_move?
 
           expect(result).to be(false)
         end
@@ -61,9 +66,12 @@ describe Validator do
           allow(board).to receive(:selected_piece).and_return(bishop)
           allow(bishop).to receive(:current_coordinate).and_return(:b3)
           allow(bishop).to receive(:destination_coordinate).and_return(:e5)
-          allow(bishop).to receive(:class).and_return(Bishop)
+          allow(Bishop).to receive(:===).with(bishop).and_return(true)
 
-          result = validator.valid_move?(board:)
+          validator = Validator.new(board:)
+          allow(validator).to receive(:valid_board_move?).and_return(true)
+
+          result = validator.valid_move?
 
           expect(result).to be(false)
         end
