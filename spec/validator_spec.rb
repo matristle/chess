@@ -4,6 +4,7 @@ require_relative '../lib/rook'
 require_relative '../lib/bishop'
 require_relative '../lib/queen'
 require_relative '../lib/king'
+require_relative '../lib/knight'
 
 
 describe Validator do
@@ -87,6 +88,23 @@ describe Validator do
           allow(king).to receive(:current_coordinate).and_return(:f2)
           allow(king).to receive(:destination_coordinate).and_return(:e3)
           allow(King).to receive(:===).with(king).and_return(true)
+          validator = Validator.new(board:)
+          allow(validator).to receive(:valid_board_move?).and_return(true)
+
+          result = validator.valid_move?
+
+          expect(result).to be(true)
+        end
+      end
+
+      context 'and piece is knight' do
+        it 'returns true' do
+          board = double('board')
+          knight  = double('knight')
+          allow(board).to receive(:selected_piece).and_return(knight)
+          allow(knight).to receive(:current_coordinate).and_return(:g1)
+          allow(knight).to receive(:destination_coordinate).and_return(:f3)
+          allow(Knight).to receive(:===).with(knight).and_return(true)
           validator = Validator.new(board:)
           allow(validator).to receive(:valid_board_move?).and_return(true)
 
