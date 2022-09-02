@@ -28,7 +28,7 @@ class Validator
     when Knight
       l_shape_step?
     when Pawn
-      same_file? && one_step?
+      (same_file? && one_step?) || (same_file? && two_steps?)
     end
   end
 
@@ -56,6 +56,10 @@ class Validator
 
   def one_step?
     rank_difference == 1 || file_difference == 1
+  end
+
+  def two_steps?
+    rank_difference == 2 || file_difference == 2
   end
 
   def l_shape_step?
