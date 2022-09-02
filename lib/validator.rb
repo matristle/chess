@@ -27,6 +27,8 @@ class Validator
       (same_file_or_rank? || same_file_rank_steps?) && one_step?
     when Knight
       l_shape_step?
+    when Pawn
+      same_file? && one_step?
     end
   end
 
@@ -37,7 +39,15 @@ class Validator
   end
 
   def same_file_or_rank?
-    current_coordinate[0] == destination_coordinate[0] || current_coordinate[1] == destination_coordinate[1]
+    same_file? || same_rank?
+  end
+
+  def same_file? 
+    current_coordinate[0] == destination_coordinate[0]
+  end
+
+  def same_rank? 
+    current_coordinate[1] == destination_coordinate[1]
   end
 
   def same_file_rank_steps?
@@ -57,7 +67,7 @@ class Validator
   end
 
   def rank_difference
-    destination_coordinate[1].to_i - current_coordinate[1].to_i.abs
+    (destination_coordinate[1].to_i - current_coordinate[1].to_i).abs
   end
 
   def file_difference
