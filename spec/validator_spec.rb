@@ -168,6 +168,23 @@ describe Validator do
           end
         end
       end
+
+      context 'and piece is king' do
+        it 'returns false' do
+          board = double('board')
+          king  = double('king')
+          allow(board).to receive(:selected_piece).and_return(king)
+          allow(king).to receive(:current_coordinate).and_return(:b6)
+          allow(king).to receive(:destination_coordinate).and_return(:a8)
+          allow(King).to receive(:===).with(king).and_return(true)
+          validator = Validator.new(board:)
+          allow(validator).to receive(:valid_board_move?).and_return(true)
+
+          result = validator.valid_move?
+
+          expect(result).to be(false)
+        end
+      end
     end
   end
 end
