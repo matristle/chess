@@ -257,6 +257,42 @@ describe Validator do
           expect(result).to be(false)
         end
       end
+
+      xcontext 'and piece is pawn' do
+        context 'when one step' do
+          it 'returns false' do
+            board = double('board')
+            pawn  = double('pawn')
+            allow(board).to receive(:selected_piece).and_return(pawn)
+            allow(pawn).to receive(:current_coordinate).and_return(:d4)
+            allow(pawn).to receive(:destination_coordinate).and_return(:d3)
+            allow(Pawn).to receive(:===).with(pawn).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(false)
+          end
+        end
+
+        context 'when two steps' do
+          it 'returns true' do
+            board = double('board')
+            pawn  = double('pawn')
+            allow(board).to receive(:selected_piece).and_return(pawn)
+            allow(pawn).to receive(:current_coordinate).and_return(:e2)
+            allow(pawn).to receive(:destination_coordinate).and_return(:e4)
+            allow(Pawn).to receive(:===).with(pawn).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(true)
+          end
+        end
+      end
     end
   end
 end
