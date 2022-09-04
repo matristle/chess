@@ -11,6 +11,6 @@ class Coordinate
   end
 
   def file_to_number
-    file_number_mapping[file.sym].to_i
+    file_number_mapping[file.to_sym].to_i
   end
 end
