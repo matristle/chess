@@ -58,15 +58,13 @@ class Validator
   end
 
   def rank_difference
-    (destination_coordinate.rank.to_i - current_coordinate.rank.to_i).abs
+    difference = destination_coordinate.rank.to_i - current_coordinate.rank.to_i
+    difference.abs
   end
 
   def file_difference
-    (file_number_mapping[destination_coordinate.file.to_sym] - file_number_mapping[current_coordinate.file.to_sym]).abs
-  end
-
-  def file_number_mapping
-    { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8 }
+    difference = destination_coordinate.file_to_number - current_coordinate.file_to_number
+    difference.abs
   end
 
   def one_step?
