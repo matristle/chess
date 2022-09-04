@@ -37,7 +37,7 @@ class Validator
     when Knight
       l_shape_step?
     when Pawn
-      (same_file? && one_step?) || (same_file? && two_steps?)
+      same_file? && (one_step? || two_steps?)
     end
   end
 
