@@ -11,7 +11,7 @@ require_relative '../lib/pawn'
 describe Validator do
   describe '#valid_move?' do
     context 'when move is valid' do
-      context 'and piece is rook' do
+      context 'piece is rook' do
         it 'returns true' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -34,7 +34,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is bishop' do
+      context 'piece is bishop' do
         it 'returns true' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -59,7 +59,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is queen' do
+      context 'piece is queen' do
         context 'when it moves like a rook' do
           it 'returns true' do
             current_coordinate = double('current_coordinate')
@@ -109,7 +109,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is king' do
+      context 'piece is king' do
         it 'returns true' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -134,7 +134,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is knight' do
+      context 'piece is knight' do
         it 'returns true' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -159,7 +159,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is pawn' do
+      context 'piece is pawn' do
         context 'when one step' do
           it 'returns true' do
             current_coordinate = double('current_coordinate')
@@ -211,7 +211,7 @@ describe Validator do
     end
 
     context 'when move is not valid' do
-      context 'and piece is rook' do
+      context 'piece is rook' do
         it 'returns false' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -234,7 +234,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is bishop' do
+      context 'piece is bishop' do
         it 'returns false' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -260,7 +260,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is queen' do
+      context 'piece is queen' do
         context 'when it moves like a rook' do
           it 'returns false' do
             current_coordinate = double('current_coordinate')
@@ -312,7 +312,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is king' do
+      context 'piece is king' do
         it 'returns false' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -337,7 +337,7 @@ describe Validator do
         end
       end
 
-      context 'and piece is knight' do
+      context 'piece is knight' do
         it 'returns false' do
           current_coordinate = double('current_coordinate')
           destination_coordinate = double('destination_coordinate')
@@ -360,7 +360,7 @@ describe Validator do
         end
       end
 
-      xcontext 'and piece is pawn' do
+      xcontext 'piece is pawn' do
         context 'when one step' do
           it 'returns false' do
             board = double('board')
