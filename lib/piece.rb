@@ -1,12 +1,12 @@
 class Piece
-  attr_reader :board, :validity_inspector
+  attr_reader :board, :validator
 
-  def initialize(board:, validity_inspector:)
+  def initialize(board:, validator:)
     @board = board
-    @validity_inspector = validity_inspector
+    @validator = validator
   end
 
   def move(destination_coordinate:)
-    board.transport(destination_coordinate:) if validity_inspector.valid_move?(destination_coordinate:)
+    board.transport(destination_coordinate:) if validator.valid_move?(destination_coordinate:)
   end
 end
