@@ -1,7 +1,7 @@
-require_relative 'movable'
+require_relative 'intrinsically_movable'
 
 class Validator
-  include Movable
+  include IntrinsicallyMovable
   attr_reader :board, :current_coordinate, :destination_coordinate, :selected_piece
 
   def initialize(board:)

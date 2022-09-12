@@ -1,4 +1,4 @@
-module Movable
+module IntrinsicallyMovable
   def same_file_or_rank?
     same_file? || same_rank?
   end
