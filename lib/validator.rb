@@ -15,7 +15,7 @@ class Validator
 
   def valid_piece_move?
     set_piece_related_attributes
-    choose_piece_behavior(selected_piece:)
+    validate(selected_piece:)
   end
 
   def set_piece_related_attributes
@@ -24,7 +24,7 @@ class Validator
     @destination_coordinate = selected_piece.destination_coordinate
   end
 
-  def choose_piece_behavior(selected_piece:)
+  def validate(selected_piece:)
     case selected_piece
     when Rook
       same_file_or_rank?
