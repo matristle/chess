@@ -43,4 +43,15 @@ module IntrinsicallyMovable
   def two_steps?
     rank_absolute_difference == 2 || file_absolute_difference == 2
   end
+
+  def forward_step?(piece_color)
+    case piece_color
+    when :white
+      (destination_coordinate.rank.to_i - current_coordinate.rank.to_i).positive?
+    when :black
+      (current_coordinate.rank.to_i - destination_coordinate.rank.to_i).positive?
+    else
+      raise 'Color not given.'
+    end
+  end
 end
