@@ -393,9 +393,9 @@ describe Validator do
             allow(current_coordinate).to receive(:file_to_number).and_return(5)
             allow(destination_coordinate).to receive(:file_to_number).and_return(5)
             allow(current_coordinate).to receive(:file).and_return('e')
-            allow(current_coordinate).to receive(:rank).and_return('2')
+            allow(current_coordinate).to receive(:rank).and_return('4')
             allow(destination_coordinate).to receive(:file).and_return('e')
-            allow(destination_coordinate).to receive(:rank).and_return('4')
+            allow(destination_coordinate).to receive(:rank).and_return('2')
             allow(board).to receive(:selected_piece).and_return(pawn)
             allow(pawn).to receive(:current_coordinate).and_return(current_coordinate)
             allow(pawn).to receive(:destination_coordinate).and_return(destination_coordinate)
@@ -405,7 +405,7 @@ describe Validator do
 
             result = validator.valid_move?
 
-            expect(result).to be(true)
+            expect(result).to be(false)
           end
         end
       end
