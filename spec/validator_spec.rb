@@ -361,7 +361,7 @@ describe Validator do
       end
 
       context 'piece is pawn' do
-        context 'when one step' do
+        context 'when one step backward' do
           it 'returns false' do
             current_coordinate     = double('current_coordinate')
             destination_coordinate = double('destination_coordinate')
@@ -384,8 +384,8 @@ describe Validator do
           end
         end
 
-        context 'when two steps' do
-          it 'returns true' do
+        context 'when two steps backward' do
+          it 'returns false' do
             current_coordinate     = double('current_coordinate')
             destination_coordinate = double('destination_coordinate')
             board = double('board')
