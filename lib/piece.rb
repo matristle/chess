@@ -1,7 +1,7 @@
 class Piece
-  attr_reader :board, :validator
+  attr_reader :board, :validator, :color
 
-  def initialize(board:, validator:)
+  def initialize(board:, validator:, color: :fix_me)
     @board = board
     @validator = validator
   end

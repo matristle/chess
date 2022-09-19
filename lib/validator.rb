@@ -2,7 +2,7 @@ require_relative 'intrinsically_movable'
 
 class Validator
   include IntrinsicallyMovable
-  attr_reader :board, :current_coordinate, :destination_coordinate, :selected_piece
+  attr_reader :board, :piece_color, :current_coordinate, :destination_coordinate, :selected_piece
 
   def initialize(board:)
     @board = board
@@ -23,6 +23,7 @@ class Validator
 
   def set_piece_related_attributes
     @selected_piece = board.selected_piece
+    @piece_color            = selected_piece.color if selected_piece.is_a?(Pawn)
     @current_coordinate     = selected_piece.current_coordinate
     @destination_coordinate = selected_piece.destination_coordinate
   end
@@ -40,7 +41,7 @@ class Validator
     when Knight
       l_shape?
     when Pawn
-      same_file? && (one_step? || two_steps?)
+      same_file? && (one_step? || two_steps?) && forward_step?(piece_color)
     end
   end
 end
