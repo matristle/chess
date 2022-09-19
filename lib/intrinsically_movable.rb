@@ -3,7 +3,7 @@ module IntrinsicallyMovable
     same_file? || same_rank?
   end
 
-  def same_file? 
+  def same_file?
     current_coordinate.file == destination_coordinate.file
   end
 
@@ -36,7 +36,7 @@ module IntrinsicallyMovable
     rank_absolute_difference == 1 || file_absolute_difference == 1
   end
 
-  def l_shape_step?
+  def l_shape?
     (rank_absolute_difference == 1 && file_absolute_difference == 2) || (rank_absolute_difference == 2 && file_absolute_difference == 1)
   end
 

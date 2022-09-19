@@ -38,7 +38,7 @@ class Validator
     when King
       (same_file_or_rank? || same_file_rank_steps?) && one_step?
     when Knight
-      l_shape_step?
+      l_shape?
     when Pawn
       same_file? && (one_step? || two_steps?)
     end
