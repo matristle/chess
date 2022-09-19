@@ -360,14 +360,20 @@ describe Validator do
         end
       end
 
-      xcontext 'piece is pawn' do
+      context 'piece is pawn' do
         context 'when one step' do
           it 'returns false' do
+            current_coordinate     = double('current_coordinate')
+            destination_coordinate = double('destination_coordinate')
             board = double('board')
             pawn  = double('pawn')
+            allow(current_coordinate).to receive(:file).and_return('d')
+            allow(current_coordinate).to receive(:rank).and_return('4')
+            allow(destination_coordinate).to receive(:file).and_return('d')
+            allow(destination_coordinate).to receive(:rank).and_return('3')
             allow(board).to receive(:selected_piece).and_return(pawn)
-            allow(pawn).to receive(:current_coordinate).and_return(:d4)
-            allow(pawn).to receive(:destination_coordinate).and_return(:d3)
+            allow(pawn).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(pawn).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(Pawn).to receive(:===).with(pawn).and_return(true)
             validator = Validator.new(board:)
             allow(validator).to receive(:valid_board_move?).and_return(true)
@@ -380,11 +386,19 @@ describe Validator do
 
         context 'when two steps' do
           it 'returns true' do
+            current_coordinate     = double('current_coordinate')
+            destination_coordinate = double('destination_coordinate')
             board = double('board')
             pawn  = double('pawn')
+            allow(current_coordinate).to receive(:file_to_number).and_return(5)
+            allow(destination_coordinate).to receive(:file_to_number).and_return(5)
+            allow(current_coordinate).to receive(:file).and_return('e')
+            allow(current_coordinate).to receive(:rank).and_return('2')
+            allow(destination_coordinate).to receive(:file).and_return('e')
+            allow(destination_coordinate).to receive(:rank).and_return('4')
             allow(board).to receive(:selected_piece).and_return(pawn)
-            allow(pawn).to receive(:current_coordinate).and_return(:e2)
-            allow(pawn).to receive(:destination_coordinate).and_return(:e4)
+            allow(pawn).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(pawn).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(Pawn).to receive(:===).with(pawn).and_return(true)
             validator = Validator.new(board:)
             allow(validator).to receive(:valid_board_move?).and_return(true)
