@@ -103,27 +103,101 @@ describe Validator do
       end
 
       context 'piece is bishop' do
-        it 'returns true' do
-          current_coordinate = double('current_coordinate')
-          destination_coordinate = double('destination_coordinate')
-          board = double('board')
-          bishop = double('bishop')
-          allow(current_coordinate).to receive(:file_to_number).and_return(3)
-          allow(destination_coordinate).to receive(:file_to_number).and_return(6)
-          allow(current_coordinate).to receive(:file).and_return('c')
-          allow(current_coordinate).to receive(:rank).and_return('4')
-          allow(destination_coordinate).to receive(:file).and_return('f')
-          allow(destination_coordinate).to receive(:rank).and_return('7')
-          allow(board).to receive(:selected_piece).and_return(bishop)
-          allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
-          allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(Bishop).to receive(:===).with(bishop).and_return(true)
-          validator = Validator.new(board:)
-          allow(validator).to receive(:valid_board_move?).and_return(true)
+        context 'when top left diagonal' do
+          it 'returns true' do
+            current_coordinate = double('current_coordinate')
+            destination_coordinate = double('destination_coordinate')
+            board = double('board')
+            bishop = double('bishop')
+            allow(current_coordinate).to receive(:file_to_number).and_return(3)
+            allow(destination_coordinate).to receive(:file_to_number).and_return(1)
+            allow(current_coordinate).to receive(:file).and_return('c')
+            allow(current_coordinate).to receive(:rank).and_return('3')
+            allow(destination_coordinate).to receive(:file).and_return('a')
+            allow(destination_coordinate).to receive(:rank).and_return('5')
+            allow(board).to receive(:selected_piece).and_return(bishop)
+            allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(Bishop).to receive(:===).with(bishop).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
 
-          result = validator.valid_move?
+            result = validator.valid_move?
 
-          expect(result).to be(true)
+            expect(result).to be(true)
+          end
+        end
+        context 'when top right diagonal' do
+          it 'returns true' do
+            current_coordinate = double('current_coordinate')
+            destination_coordinate = double('destination_coordinate')
+            board = double('board')
+            bishop = double('bishop')
+            allow(current_coordinate).to receive(:file_to_number).and_return(4)
+            allow(destination_coordinate).to receive(:file_to_number).and_return(7)
+            allow(current_coordinate).to receive(:file).and_return('d')
+            allow(current_coordinate).to receive(:rank).and_return('3')
+            allow(destination_coordinate).to receive(:file).and_return('g')
+            allow(destination_coordinate).to receive(:rank).and_return('6')
+            allow(board).to receive(:selected_piece).and_return(bishop)
+            allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(Bishop).to receive(:===).with(bishop).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(true)
+          end
+        end
+        context 'when bottom left diagonal' do
+          it 'returns true' do
+            current_coordinate = double('current_coordinate')
+            destination_coordinate = double('destination_coordinate')
+            board = double('board')
+            bishop = double('bishop')
+            allow(current_coordinate).to receive(:file_to_number).and_return(5)
+            allow(destination_coordinate).to receive(:file_to_number).and_return(2)
+            allow(current_coordinate).to receive(:file).and_return('e')
+            allow(current_coordinate).to receive(:rank).and_return('7')
+            allow(destination_coordinate).to receive(:file).and_return('b')
+            allow(destination_coordinate).to receive(:rank).and_return('4')
+            allow(board).to receive(:selected_piece).and_return(bishop)
+            allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(Bishop).to receive(:===).with(bishop).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(true)
+          end
+        end
+        context 'when bottom right diagonal' do
+          it 'returns true' do
+            current_coordinate = double('current_coordinate')
+            destination_coordinate = double('destination_coordinate')
+            board = double('board')
+            bishop = double('bishop')
+            allow(current_coordinate).to receive(:file_to_number).and_return(4)
+            allow(destination_coordinate).to receive(:file_to_number).and_return(6)
+            allow(current_coordinate).to receive(:file).and_return('d')
+            allow(current_coordinate).to receive(:rank).and_return('4')
+            allow(destination_coordinate).to receive(:file).and_return('f')
+            allow(destination_coordinate).to receive(:rank).and_return('2')
+            allow(board).to receive(:selected_piece).and_return(bishop)
+            allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(Bishop).to receive(:===).with(bishop).and_return(true)
+            validator = Validator.new(board:)
+            allow(validator).to receive(:valid_board_move?).and_return(true)
+
+            result = validator.valid_move?
+
+            expect(result).to be(true)
+          end
         end
       end
 
