@@ -208,55 +208,10 @@ describe Validator do
       context 'piece is bishop' do
         include_examples 'intrinsic diagonal movement', Bishop
       end
-      
+
       context 'piece is queen' do
-        context 'when it moves like a rook' do
-          it 'returns true' do
-            current_coordinate = double('current_coordinate')
-            destination_coordinate = double('destination_coordinate')
-            board = double('board')
-            queen = double('queen')
-            allow(current_coordinate).to receive(:file).and_return('f')
-            allow(current_coordinate).to receive(:rank).and_return('3')
-            allow(destination_coordinate).to receive(:file).and_return('f')
-            allow(destination_coordinate).to receive(:rank).and_return('8')
-            allow(board).to receive(:selected_piece).and_return(queen)
-            allow(queen).to receive(:current_coordinate).and_return(current_coordinate)
-            allow(queen).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(Queen).to receive(:===).with(queen).and_return(true)
-            validator = Validator.new(board:)
-            allow(validator).to receive(:valid_board_move?).and_return(true)
-
-            result = validator.valid_move?
-
-            expect(result).to be(true)
-          end
-        end
-
-        context 'when it moves like a bishop' do
-          it 'returns true' do
-            current_coordinate = double('current_coordinate')
-            destination_coordinate = double('destination_coordinate')
-            board = double('board')
-            queen = double('queen')
-            allow(current_coordinate).to receive(:file_to_number).and_return(4)
-            allow(destination_coordinate).to receive(:file_to_number).and_return(2)
-            allow(current_coordinate).to receive(:file).and_return('d')
-            allow(current_coordinate).to receive(:rank).and_return('1')
-            allow(destination_coordinate).to receive(:file).and_return('b')
-            allow(destination_coordinate).to receive(:rank).and_return('3')
-            allow(board).to receive(:selected_piece).and_return(queen)
-            allow(queen).to receive(:current_coordinate).and_return(current_coordinate)
-            allow(queen).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(Queen).to receive(:===).with(queen).and_return(true)
-            validator = Validator.new(board:)
-            allow(validator).to receive(:valid_board_move?).and_return(true)
-
-            result = validator.valid_move?
-
-            expect(result).to be(true)
-          end
-        end
+        include_examples 'intrinsic vertical and horizontal movement', Queen
+        include_examples 'intrinsic diagonal movement', Queen
       end
 
       context 'piece is king' do
