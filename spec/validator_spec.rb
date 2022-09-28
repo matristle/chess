@@ -7,35 +7,35 @@ require_relative '../lib/king'
 require_relative '../lib/knight'
 require_relative '../lib/pawn'
 
-shared_examples 'intrinsic vertical and horizontal movement' do |piece_class|
+shared_examples_for 'a vertically movable piece -- intrinsic' do |piece_class|
+  let(:current_coordinate) { double('current_coordinate') }
+  let(:destination_coordinate) { double('destination_coordinate') }
+  let(:board) { double('board') }
+  let(:piece) { double('piece') }
+  subject(:validator) { described_class.new(board:) }
+
   context 'when up' do
-    it 'returns true' do
-      current_coordinate = double('current_coordinate')
-      destination_coordinate = double('destination_coordinate')
-      board = double('board')
-      piece = double('piece')
-      allow(current_coordinate).to receive(:file).and_return('f')
-      allow(current_coordinate).to receive(:rank).and_return('1')
-      allow(destination_coordinate).to receive(:file).and_return('f')
-      allow(destination_coordinate).to receive(:rank).and_return('7')
+    before do
+      allow(current_coordinate).to receive_messages(file: 'f', rank: '1')
+      allow(destination_coordinate).to receive_messages(file: 'f', rank: '7')
       allow(board).to receive(:selected_piece).and_return(piece)
-      allow(piece).to receive(:current_coordinate).and_return(current_coordinate)
-      allow(piece).to receive(:destination_coordinate).and_return(destination_coordinate)
+      allow(piece).to receive_messages(current_coordinate:, destination_coordinate:)
       allow(piece_class).to receive(:===).with(piece).and_return(true)
-      validator = Validator.new(board:)
       allow(validator).to receive(:valid_board_move?).and_return(true)
+    end
 
-      result = validator.valid_move?
-
-      expect(result).to be(true)
+    it 'returns true' do
+      move_validity = validator.valid_move?
+      expect(move_validity).to be(true)
     end
   end
+
   context 'when down' do
     it 'returns true' do
       current_coordinate = double('current_coordinate')
       destination_coordinate = double('destination_coordinate')
       board = double('board')
-      piece  = double('piece')
+      piece = double('piece')
       allow(current_coordinate).to receive(:file).and_return('e')
       allow(current_coordinate).to receive(:rank).and_return('3')
       allow(destination_coordinate).to receive(:file).and_return('e')
@@ -52,13 +52,15 @@ shared_examples 'intrinsic vertical and horizontal movement' do |piece_class|
       expect(result).to be(true)
     end
   end
+end
 
+shared_examples_for 'a horizontally movable piece -- intrinsic' do |piece_class|  
   context 'when left' do
     it 'returns true' do
       current_coordinate = double('current_coordinate')
       destination_coordinate = double('destination_coordinate')
       board = double('board')
-      piece  = double('piece')
+      piece = double('piece')
       allow(current_coordinate).to receive(:file).and_return('c')
       allow(current_coordinate).to receive(:rank).and_return('1')
       allow(destination_coordinate).to receive(:file).and_return('a')
@@ -80,7 +82,7 @@ shared_examples 'intrinsic vertical and horizontal movement' do |piece_class|
       current_coordinate = double('current_coordinate')
       destination_coordinate = double('destination_coordinate')
       board = double('board')
-      piece  = double('piece')
+      piece = double('piece')
       allow(current_coordinate).to receive(:file).and_return('d')
       allow(current_coordinate).to receive(:rank).and_return('4')
       allow(destination_coordinate).to receive(:file).and_return('g')
@@ -99,7 +101,7 @@ shared_examples 'intrinsic vertical and horizontal movement' do |piece_class|
   end
 end
 
-shared_examples 'intrinsic diagonal movement' do |piece_class|
+shared_examples_for 'a diagonally movable piece -- intrinsic' do |piece_class|
   context 'when top left diagonal' do
     it 'returns true' do
       current_coordinate = double('current_coordinate')
@@ -202,16 +204,18 @@ describe Validator do
   describe '#valid_move?' do
     context 'when move is valid' do
       context 'piece is rook' do
-        include_examples 'intrinsic vertical and horizontal movement', Rook
+        it_behaves_like 'a vertically movable piece -- intrinsic', Rook
+        it_behaves_like 'a horizontally movable piece -- intrinsic', Rook
       end
 
       context 'piece is bishop' do
-        include_examples 'intrinsic diagonal movement', Bishop
+        it_behaves_like 'a diagonally movable piece -- intrinsic', Bishop
       end
 
       context 'piece is queen' do
-        include_examples 'intrinsic vertical and horizontal movement', Queen
-        include_examples 'intrinsic diagonal movement', Queen
+        it_behaves_like 'a vertically movable piece -- intrinsic', Queen
+        it_behaves_like 'a horizontally movable piece -- intrinsic', Queen
+        it_behaves_like 'a diagonally movable piece -- intrinsic', Queen
       end
 
       context 'piece is king' do
