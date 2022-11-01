@@ -11,6 +11,9 @@ Style/Documentation:
 Style/RedundantReturn:
   Enabled: false
 
+Style/RedundantSelf:
+  Enabled: false
+
 # RSpec Cop Exclusions
 
 Lint/AmbiguousBlockAssociation:

@@ -5,6 +5,8 @@ class Rook < Piece
   include IntrinsicallyMovable
 
   def valid_move?
+    return false if same_coordinate?
+    
     valid_piece_move? && valid_board_move?
   end
 
