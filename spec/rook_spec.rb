@@ -1,5 +1,5 @@
-require_relative '../lib/piece'
 require_relative '../lib/rook'
+require_relative '../lib/piece'
 require_relative '../lib/king'
 require_relative '../lib/board'
 require_relative '../lib/coordinate'
@@ -76,6 +76,22 @@ describe Rook do
     end
 
     context 'when move is invalid' do
+      context 'when target coordinate is same as current coordinate' do
+        let(:current_coordinate)     { Coordinate.new(:f4) }
+        let(:destination_coordinate) { Coordinate.new(:f4) }
+
+        before do
+          allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+          allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+          allow(rook).to receive(:valid_board_move?).and_return(true)
+        end
+
+        it 'returns false' do
+          move_validity = rook.valid_move?
+          expect(move_validity).to be(false)
+        end
+      end
+
       context 'when up' do
         context 'wrong file' do
           context 'left side of correct file' do
@@ -364,13 +380,17 @@ describe Rook do
     end
   end
 
-  context 'when other pieces are needed' do
+  context 'when other pieces are needed: capturing a piece' do
     context 'when move is valid' do
-      context 'when there is no piece at destination coordinate' do
-        let(:current_coordinate)     { Coordinate.new(:f1) }
-        let(:destination_coordinate) { Coordinate.new(:f7) }
+      context 'when up' do
+        let(:target_piece) { double('target_piece') }
+        let(:current_coordinate)     { Coordinate.new(:c1) }
+        let(:destination_coordinate) { Coordinate.new(:c3) }
 
         before do
+          allow(rook).to receive(:color).and_return(:white)
+          allow(target_piece).to receive(:color).and_return(:black)
+          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -382,7 +402,69 @@ describe Rook do
         end
       end
 
-      context 'when capturing a piece' do
+      context 'when down' do
+        let(:target_piece) { double('target_piece') }
+        let(:current_coordinate)     { Coordinate.new(:g7) }
+        let(:destination_coordinate) { Coordinate.new(:g2) }
+
+        before do
+          allow(rook).to receive(:color).and_return(:white)
+          allow(target_piece).to receive(:color).and_return(:black)
+          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+          allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+          allow(rook).to receive(:valid_piece_move?).and_return(true)
+        end
+
+        it 'returns true' do
+          move_validity = rook.valid_move?
+          expect(move_validity).to be(true)
+        end
+      end
+
+      context 'when left' do
+        let(:target_piece) { double('target_piece') }
+        let(:current_coordinate)     { Coordinate.new(:f2) }
+        let(:destination_coordinate) { Coordinate.new(:b2) }
+
+        before do
+          allow(rook).to receive(:color).and_return(:white)
+          allow(target_piece).to receive(:color).and_return(:black)
+          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+          allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+          allow(rook).to receive(:valid_piece_move?).and_return(true)
+        end
+
+        it 'returns true' do
+          move_validity = rook.valid_move?
+          expect(move_validity).to be(true)
+        end
+      end
+
+      context 'when right' do
+        let(:target_piece) { double('target_piece') }
+        let(:current_coordinate)     { Coordinate.new(:d5) }
+        let(:destination_coordinate) { Coordinate.new(:g5) }
+
+        before do
+          allow(rook).to receive(:color).and_return(:white)
+          allow(target_piece).to receive(:color).and_return(:black)
+          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+          allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+          allow(rook).to receive(:valid_piece_move?).and_return(true)
+        end
+
+        it 'returns true' do
+          move_validity = rook.valid_move?
+          expect(move_validity).to be(true)
+        end
+      end
+    end
+
+    context 'when move is invalid' do
+      context 'when piece has the same color' do
         context 'when up' do
           let(:target_piece) { double('target_piece') }
           let(:current_coordinate)     { Coordinate.new(:c1) }
@@ -390,16 +472,16 @@ describe Rook do
 
           before do
             allow(rook).to receive(:color).and_return(:white)
-            allow(target_piece).to receive(:color).and_return(:black)
+            allow(target_piece).to receive(:color).and_return(:white)
             allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          it 'returns true' do
+          it 'returns false' do
             move_validity = rook.valid_move?
-            expect(move_validity).to be(true)
+            expect(move_validity).to be(false)
           end
         end
 
@@ -409,7 +491,7 @@ describe Rook do
           let(:destination_coordinate) { Coordinate.new(:g2) }
 
           before do
-            allow(rook).to receive(:color).and_return(:white)
+            allow(rook).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
             allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
@@ -417,9 +499,9 @@ describe Rook do
             allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          it 'returns true' do
+          it 'returns false' do
             move_validity = rook.valid_move?
-            expect(move_validity).to be(true)
+            expect(move_validity).to be(false)
           end
         end
 
@@ -429,7 +511,7 @@ describe Rook do
           let(:destination_coordinate) { Coordinate.new(:b2) }
 
           before do
-            allow(rook).to receive(:color).and_return(:white)
+            allow(rook).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
             allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
@@ -437,9 +519,9 @@ describe Rook do
             allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          it 'returns true' do
+          it 'returns false' do
             move_validity = rook.valid_move?
-            expect(move_validity).to be(true)
+            expect(move_validity).to be(false)
           end
         end
 
@@ -450,183 +532,98 @@ describe Rook do
 
           before do
             allow(rook).to receive(:color).and_return(:white)
-            allow(target_piece).to receive(:color).and_return(:black)
+            allow(target_piece).to receive(:color).and_return(:white)
             allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          it 'returns true' do
+          it 'returns false' do
             move_validity = rook.valid_move?
-            expect(move_validity).to be(true)
+            expect(move_validity).to be(false)
           end
         end
       end
-    end
+      
+      context 'when piece is a king' do
+        context 'when up' do
+          let(:king) { King.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:c1) }
+          let(:destination_coordinate) { Coordinate.new(:c3) }
 
-    context 'when move is invalid' do
-      context 'when capturing a piece' do
-        context 'but the piece has the same color' do
-          context 'when up' do
-            let(:target_piece) { double('target_piece') }
-            let(:current_coordinate)     { Coordinate.new(:c1) }
-            let(:destination_coordinate) { Coordinate.new(:c3) }
-  
-            before do
-              allow(rook).to receive(:color).and_return(:white)
-              allow(target_piece).to receive(:color).and_return(:white)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
-  
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
+          before do
+            allow(rook).to receive(:color).and_return(:white)
+            allow(king).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          context 'when down' do
-            let(:target_piece) { double('target_piece') }
-            let(:current_coordinate)     { Coordinate.new(:g7) }
-            let(:destination_coordinate) { Coordinate.new(:g2) }
-  
-            before do
-              allow(rook).to receive(:color).and_return(:black)
-              allow(target_piece).to receive(:color).and_return(:black)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
-  
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
-          end
-
-          context 'when left' do
-            let(:target_piece) { double('target_piece') }
-            let(:current_coordinate)     { Coordinate.new(:f2) }
-            let(:destination_coordinate) { Coordinate.new(:b2) }
-  
-            before do
-              allow(rook).to receive(:color).and_return(:black)
-              allow(target_piece).to receive(:color).and_return(:black)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
-  
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
-          end
-
-          context 'when right' do
-            let(:target_piece) { double('target_piece') }
-            let(:current_coordinate)     { Coordinate.new(:d5) }
-            let(:destination_coordinate) { Coordinate.new(:g5) }
-  
-            before do
-              allow(rook).to receive(:color).and_return(:white)
-              allow(target_piece).to receive(:color).and_return(:white)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
-  
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
+          it 'returns false' do
+            move_validity = rook.valid_move?
+            expect(move_validity).to be(false)
           end
         end
-        context 'but the piece is a king' do
-          context 'when up' do
-            let(:king) { King.new(board:) }
-            let(:current_coordinate)     { Coordinate.new(:c1) }
-            let(:destination_coordinate) { Coordinate.new(:c3) }
 
-            before do
-              allow(rook).to receive(:color).and_return(:white)
-              allow(king).to receive(:color).and_return(:black)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
+        context 'when down' do
+          let(:king) { King.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:g7) }
+          let(:destination_coordinate) { Coordinate.new(:g2) }
 
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
+          before do
+            allow(rook).to receive(:color).and_return(:black)
+            allow(king).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          context 'when down' do
-            let(:king) { King.new(board:) }
-            let(:current_coordinate)     { Coordinate.new(:g7) }
-            let(:destination_coordinate) { Coordinate.new(:g2) }
+          it 'returns false' do
+            move_validity = rook.valid_move?
+            expect(move_validity).to be(false)
+          end
+        end
 
-            before do
-              allow(rook).to receive(:color).and_return(:black)
-              allow(king).to receive(:color).and_return(:black)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
+        context 'when left' do
+          let(:king) { King.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:f2) }
+          let(:destination_coordinate) { Coordinate.new(:b2) }
 
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
+          before do
+            allow(rook).to receive(:color).and_return(:black)
+            allow(king).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          context 'when left' do
-            let(:king) { King.new(board:) }
-            let(:current_coordinate)     { Coordinate.new(:f2) }
-            let(:destination_coordinate) { Coordinate.new(:b2) }
+          it 'returns false' do
+            move_validity = rook.valid_move?
+            expect(move_validity).to be(false)
+          end
+        end
 
-            before do
-              allow(rook).to receive(:color).and_return(:black)
-              allow(king).to receive(:color).and_return(:black)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
+        context 'when right' do
+          let(:king) { King.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:d5) }
+          let(:destination_coordinate) { Coordinate.new(:g5) }
 
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
+          before do
+            allow(rook).to receive(:color).and_return(:white)
+            allow(king).to receive(:color).and_return(:white)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(rook).to receive(:valid_piece_move?).and_return(true)
           end
 
-          context 'when right' do
-            let(:king) { King.new(board:) }
-            let(:current_coordinate)     { Coordinate.new(:d5) }
-            let(:destination_coordinate) { Coordinate.new(:g5) }
-
-            before do
-              allow(rook).to receive(:color).and_return(:white)
-              allow(king).to receive(:color).and_return(:white)
-              allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
-              allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
-              allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-              allow(rook).to receive(:valid_piece_move?).and_return(true)
-            end
-
-            it 'returns false' do
-              move_validity = rook.valid_move?
-              expect(move_validity).to be(false)
-            end
+          it 'returns false' do
+            move_validity = rook.valid_move?
+            expect(move_validity).to be(false)
           end
         end
       end

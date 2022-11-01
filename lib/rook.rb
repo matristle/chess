@@ -1,3 +1,4 @@
+require_relative 'piece'
 require_relative 'intrinsically_movable'
 
 class Rook < Piece
