@@ -1,1 +1,1 @@
-class King; end
+class King < Piece; end

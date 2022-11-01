@@ -1,7 +1,8 @@
 class Coordinate
-  attr_reader :file, :rank
-  
+  attr_reader :file, :rank, :symbol
+
   def initialize(coordinate)
+    @symbol = coordinate
     @file = coordinate[0]
     @rank = coordinate[1]
   end
@@ -12,5 +13,9 @@ class Coordinate
 
   def file_to_number
     file_number_mapping[file.to_sym].to_i
+  end
+
+  def ==(other)
+    self.file == other.file && self.rank == other.rank
   end
 end

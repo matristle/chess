@@ -1,8 +1,6 @@
 require_relative 'board_maker'
 
 class Board
-  attr_reader :board_structure, :selected_piece
-
   def initialize
     @board_structure = board_maker.make_with_coordinates
   end
@@ -23,11 +21,13 @@ class Board
     @board_structure[destination_coordinate] = selected_piece if coordinate?(destination_coordinate)
   end
 
-  def perform_move(origin, target)
-    @board_structure[target] = origin if coordinate?(target)
+  def piece_at?(coordinate)
+    self[coordinate] != ''
   end
 
   private
+
+  attr_reader :board_structure, :selected_piece
 
   def board_maker
     BoardMaker.new

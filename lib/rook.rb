@@ -15,5 +15,12 @@ class Rook < Piece
     same_file_or_rank?
   end
 
-  def valid_board_move?; end
+  def valid_board_move?
+    return true  unless board.piece_at?(destination_coordinate.symbol)
+    return false if king_at?(destination_coordinate)
+    return true  unless ally_piece_at?(destination_coordinate)
+    return false if ally_piece_at?(destination_coordinate)
+
+    raise 'Not implemented yet OR not anticipated'
+  end
 end
