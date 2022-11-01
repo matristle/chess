@@ -15,6 +15,14 @@ module IntrinsicallyMovable
     rank_absolute_difference == file_absolute_difference
   end
 
+  def rank_absolute_difference
+    coordinate_difference(orientation: :rank).abs
+  end
+
+  def file_absolute_difference
+    coordinate_difference(orientation: :file).abs
+  end
+
   def coordinate_difference(orientation:)
     case orientation
     when :rank
@@ -22,14 +30,6 @@ module IntrinsicallyMovable
     when :file
       destination_coordinate.file_to_number - current_coordinate.file_to_number
     end
-  end
-
-  def rank_absolute_difference
-    coordinate_difference(orientation: :rank).abs
-  end
-
-  def file_absolute_difference
-    coordinate_difference(orientation: :file).abs
   end
 
   def one_step?

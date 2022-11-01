@@ -1,4 +1,6 @@
 class Piece
+  attr_reader :board, :validator, :color
+
   def initialize(board:, validator: :fix_me, color: :fix_me)
     @board = board
     @validator = validator
@@ -16,19 +18,17 @@ class Piece
   end
 
   def king_at?(coordinate)
-    board[coordinate.symbol].is_a?(King)
+    board[coordinate.to_sym].is_a?(King)
   end
 
   def same_coordinate?
-    current_coordinate.file == destination_coordinate.file && current_coordinate.rank == destination_coordinate.rank
+    current_coordinate == destination_coordinate
   end
 
-  private
-
-  attr_reader :board, :validator, :color
-
   def same_color?(coordinate)
-    other_piece = board[coordinate.symbol]
+    return false unless board.piece_at?(coordinate)
+
+    other_piece = board[coordinate.to_sym]
     self.color == other_piece.color
   end
 end

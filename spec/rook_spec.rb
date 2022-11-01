@@ -545,8 +545,8 @@ describe Rook do
           end
         end
       end
-      
-      context 'when piece is a king' do
+
+      context 'when target piece is a king' do
         context 'when up' do
           let(:king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:c1) }

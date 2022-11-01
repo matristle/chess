@@ -260,7 +260,7 @@ describe Bishop do
         end
       end
 
-      context 'when piece is a king' do
+      context 'when target piece is a king' do
         context 'when top left' do
           let(:king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:g2) }

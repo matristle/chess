@@ -673,6 +673,86 @@ describe Queen do
 
     context 'when move is invalid' do
       context 'when piece has the same color' do
+        context 'when up' do
+          let(:target_piece) { double('target_piece') }
+          let(:current_coordinate)     { Coordinate.new(:c1) }
+          let(:destination_coordinate) { Coordinate.new(:c3) }
+
+          before do
+            allow(queen).to receive(:color).and_return(:white)
+            allow(target_piece).to receive(:color).and_return(:white)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(queen).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(queen).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(queen).to receive(:valid_piece_move?).and_return(true)
+          end
+
+          it 'returns false' do
+            move_validity = queen.valid_move?
+            expect(move_validity).to be(false)
+          end
+        end
+
+        context 'when down' do
+          let(:target_piece) { double('target_piece') }
+          let(:current_coordinate)     { Coordinate.new(:g7) }
+          let(:destination_coordinate) { Coordinate.new(:g2) }
+
+          before do
+            allow(queen).to receive(:color).and_return(:black)
+            allow(target_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(queen).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(queen).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(queen).to receive(:valid_piece_move?).and_return(true)
+          end
+
+          it 'returns false' do
+            move_validity = queen.valid_move?
+            expect(move_validity).to be(false)
+          end
+        end
+
+        context 'when left' do
+          let(:target_piece) { double('target_piece') }
+          let(:current_coordinate)     { Coordinate.new(:f2) }
+          let(:destination_coordinate) { Coordinate.new(:b2) }
+
+          before do
+            allow(queen).to receive(:color).and_return(:white)
+            allow(target_piece).to receive(:color).and_return(:white)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(queen).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(queen).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(queen).to receive(:valid_piece_move?).and_return(true)
+          end
+
+          it 'returns false' do
+            move_validity = queen.valid_move?
+            expect(move_validity).to be(false)
+          end
+        end
+
+        context 'when right' do
+          let(:target_piece) { double('target_piece') }
+          let(:current_coordinate)     { Coordinate.new(:d5) }
+          let(:destination_coordinate) { Coordinate.new(:g5) }
+
+          before do
+            allow(queen).to receive(:color).and_return(:black)
+            allow(target_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(queen).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(queen).to receive(:destination_coordinate).and_return(destination_coordinate)
+            allow(queen).to receive(:valid_piece_move?).and_return(true)
+          end
+
+          it 'returns false' do
+            move_validity = queen.valid_move?
+            expect(move_validity).to be(false)
+          end
+        end
+
         context 'when top left' do
           let(:target_piece) { double('target_piece') }
           let(:current_coordinate)     { Coordinate.new(:g2) }
@@ -692,7 +772,7 @@ describe Queen do
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when top right' do
           let(:target_piece) { double('target_piece') }
           let(:current_coordinate)     { Coordinate.new(:c3) }
@@ -712,7 +792,7 @@ describe Queen do
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when bottom left' do
           let(:target_piece) { double('target_piece') }
           let(:current_coordinate)     { Coordinate.new(:f5) }
@@ -732,12 +812,12 @@ describe Queen do
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when bottom right' do
           let(:target_piece) { double('target_piece') }
           let(:current_coordinate)     { Coordinate.new(:b4) }
           let(:destination_coordinate) { Coordinate.new(:d2) }
-  
+
           before do
             allow(queen).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
@@ -754,7 +834,7 @@ describe Queen do
         end
       end
 
-      context 'when piece is a king' do
+      context 'when target piece is a king' do
         context 'when top left' do
           let(:king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:g2) }

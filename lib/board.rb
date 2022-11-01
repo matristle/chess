@@ -22,7 +22,7 @@ class Board
   end
 
   def piece_at?(coordinate)
-    self[coordinate] != ''
+    self[coordinate.to_sym] != ''
   end
 
   private
