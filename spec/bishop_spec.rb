@@ -104,7 +104,7 @@ describe Bishop do
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -124,7 +124,7 @@ describe Bishop do
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -144,7 +144,7 @@ describe Bishop do
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -164,7 +164,7 @@ describe Bishop do
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -187,7 +187,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -207,7 +207,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -227,7 +227,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -247,7 +247,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -269,7 +269,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:white)
             allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -289,7 +289,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:white)
             allow(king).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -309,7 +309,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:black)
             allow(king).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)
@@ -329,7 +329,7 @@ describe Bishop do
           before do
             allow(bishop).to receive(:color).and_return(:black)
             allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(bishop).to receive(:valid_piece_move?).and_return(true)

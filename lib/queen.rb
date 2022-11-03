@@ -19,7 +19,7 @@ class Queen < Piece
   end
 
   def valid_board_move?
-    return true  unless board.piece_at?(destination_coordinate.symbol)
+    return true  unless board.piece_at?(destination_coordinate.to_sym)
     return false if king_at?(destination_coordinate)
     return true  unless ally_piece_at?(destination_coordinate)
     return false if ally_piece_at?(destination_coordinate)

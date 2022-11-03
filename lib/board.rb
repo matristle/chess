@@ -22,12 +22,14 @@ class Board
   end
 
   def piece_at?(coordinate)
-    self[coordinate.to_sym] != ''
+    self[coordinate.to_sym] != EMPTY
   end
 
   private
 
   attr_reader :board_structure, :selected_piece
+
+  EMPTY = ''.freeze
 
   def board_maker
     BoardMaker.new

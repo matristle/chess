@@ -390,7 +390,7 @@ describe Rook do
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -410,7 +410,7 @@ describe Rook do
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -430,7 +430,7 @@ describe Rook do
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -450,7 +450,7 @@ describe Rook do
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
           allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -473,7 +473,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -493,7 +493,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -513,7 +513,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -533,7 +533,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -555,7 +555,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:white)
             allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -575,7 +575,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:black)
             allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -595,7 +595,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:black)
             allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)
@@ -615,7 +615,7 @@ describe Rook do
           before do
             allow(rook).to receive(:color).and_return(:white)
             allow(king).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.symbol).and_return(king)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
             allow(rook).to receive(:valid_piece_move?).and_return(true)

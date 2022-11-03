@@ -9,7 +9,7 @@ require_relative '../lib/pawn'
 require_relative '../lib/coordinate'
 require_relative '../lib/board'
 
-describe Validator do
+xdescribe Validator do
   describe '#valid_move?' do
     context 'when other pieces aren\'t needed' do
       context 'when move is valid' do
