@@ -1,7 +1,7 @@
 class Coordinate
   attr_reader :file, :rank
 
-  def initialize(coordinate = nil, file = nil, rank = nil)
+  def initialize(coordinate = nil)
     @symbol = coordinate
     @file = coordinate[0]
     @rank = coordinate[1]

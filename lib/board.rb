@@ -25,6 +25,10 @@ class Board
     self[coordinate.to_sym] != EMPTY
   end
 
+  def any_piece_watching_at?(coordinate)
+    self[coordinate.to_sym].watchers?
+  end
+
   private
 
   attr_reader :board_structure, :selected_piece
