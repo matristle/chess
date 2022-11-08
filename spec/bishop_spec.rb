@@ -3,6 +3,10 @@ require_relative '../lib/piece'
 require_relative '../lib/king'
 require_relative '../lib/board'
 require_relative '../lib/coordinate'
+require_relative '../lib/rook'
+require_relative '../lib/queen'
+require_relative '../lib/knight'
+require_relative '../lib/square'
 
 describe Bishop do
   subject(:bishop) { described_class.new(board:) }
@@ -17,7 +21,6 @@ describe Bishop do
         before do
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -33,7 +36,6 @@ describe Bishop do
         before do
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -49,7 +51,6 @@ describe Bishop do
         before do
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -65,7 +66,6 @@ describe Bishop do
         before do
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -83,7 +83,6 @@ describe Bishop do
         before do
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns false' do
@@ -97,17 +96,18 @@ describe Bishop do
   context 'when other pieces are needed: capturing a piece' do
     context 'when move is valid' do
       context 'when top left' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Rook.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:g2) }
         let(:destination_coordinate) { Coordinate.new(:b7) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -117,17 +117,18 @@ describe Bishop do
       end
 
       context 'when top right' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Bishop.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:c3) }
         let(:destination_coordinate) { Coordinate.new(:f6) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -137,17 +138,18 @@ describe Bishop do
       end
 
       context 'when bottom left' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Queen.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:f5) }
         let(:destination_coordinate) { Coordinate.new(:b1) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -157,17 +159,18 @@ describe Bishop do
       end
 
       context 'when bottom right' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Knight.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:b4) }
         let(:destination_coordinate) { Coordinate.new(:d2) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(bishop).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
           allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(bishop).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -180,79 +183,83 @@ describe Bishop do
     context 'when move is invalid' do
       context 'when piece has the same color' do
         context 'when top left' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Rook.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:g2) }
           let(:destination_coordinate) { Coordinate.new(:b7) }
-  
+          let(:capture_square) { Square.new }
+
           before do
             allow(bishop).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when top right' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Bishop.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:c3) }
           let(:destination_coordinate) { Coordinate.new(:f6) }
-  
+          let(:capture_square) { Square.new }
+
           before do
             allow(bishop).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when bottom left' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Queen.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:f5) }
           let(:destination_coordinate) { Coordinate.new(:b1) }
-  
+          let(:capture_square) { Square.new }
+
           before do
             allow(bishop).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when bottom right' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Knight.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:b4) }
           let(:destination_coordinate) { Coordinate.new(:d2) }
-  
+          let(:capture_square) { Square.new }
+
           before do
             allow(bishop).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)
@@ -262,79 +269,83 @@ describe Bishop do
 
       context 'when target piece is a king' do
         context 'when top left' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:g2) }
           let(:destination_coordinate) { Coordinate.new(:b7) }
-  
+          let(:capture_square) { Square.new }
+          
           before do
             allow(bishop).to receive(:color).and_return(:white)
-            allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when top right' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:c3) }
           let(:destination_coordinate) { Coordinate.new(:f6) }
-  
+          let(:capture_square) { Square.new }
+          
           before do
             allow(bishop).to receive(:color).and_return(:white)
-            allow(king).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:white)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when bottom left' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:f5) }
           let(:destination_coordinate) { Coordinate.new(:b1) }
-  
+          let(:capture_square) { Square.new }
+          
           before do
             allow(bishop).to receive(:color).and_return(:black)
-            allow(king).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:white)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)
           end
         end
-  
+
         context 'when bottom right' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:b4) }
           let(:destination_coordinate) { Coordinate.new(:d2) }
-  
+          let(:capture_square) { Square.new }
+          
           before do
             allow(bishop).to receive(:color).and_return(:black)
-            allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(bishop).to receive(:current_coordinate).and_return(current_coordinate)
             allow(bishop).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(bishop).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
-  
+
           it 'returns false' do
             move_validity = bishop.valid_move?
             expect(move_validity).to be(false)

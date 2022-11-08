@@ -1,4 +1,5 @@
 require_relative 'board_maker'
+require_relative 'square'
 
 class Board
   def initialize
@@ -22,18 +23,20 @@ class Board
   end
 
   def piece_at?(coordinate)
-    self[coordinate.to_sym] != EMPTY
+    square_at(coordinate).occupied?
   end
 
   def any_piece_watching_at?(coordinate)
-    self[coordinate.to_sym].watchers?
+    square_at(coordinate).watchers?
   end
 
   private
 
   attr_reader :board_structure, :selected_piece
 
-  EMPTY = ''.freeze
+  def square_at(coordinate)
+    self[coordinate.to_sym]
+  end
 
   def board_maker
     BoardMaker.new

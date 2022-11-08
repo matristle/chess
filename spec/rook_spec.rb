@@ -3,6 +3,10 @@ require_relative '../lib/piece'
 require_relative '../lib/king'
 require_relative '../lib/board'
 require_relative '../lib/coordinate'
+require_relative '../lib/bishop'
+require_relative '../lib/queen'
+require_relative '../lib/knight'
+require_relative '../lib/square'
 
 describe Rook do
   subject(:rook) { described_class.new(board:) }
@@ -17,7 +21,6 @@ describe Rook do
         before do
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -33,7 +36,6 @@ describe Rook do
         before do
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -49,7 +51,6 @@ describe Rook do
         before do
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -65,7 +66,6 @@ describe Rook do
         before do
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns true' do
@@ -83,7 +83,6 @@ describe Rook do
         before do
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_board_move?).and_return(true)
         end
 
         it 'returns false' do
@@ -102,7 +101,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -118,7 +116,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -136,7 +133,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -152,7 +148,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -174,7 +169,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -190,7 +184,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -208,7 +201,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -224,7 +216,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -246,7 +237,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -261,7 +251,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -279,7 +268,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -294,7 +282,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -316,7 +303,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -332,7 +318,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -350,7 +335,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -366,7 +350,6 @@ describe Rook do
               before do
                 allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
                 allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-                allow(rook).to receive(:valid_board_move?).and_return(true)
               end
 
               it 'returns false' do
@@ -383,17 +366,18 @@ describe Rook do
   context 'when other pieces are needed: capturing a piece' do
     context 'when move is valid' do
       context 'when up' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Rook.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:c1) }
         let(:destination_coordinate) { Coordinate.new(:c3) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -403,17 +387,18 @@ describe Rook do
       end
 
       context 'when down' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Bishop.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:g7) }
         let(:destination_coordinate) { Coordinate.new(:g2) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -423,17 +408,18 @@ describe Rook do
       end
 
       context 'when left' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Queen.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:f2) }
         let(:destination_coordinate) { Coordinate.new(:b2) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -443,17 +429,18 @@ describe Rook do
       end
 
       context 'when right' do
-        let(:target_piece) { double('target_piece') }
+        let(:target_piece) { Knight.new(board:) }
         let(:current_coordinate)     { Coordinate.new(:d5) }
         let(:destination_coordinate) { Coordinate.new(:g5) }
+        let(:capture_square) { Square.new }
 
         before do
           allow(rook).to receive(:color).and_return(:white)
           allow(target_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
           allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
           allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(rook).to receive(:valid_piece_move?).and_return(true)
+          capture_square.add(target_piece)
         end
 
         it 'returns true' do
@@ -466,17 +453,18 @@ describe Rook do
     context 'when move is invalid' do
       context 'when piece has the same color' do
         context 'when up' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Rook.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:c1) }
           let(:destination_coordinate) { Coordinate.new(:c3) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
 
           it 'returns false' do
@@ -486,17 +474,18 @@ describe Rook do
         end
 
         context 'when down' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Bishop.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:g7) }
           let(:destination_coordinate) { Coordinate.new(:g2) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
 
           it 'returns false' do
@@ -506,17 +495,18 @@ describe Rook do
         end
 
         context 'when left' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Queen.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:f2) }
           let(:destination_coordinate) { Coordinate.new(:b2) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:black)
             allow(target_piece).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
 
           it 'returns false' do
@@ -526,17 +516,18 @@ describe Rook do
         end
 
         context 'when right' do
-          let(:target_piece) { double('target_piece') }
+          let(:target_piece) { Knight.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:d5) }
           let(:destination_coordinate) { Coordinate.new(:g5) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:white)
             allow(target_piece).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(target_piece)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(target_piece)
           end
 
           it 'returns false' do
@@ -548,17 +539,18 @@ describe Rook do
 
       context 'when target piece is a king' do
         context 'when up' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:c1) }
           let(:destination_coordinate) { Coordinate.new(:c3) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:white)
-            allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
 
           it 'returns false' do
@@ -568,17 +560,18 @@ describe Rook do
         end
 
         context 'when down' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:g7) }
           let(:destination_coordinate) { Coordinate.new(:g2) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:black)
-            allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:white)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
 
           it 'returns false' do
@@ -588,17 +581,18 @@ describe Rook do
         end
 
         context 'when left' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:f2) }
           let(:destination_coordinate) { Coordinate.new(:b2) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:black)
-            allow(king).to receive(:color).and_return(:black)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
 
           it 'returns false' do
@@ -608,17 +602,18 @@ describe Rook do
         end
 
         context 'when right' do
-          let(:king) { King.new(board:) }
+          let(:uncaptureable_king) { King.new(board:) }
           let(:current_coordinate)     { Coordinate.new(:d5) }
           let(:destination_coordinate) { Coordinate.new(:g5) }
+          let(:capture_square) { Square.new }
 
           before do
             allow(rook).to receive(:color).and_return(:white)
-            allow(king).to receive(:color).and_return(:white)
-            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(king)
+            allow(uncaptureable_king).to receive(:color).and_return(:white)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(capture_square)
             allow(rook).to receive(:current_coordinate).and_return(current_coordinate)
             allow(rook).to receive(:destination_coordinate).and_return(destination_coordinate)
-            allow(rook).to receive(:valid_piece_move?).and_return(true)
+            capture_square.add(uncaptureable_king)
           end
 
           it 'returns false' do

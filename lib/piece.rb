@@ -1,14 +1,13 @@
 class Piece
-  attr_reader :board, :validator, :color
+  attr_reader :board, :color
 
-  def initialize(board:, validator: :fix_me, color: :fix_me)
+  def initialize(board:, color: :fix_me)
     @board = board
-    @validator = validator
     @color = color
   end
 
   def move(destination_coordinate:)
-    board.transport(destination_coordinate:) if validator.valid_move?(destination_coordinate:)
+    board.transport(destination_coordinate:) if valid_move?(destination_coordinate:)
   end
 
   def ally_piece_at?(coordinate)
@@ -18,7 +17,7 @@ class Piece
   end
 
   def king_at?(coordinate)
-    board[coordinate.to_sym].is_a?(King)
+    board[coordinate.to_sym].piece.is_a?(King)
   end
 
   def same_coordinate?
@@ -28,7 +27,7 @@ class Piece
   def same_color?(coordinate)
     return false unless board.piece_at?(coordinate)
 
-    other_piece = board[coordinate.to_sym]
-    self.color == other_piece.color
+    other_piece_color = board[coordinate.to_sym].piece_color
+    color == other_piece_color
   end
 end

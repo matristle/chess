@@ -1,6 +1,14 @@
 class Square
-  def initialize
+  attr_reader :piece
+
+  def initialize(status = :empty)
+    @status = status
     @watchers = []
+  end
+
+  def add(piece)
+    @status = :occupied
+    @piece = piece
   end
 
   def add_watcher(piece_class)
@@ -11,9 +19,21 @@ class Square
     !watchers.empty?
   end
 
+  def empty?
+    status == :empty
+  end
+
+  def occupied?
+    status == :occupied
+  end
+
+  def piece_color
+    piece.color
+  end
+
   private
 
-  attr_reader :watchers
+  attr_reader :status, :watchers
 
   def piece_sym(piece_class)
     piece_class.to_s
