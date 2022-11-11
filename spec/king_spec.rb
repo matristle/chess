@@ -824,137 +824,136 @@ describe King do
     end
 
     context 'when moving into another piece\'s moveset' do
-      context 'when up' do
-        let(:watching_piece)           { double('watching_piece') }
-        let(:current_coordinate)     { Coordinate.new(:e5) }
-        let(:destination_coordinate) { Coordinate.new(:e6) }
-
-        before do
-          allow(board).to receive(:any_piece_watching_at?).and_return(true)
-          allow(king).to receive(:color).and_return(:white)
-          allow(watching_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(current_coordinate.to_sym).and_call_original
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(destination_coordinate)
-          allow(king).to receive(:current_coordinate).and_return(current_coordinate)
-          allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(king).to receive(:valid_piece_move?).and_return(true)
+      context 'when watching piece is rook' do
+        context 'when top left' do
+          let(:watching_piece) { Rook.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:c3) }
+          let(:destination_coordinate) { Coordinate.new(:b4) }
+          let(:forbidden_square) { Square.new }
+  
+          before do
+            allow(board).to receive(:any_piece_watching_at?).and_return(true)
+            allow(king).to receive(:color).and_return(:white)
+            allow(watching_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(forbidden_square)
+            allow(king).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
+          end
+  
+          it 'returns false' do
+            move_validity = king.valid_move?
+            expect(move_validity).to be(false)
+          end
         end
 
-        it 'returns false' do
-          move_validity = king.valid_move?
-          expect(move_validity).to be(false)
-        end
-      end
-
-      context 'when top left' do
-        let(:watching_piece)            { double('watching_piece') }
-        let(:current_coordinate)     { Coordinate.new(:c3) }
-        let(:destination_coordinate) { Coordinate.new(:b4) }
-
-        before do
-          allow(board).to receive(:any_piece_watching_at?).and_return(true)
-          allow(king).to receive(:color).and_return(:white)
-          allow(watching_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(current_coordinate.to_sym).and_call_original
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(destination_coordinate)
-          allow(king).to receive(:current_coordinate).and_return(current_coordinate)
-          allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(king).to receive(:valid_piece_move?).and_return(true)
-        end
-
-        it 'returns false' do
-          move_validity = king.valid_move?
-          expect(move_validity).to be(false)
-        end
-      end
-
-      context 'when top right' do
-        let(:watching_piece)            { double('watching_piece') }
-        let(:current_coordinate)     { Coordinate.new(:f6) }
-        let(:destination_coordinate) { Coordinate.new(:g7) }
-
-        before do
-          allow(board).to receive(:any_piece_watching_at?).and_return(true)
-          allow(king).to receive(:color).and_return(:white)
-          allow(watching_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(current_coordinate.to_sym).and_call_original
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(destination_coordinate)
-          allow(king).to receive(:current_coordinate).and_return(current_coordinate)
-          allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(king).to receive(:valid_piece_move?).and_return(true)
+        context 'when top right' do
+          let(:watching_piece) { Rook.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:f6) }
+          let(:destination_coordinate) { Coordinate.new(:g7) }
+          let(:forbidden_square) { Square.new }
+  
+          before do
+            allow(board).to receive(:any_piece_watching_at?).and_return(true)
+            allow(king).to receive(:color).and_return(:white)
+            allow(watching_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(forbidden_square)
+            allow(king).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
+          end
+  
+          it 'returns false' do
+            move_validity = king.valid_move?
+            expect(move_validity).to be(false)
+          end
         end
 
-        it 'returns false' do
-          move_validity = king.valid_move?
-          expect(move_validity).to be(false)
-        end
-      end
-
-      context 'when down' do
-        let(:watching_piece)            { double('watching_piece') }
-        let(:current_coordinate)     { Coordinate.new(:c5) }
-        let(:destination_coordinate) { Coordinate.new(:c4) }
-
-        before do
-          allow(board).to receive(:any_piece_watching_at?).and_return(true)
-          allow(king).to receive(:color).and_return(:white)
-          allow(watching_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(current_coordinate.to_sym).and_call_original
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(destination_coordinate)
-          allow(king).to receive(:current_coordinate).and_return(current_coordinate)
-          allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(king).to receive(:valid_piece_move?).and_return(true)
-        end
-
-        it 'returns false' do
-          move_validity = king.valid_move?
-          expect(move_validity).to be(false)
-        end
-      end
-
-      context 'when bottom left' do
-        let(:watching_piece)            { double('watching_piece') }
-        let(:current_coordinate)     { Coordinate.new(:e8) }
-        let(:destination_coordinate) { Coordinate.new(:d7) }
-
-        before do
-          allow(board).to receive(:any_piece_watching_at?).and_return(true)
-          allow(king).to receive(:color).and_return(:white)
-          allow(watching_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(current_coordinate.to_sym).and_call_original
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(destination_coordinate)
-          allow(king).to receive(:current_coordinate).and_return(current_coordinate)
-          allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(king).to receive(:valid_piece_move?).and_return(true)
+        context 'when up' do
+          let(:watching_piece) { Rook.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:e5) }
+          let(:destination_coordinate) { Coordinate.new(:e6) }
+          let(:forbidden_square) { Square.new }
+  
+          before do
+            allow(board).to receive(:any_piece_watching_at?).and_return(true)
+            allow(king).to receive(:color).and_return(:white)
+            allow(watching_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(forbidden_square)
+            allow(king).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
+          end
+  
+          it 'returns false' do
+            move_validity = king.valid_move?
+            expect(move_validity).to be(false)
+          end
         end
 
-        it 'returns false' do
-          move_validity = king.valid_move?
-          expect(move_validity).to be(false)
+        context 'when down' do
+          let(:watching_piece) { Rook.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:c5) }
+          let(:destination_coordinate) { Coordinate.new(:c4) }
+          let(:forbidden_square) { Square.new }
+  
+          before do
+            allow(board).to receive(:any_piece_watching_at?).and_return(true)
+            allow(king).to receive(:color).and_return(:white)
+            allow(watching_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(forbidden_square)
+            allow(king).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
+          end
+  
+          it 'returns false' do
+            move_validity = king.valid_move?
+            expect(move_validity).to be(false)
+          end
         end
-      end
 
-      context 'when bottom right' do
-        let(:watching_piece)            { double('watching_piece') }
-        let(:current_coordinate)     { Coordinate.new(:g2) }
-        let(:destination_coordinate) { Coordinate.new(:h1) }
-
-        before do
-          allow(board).to receive(:any_piece_watching_at?).and_return(true)
-          allow(king).to receive(:color).and_return(:white)
-          allow(watching_piece).to receive(:color).and_return(:black)
-          allow(board).to receive(:[]).with(current_coordinate.to_sym).and_call_original
-          allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(destination_coordinate)
-          allow(king).to receive(:current_coordinate).and_return(current_coordinate)
-          allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
-          allow(king).to receive(:valid_piece_move?).and_return(true)
+        context 'when bottom left' do
+          let(:watching_piece) { Rook.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:e8) }
+          let(:destination_coordinate) { Coordinate.new(:d7) }
+          let(:forbidden_square) { Square.new }
+  
+          before do
+            allow(board).to receive(:any_piece_watching_at?).and_return(true)
+            allow(king).to receive(:color).and_return(:white)
+            allow(watching_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(forbidden_square)
+            allow(king).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
+          end
+  
+          it 'returns false' do
+            move_validity = king.valid_move?
+            expect(move_validity).to be(false)
+          end
         end
 
-        it 'returns false' do
-          move_validity = king.valid_move?
-          expect(move_validity).to be(false)
+        context 'when bottom right' do
+          let(:watching_piece) { Rook.new(board:) }
+          let(:current_coordinate)     { Coordinate.new(:g2) }
+          let(:destination_coordinate) { Coordinate.new(:h1) }
+          let(:forbidden_square) { Square.new }
+  
+          before do
+            allow(board).to receive(:any_piece_watching_at?).and_return(true)
+            allow(king).to receive(:color).and_return(:white)
+            allow(watching_piece).to receive(:color).and_return(:black)
+            allow(board).to receive(:[]).with(destination_coordinate.to_sym).and_return(forbidden_square)
+            allow(king).to receive(:current_coordinate).and_return(current_coordinate)
+            allow(king).to receive(:destination_coordinate).and_return(destination_coordinate)
+          end
+  
+          it 'returns false' do
+            move_validity = king.valid_move?
+            expect(move_validity).to be(false)
+          end
         end
       end
+      context 'when watching piece is bishop'
+      context 'when watching piece is queen'
+      context 'when watching piece is knight'
     end
 
     context 'when castling' do
