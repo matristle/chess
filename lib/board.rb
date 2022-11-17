@@ -2,14 +2,14 @@ require_relative 'board_maker'
 
 class Board
   def initialize
-    @structure = BoardMaker.new.make
+    @structure = board_maker.make
   end
 
   def empty?
-    structure.values.all? { |square| square == :empty }
+    squares.all? { |square| square == :empty }
   end
 
-  def size
+  def number_of_squares
     structure.size
   end
 
@@ -20,4 +20,12 @@ class Board
   private
 
   attr_reader :structure
+
+  def board_maker
+    BoardMaker.new
+  end
+
+  def squares
+    structure.values
+  end
 end

@@ -5,7 +5,7 @@ describe Board do
 
   context 'when board is created' do
     it 'has 64 squares' do
-      expect(board.size).to eq(64)
+      expect(board.number_of_squares).to eq(64)
     end
 
     it 'has an empty square' do
