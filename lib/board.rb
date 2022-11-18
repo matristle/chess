@@ -17,6 +17,18 @@ class Board
     structure[coordinate]
   end
 
+  def white_square_number
+    number_of_squares / 2
+  end
+
+  def black_square_number
+    number_of_squares / 2
+  end
+
+  def all_coordinates
+    structure.keys
+  end
+
   private
 
   attr_reader :structure
