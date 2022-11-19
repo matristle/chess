@@ -5,28 +5,34 @@ class Board
     @structure = board_maker.make
   end
 
-  def empty?
-    squares.all? { |square| square == :empty }
-  end
-
-  def number_of_squares
-    structure.size
-  end
-
   def [](coordinate)
     structure[coordinate]
   end
-
-  def white_square_number
-    number_of_squares / 2
+  
+  def empty?
+    squares.all? { |square| square.empty? }
   end
 
-  def black_square_number
-    number_of_squares / 2
+  def number_of_squares
+    squares.count { |square| square.is_a? Square }
+  end
+
+  def number_of_light_squares
+    squares.count { |square| square.light? }
+  end
+  
+  def number_of_dark_squares
+    squares.count { |square| square.dark? }
   end
 
   def all_coordinates
     structure.keys
+  end
+
+  def black_white_pattern_at?(rank:)
+  end
+
+  def checkered?
   end
 
   private

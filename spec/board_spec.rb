@@ -8,20 +8,16 @@ describe Board do
       expect(board.number_of_squares).to eq(64)
     end
 
-    it 'has an empty square' do
-      expect(board[:a5]).to eq(:empty)
-    end
-
     it 'has all of its squares empty' do
       expect(board.empty?).to be(true)
     end
 
-    it 'has 32 white squares' do
-      expect(board.white_square_number).to eq(32)
+    it 'has 32 light squares' do
+      expect(board.number_of_light_squares).to eq(32)
     end
 
-    it 'has 32 black squares' do
-      expect(board.black_square_number).to eq(32)
+    it 'has 32 dark squares' do
+      expect(board.number_of_dark_squares).to eq(32)
     end
 
     it 'has all desirable alphanumeric coordinates' do
@@ -30,9 +26,32 @@ describe Board do
       expect(board.all_coordinates).to eq(coordinates)
     end
 
-    xit 'has black-white on first rank at the start' do
-      expect(board[:a1].black?).to be(true)
-      expect(board[:a2].white?).to be(true)
+    it 'has a dark square at a1' do
+      expect(board[:a1].dark?).to be(true)
+    end
+
+    it 'has a dark square at a2' do
+      expect(board[:a2].light?).to be(true)
+    end
+    
+    it 'has a light square at b1' do
+      expect(board[:b1].light?).to be(true)
+    end
+
+    it 'has a light square at b2' do
+      expect(board[:b2].dark?).to be(true)
+    end
+
+    it 'has a dark square at c1' do
+      expect(board[:c1].dark?).to be(true)
+    end
+
+    it 'has black-white pattern on first rank' do
+      expect(board.dark_light_pattern_at?(rank: 1)).to be(true)
+    end
+
+    xit 'has a checkered pattern' do
+      expect(board.checkered?).to be(true)
     end
   end
 end

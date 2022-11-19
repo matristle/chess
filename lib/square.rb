@@ -6,12 +6,12 @@ class Square
     @status = status
   end
 
-  def white?
-    color == :white
+  def light?
+    color == :light
   end
 
-  def black?
-    color == :black
+  def dark?
+    color == :dark
   end
 
   def empty?
@@ -37,8 +37,8 @@ class Square
   private
 
   def foul_input_guards_for(color, status)
-    unless color == :white || color == :black 
-      raise "Foul color input. The square color must be either :black or :white, not #{color}"
+    unless color == :light || color == :dark 
+      raise "Foul color input. The square color must be either :dark or :light, not #{color}"
     end
     
     unless status == :empty || status == :occupied 
