@@ -6,7 +6,7 @@ describe BoardMaker do
       expect(BoardMaker.file_to_number('a')).to eq('1')
     end
 
-    it 'returns 1 for d-file' do
+    it 'returns 4 for d-file' do
       expect(BoardMaker.file_to_number('d')).to eq('4')
     end
 
