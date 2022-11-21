@@ -40,7 +40,7 @@ class Board
   attr_reader :structure
   
   def board_maker
-    BoardMaker.new
+    @board_maker ||= BoardMaker.new
   end
 
   def coordinates

@@ -4,11 +4,10 @@ class Square
   attr_reader :piece
   using TemporaryPatch
 
-  def initialize(color:, status: :empty)
-    foul_input_guards_for(color, status)
+  def initialize(color:)
+    foul_input_guard_for(color)
 
     @color  = color
-    @status = status
   end
 
   def light?
@@ -20,11 +19,11 @@ class Square
   end
 
   def empty?
-    status == :empty
+    piece.nil?
   end
   
   def occupied?
-    status == :occupied
+    !empty?
   end
   
   def same_color_as?(other)
@@ -32,18 +31,22 @@ class Square
   end
 
   def occupied_like?(other)
-    self.status == other.status && self.occupied?
+    self.occupied? && other.occupied?
   end
 
   def host(piece)
-    raise "The #{piece} is not in the set of domain pieces" unless piece.belongs_to? set_of_chess_pieces
-    
+    foul_input_guard(piece)
+
     @piece = piece
+  end
+
+  def ==(other)
+    self.color == other.color && self.piece == other.piece
   end
   
   protected
   
-  attr_reader :color, :status
+  attr_reader :color
 
   private
 
@@ -51,13 +54,15 @@ class Square
     %i(pawn rook bishop queen king knight)
   end
 
-  def foul_input_guards_for(color, status)
+  def foul_input_guard_for(color)
     unless color == :light || color == :dark 
       raise "Foul color input. The square color must be either :dark or :light, not #{color}"
     end
-    
-    unless status == :empty || status == :occupied 
-      raise "Foul status input. Status must be either :empty or :occupied, not #{status}"
+  end
+
+  def foul_input_guard(piece, extra_reminder: :pending_abstraction)
+    unless piece.belongs_to? set_of_chess_pieces
+      raise "The #{piece} is not in the set of domain pieces" 
     end
   end
 end

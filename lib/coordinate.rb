@@ -17,6 +17,18 @@ class Coordinate
     { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8 }
   end
 
+  def ==(other)
+    self.file == other.file && self.rank == other.rank
+  end
+
+  def eql?(other)
+    self == other
+  end
+
+  def hash
+    0000
+  end
+
   private
 
   def out_of_bounds_input_guards_for(file, rank)

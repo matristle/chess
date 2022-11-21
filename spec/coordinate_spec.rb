@@ -64,4 +64,12 @@ describe Coordinate do
       expect(Coordinate.file_number_mapping).to eq(expected_hash)
     end
   end
+
+  it 'can be equal to another coordinate' do
+    expect(Coordinate.new(:g4)).to eq(Coordinate.new(:g4))
+  end
+
+  it 'can be different from another coordinate' do
+    expect(Coordinate.new(:a2)).to_not eq(Coordinate.new(:a3))
+  end
 end

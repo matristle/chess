@@ -10,16 +10,6 @@ describe Square do
         expect { not_to_be_created_square }.to raise_error("Foul color input. The square color must be either :dark or :light, not #{foul_color_input}")
       end
     end
-
-    context 'and the foul input is for status' do
-      let(:not_to_be_created_square) { Square.new(color: valid_color_input, status: foul_status_input) }
-      let(:valid_color_input) { :light }
-      let(:foul_status_input) { :empty_AND_occupied! }
-
-      it 'raise foul status input error' do
-        expect { not_to_be_created_square }.to raise_error("Foul status input. Status must be either :empty or :occupied, not #{foul_status_input}")
-      end
-    end
   end
 
   it 'can be light colored' do
@@ -41,7 +31,8 @@ describe Square do
   end
 
   it 'can be occupied' do
-    square = Square.new(color: :dark, status: :occupied)
+    square = Square.new(color: :dark)
+    square.host(:pawn)
 
     expect(square.occupied?).to eq(true)
   end
@@ -60,23 +51,27 @@ describe Square do
     expect(a_square.same_color_as?(another_square)).to be(false)
   end
   
-  it 'can be occupied by a piece when another square is occupied' do
-    a_square       = Square.new(color: :dark , status: :occupied)
-    another_square = Square.new(color: :light, status: :occupied)
+  it 'can be occupied by a piece like another square' do
+    a_square = Square.new(color: :dark)
+    a_square.host(:knight)
+    another_square = Square.new(color: :light)
+    another_square.host(:pawn)
 
     expect(a_square.occupied_like?(another_square)).to be(true)
   end
 
   it 'can be empty when another square is occupied by a piece' do
-    a_square       = Square.new(color: :light, status: :empty)
-    another_square = Square.new(color: :light, status: :occupied)
+    a_square       = Square.new(color: :light)
+    no_op = a_square
+    another_square = Square.new(color: :light)
+    another_square.host(:queen)
     
     expect(a_square.occupied_like?(another_square)).to be(false)
   end
 
   it 'can be empty like another square but these squares should not be occupied' do
-    a_square       = Square.new(color: :light, status: :empty)
-    another_square = Square.new(color: :light, status: :empty)
+    a_square       = Square.new(color: :light)
+    another_square = Square.new(color: :light)
 
     expect(a_square.occupied_like?(another_square)).to be(false)
   end
