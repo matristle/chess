@@ -24,5 +24,11 @@ describe Board do
     it 'has a checkered pattern' do
       expect(board.checkered?).to be(true)
     end
+
+    xit 'has a pawn on a2' do
+      square = board[Coordinate.new(:a2)]
+
+      expect(square.piece).to eq(:pawn)
+    end
   end
 end

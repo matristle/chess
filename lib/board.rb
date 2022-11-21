@@ -52,7 +52,7 @@ class Board
   end
 
   def rank(number)
-    coordinates.select { |coordinate| coordinate[1] == number.to_s } 
+    coordinates.select { |coordinate| coordinate.rank == number.to_s } 
   end
 
   def dark_light_pattern_at?(rank_number:)
@@ -61,8 +61,8 @@ class Board
 
   def dark_on_odd_number_squares?(rank)
     odd_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate[0]
-      file_number = BoardMaker.file_to_number(file_letter).to_i
+      file_letter = coordinate.file
+      file_number = Coordinate.file_to_number(file_letter).to_i
 
       file_number.odd?
     end
@@ -76,8 +76,8 @@ class Board
 
   def light_on_even_number_squares?(rank)
     even_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate[0]
-      file_number = BoardMaker.file_to_number(file_letter).to_i
+      file_letter = coordinate.file
+      file_number = Coordinate.file_to_number(file_letter).to_i
 
       file_number.even?
     end
@@ -95,8 +95,8 @@ class Board
 
   def light_on_odd_number_squares?(rank)
     odd_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate[0]
-      file_number = BoardMaker.file_to_number(file_letter).to_i
+      file_letter = coordinate.file
+      file_number = Coordinate.file_to_number(file_letter).to_i
 
       file_number.odd?
     end
@@ -110,8 +110,8 @@ class Board
 
   def dark_on_even_number_squares?(rank)
     even_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate[0]
-      file_number = BoardMaker.file_to_number(file_letter).to_i
+      file_letter = coordinate.file
+      file_number = Coordinate.file_to_number(file_letter).to_i
 
       file_number.even?
     end
