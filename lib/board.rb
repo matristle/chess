@@ -36,33 +36,48 @@ class Board
   end
 
   def setup_pieces
+    setup_pieces_for(:white)
+    setup_pieces_for(:black)
+  end
+
+  def setup_pieces_for(piece_color)
+    i, j = 0, 7
+
     BoardMaker.set_of_chess_pieces.each do |piece|
-      setup(piece)
+      if piece == :pawn
+        case piece_color
+        when :white
+          setup_pawns(piece, 2)
+        when :black
+          setup_pawns(piece, 7)
+        end
+      else
+        case piece_color
+        when :white
+          current_leftside_coordinate  = coordinate_references_at(rank_number: 1)[i]
+          current_rightside_coordinate = coordinate_references_at(rank_number: 1)[j]  
+        when :black
+          current_leftside_coordinate  = coordinate_references_at(rank_number: 8)[i]
+          current_rightside_coordinate = coordinate_references_at(rank_number: 8)[j] 
+        end
+        
+        case piece
+        when :queen
+          square_at(current_leftside_coordinate).host(piece) 
+        when :king
+          square_at(current_rightside_coordinate).host(piece) 
+        else
+          square_at(current_leftside_coordinate).host(piece) 
+          square_at(current_rightside_coordinate).host(piece)
+
+          i += 1; j -= 1 
+        end
+      end
     end
   end
 
-  def setup(piece)
-    case piece
-    when :pawn
-      coordinate_references_at(rank_number: 2).each do |coordinate|
-        target_square = structure[coordinate]
-
-        target_square.host(piece)
-      end
-    when :rook
-      structure[Coordinate.new(:a1)].host(piece)
-      structure[Coordinate.new(:h1)].host(piece)
-    when :knight
-      structure[Coordinate.new(:b1)].host(piece)
-      structure[Coordinate.new(:g1)].host(piece)
-    when :bishop
-      structure[Coordinate.new(:c1)].host(piece)
-      structure[Coordinate.new(:f1)].host(piece)
-    when :queen
-      structure[Coordinate.new(:d1)].host(piece)
-    when :king
-      structure[Coordinate.new(:e1)].host(piece)
-    end
+  def setup_pawns(pawn, rank_number)
+    coordinate_references_at(rank_number:).each { |coordinate| square_at(coordinate).host(pawn) }
   end
 
   private
