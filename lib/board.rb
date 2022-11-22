@@ -5,7 +5,7 @@ class Board
     @structure = board_maker.make
   end
 
-  def [](coordinate)
+  def square_at(coordinate)
     structure[coordinate]
   end
   
@@ -35,6 +35,36 @@ class Board
     end
   end
 
+  def setup_pieces
+    BoardMaker.set_of_chess_pieces.each do |piece|
+      setup(piece)
+    end
+  end
+
+  def setup(piece)
+    case piece
+    when :pawn
+      coordinate_references_at(rank_number: 2).each do |coordinate|
+        target_square = structure[coordinate]
+
+        target_square.host(piece)
+      end
+    when :rook
+      structure[Coordinate.new(:a1)].host(piece)
+      structure[Coordinate.new(:h1)].host(piece)
+    when :knight
+      structure[Coordinate.new(:b1)].host(piece)
+      structure[Coordinate.new(:g1)].host(piece)
+    when :bishop
+      structure[Coordinate.new(:c1)].host(piece)
+      structure[Coordinate.new(:f1)].host(piece)
+    when :queen
+      structure[Coordinate.new(:d1)].host(piece)
+    when :king
+      structure[Coordinate.new(:e1)].host(piece)
+    end
+  end
+
   private
   
   attr_reader :structure
@@ -51,75 +81,43 @@ class Board
     structure.values
   end
 
-  def rank(number)
-    coordinates.select { |coordinate| coordinate.rank == number.to_s } 
-  end
-
   def dark_light_pattern_at?(rank_number:)
-    dark_on_odd_number_squares?(rank(rank_number)) && light_on_even_number_squares?(rank(rank_number))
+    dark_on_odd_number_squares?(rank_number:) && light_on_even_number_squares?(rank_number:)
   end
 
-  def dark_on_odd_number_squares?(rank)
-    odd_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate.file
-      file_number = Coordinate.file_to_number(file_letter).to_i
-
-      file_number.odd?
-    end
-
-    dark_confirmed = odd_number_square_coordinates.all? do |coordinate|
-      square = structure[coordinate]
-
-      square.dark?
-    end
+  def dark_on_odd_number_squares?(rank_number:)
+    odd_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).dark? }
   end
 
-  def light_on_even_number_squares?(rank)
-    even_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate.file
-      file_number = Coordinate.file_to_number(file_letter).to_i
-
-      file_number.even?
-    end
-
-    light_confirmed = even_number_square_coordinates.all? do |coordinate|
-      square = structure[coordinate]
-
-      square.light?
-    end
+  def light_on_even_number_squares?(rank_number:)
+    even_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).light? }
   end
 
   def light_dark_pattern_at?(rank_number:)
-    light_on_odd_number_squares?(rank(rank_number)) && dark_on_even_number_squares?(rank(rank_number))
+    light_on_odd_number_squares?(rank_number:) && dark_on_even_number_squares?(rank_number:)
   end
 
-  def light_on_odd_number_squares?(rank)
-    odd_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate.file
-      file_number = Coordinate.file_to_number(file_letter).to_i
-
-      file_number.odd?
-    end
-
-    light_confirmed = odd_number_square_coordinates.all? do |coordinate|
-      square = structure[coordinate]
-
-      square.light?
-    end
+  def light_on_odd_number_squares?(rank_number:)
+    odd_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).light? }
   end
 
-  def dark_on_even_number_squares?(rank)
-    even_number_square_coordinates = rank.select do |coordinate|
-      file_letter = coordinate.file
-      file_number = Coordinate.file_to_number(file_letter).to_i
+  def dark_on_even_number_squares?(rank_number:)
+    even_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).dark? }
+  end
 
-      file_number.even?
-    end
+  def odd_number_squares_at(rank_number:)
+    coordinate_references_at(rank_number:).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.odd?  }
+  end
+  
+  def even_number_squares_at(rank_number:)
+    coordinate_references_at(rank_number:).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.even? }
+  end
 
-    dark_confirmed = even_number_square_coordinates.all? do |coordinate|
-      square = structure[coordinate]
+  def coordinate_references_at(rank_number:)
+    coordinates(structure).select { |coordinate| coordinate.rank == rank_number.to_s }
+  end
 
-      square.dark?
-    end
+  def coordinates(board)
+    board.keys
   end
 end

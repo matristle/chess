@@ -3,17 +3,23 @@ require_relative 'square'
 
 class BoardMaker
   def make
-    @product = bind_empty_square_placeholders_to_coordinates
+    bind_empty_square_placeholders_to_coordinates
     replace_placeholders_with_colored_squares
     
-    @product
+    product
+  end
+
+  def self.set_of_chess_pieces
+    %i(pawn rook knight bishop queen king)
   end
 
   private
+
+  attr_reader :product
   
   def bind_empty_square_placeholders_to_coordinates
-    collected_coordinates.map { |coordinate| [coordinate, :empty] }
-                         .to_h
+    @product = collected_coordinates.map { |coordinate| [coordinate, :empty] }
+                                    .to_h
   end
 
   def collected_coordinates
@@ -36,34 +42,40 @@ class BoardMaker
 
   def replace_placeholders_with_colored_squares
     (1..8).each do |rank_number|
-      @rank = @product.select { |coordinate| coordinate.rank == rank_number.to_s }
-
       if rank_number.odd?
-        apply_dark_light_pattern
+        apply_dark_light_pattern(rank_number)
       else
-        apply_light_dark_pattern
+        apply_light_dark_pattern(rank_number)
       end
-      
-      @product.merge!(@rank)
     end
   end
-
-  def apply_dark_light_pattern
-    apply_pattern(first_color: :dark, second_color: :light)
+  
+  def apply_dark_light_pattern(rank_number)
+    apply_pattern(rank_number:, first_color: :dark, second_color: :light)
+  end
+  
+  def apply_light_dark_pattern(rank_number)
+    apply_pattern(rank_number:, first_color: :light, second_color: :dark)
+  end
+  
+  def apply_pattern(rank_number:, first_color:, second_color:)
+    odd_number_squares_at(rank_number).each  { |coordinate| @product[coordinate]  = Square.new(color: first_color)  }
+    even_number_squares_at(rank_number).each { |coordinate| @product[coordinate]  = Square.new(color: second_color) }
+  end
+  
+  def odd_number_squares_at(rank_number)
+    coordinate_references_at(rank_number).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.odd?  }
+  end
+  
+  def even_number_squares_at(rank_number)
+    coordinate_references_at(rank_number).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.even? }
   end
 
-  def apply_light_dark_pattern
-    apply_pattern(first_color: :light, second_color: :dark)
+  def coordinate_references_at(rank_number)
+    coordinates(product).select { |coordinate| coordinate.rank == rank_number.to_s }
   end
 
-  def apply_pattern(first_color:, second_color:)
-    odd_number_squares = @rank.select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.odd? }
-    odd_number_squares.keys.each { |coordinate| odd_number_squares[coordinate] = Square.new(color: first_color) }
-   
-    even_number_squares = @rank.select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.even? }
-    even_number_squares.keys.each { |coordinate| even_number_squares[coordinate] = Square.new(color: second_color) }
-      
-
-    @rank.merge!(odd_number_squares, even_number_squares)
+  def coordinates(board)
+    board.keys
   end
 end

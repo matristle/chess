@@ -1,3 +1,4 @@
+require_relative 'board_maker'
 require_relative 'temporary_patch'
 
 class Square
@@ -50,10 +51,6 @@ class Square
 
   private
 
-  def set_of_chess_pieces
-    %i(pawn rook bishop queen king knight)
-  end
-
   def foul_input_guard_for(color)
     unless color == :light || color == :dark 
       raise "Foul color input. The square color must be either :dark or :light, not #{color}"
@@ -61,7 +58,7 @@ class Square
   end
 
   def foul_input_guard(piece, extra_reminder: :pending_abstraction)
-    unless piece.belongs_to? set_of_chess_pieces
+    unless piece.belongs_to? BoardMaker.set_of_chess_pieces
       raise "The #{piece} is not in the set of domain pieces" 
     end
   end
