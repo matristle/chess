@@ -81,7 +81,7 @@ describe Square do
 
     square.host(:pawn)
 
-    expect(square.piece).to be(:pawn)
+    expect(square.occupant_is_a? :pawn).to be(true)
   end
 
   it 'can host a rook' do
@@ -89,7 +89,7 @@ describe Square do
 
     square.host(:rook)
 
-    expect(square.piece).to be(:rook)
+    expect(square.occupant_is_a? :rook).to be(true)
   end
 
   it 'can host a bishop' do
@@ -97,7 +97,7 @@ describe Square do
 
     square.host(:bishop)
 
-    expect(square.piece).to be(:bishop)
+    expect(square.occupant_is_a? :bishop).to be(true)
   end
 
   it 'can host a queen' do
@@ -105,26 +105,34 @@ describe Square do
 
     square.host(:queen)
 
-    expect(square.piece).to be(:queen)
+    expect(square.occupant_is_a? :queen).to be(true)
   end
-
+  
   it 'can host a king' do
     square = Square.new(color: :dark)
 
     square.host(:king)
-
-    expect(square.piece).to be(:king)
+    
+    expect(square.occupant_is_a? :king).to be(true)
   end
-
+  
   it 'can host a knight' do
     square = Square.new(color: :light)
-
+    
     square.host(:knight)
-
-    expect(square.piece).to be(:knight)
+    
+    expect(square.occupant_is_a? :knight).to be(true)
+  end
+  
+  it "doesn't host a rook when the occupant is actually a bishop" do
+    square = Square.new(color: :light)
+    
+    square.host(:bishop)
+    
+    expect(square.occupant_is_a? :rook).to be(false)
   end
 
-  it 'can\'t host a horse' do
+  it "doesn't host a horse" do
     square = Square.new(color: :dark) 
     out_of_domain_piece = :horse
 

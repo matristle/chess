@@ -2,7 +2,6 @@ require_relative 'board_maker'
 require_relative 'temporary_patch'
 
 class Square
-  attr_reader :piece
   using TemporaryPatch
 
   def initialize(color:)
@@ -44,10 +43,27 @@ class Square
   def ==(other)
     self.color == other.color && self.piece == other.piece
   end
+
+  def occupant_is_a?(target_piece)
+    case target_piece
+    when :pawn
+      piece == :pawn
+    when :rook
+      piece == :rook
+    when :bishop
+      piece == :bishop
+    when :queen
+      piece == :queen
+    when :king
+      piece == :king
+    when :knight
+      piece == :knight
+    end
+  end
   
   protected
   
-  attr_reader :color
+  attr_reader :color, :piece
 
   private
 

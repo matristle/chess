@@ -17,7 +17,7 @@ describe Coordinate do
     expect(Coordinate.new(:e2).rank).to eq('2')
   end
 
-  it 'can fully represent a coordinate as a symbol' do
+  it 'can represent a coordinate as a symbol' do
     expect(Coordinate.new(:f7).symbol).to be(:f7)
   end
 
@@ -54,14 +54,6 @@ describe Coordinate do
 
     it 'returns 8 for h-file' do
       expect(Coordinate.file_to_number('h')).to eq('8')
-    end
-  end
-
-  describe '::file_to_number_mapping' do
-    it 'returns mapped out hash' do
-      expected_hash = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8 }
-
-      expect(Coordinate.file_number_mapping).to eq(expected_hash)
     end
   end
 

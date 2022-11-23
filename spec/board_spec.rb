@@ -4,15 +4,11 @@ require_relative '../lib/square'
 describe Board do
   subject(:board) { Board.new }
 
-  context 'when board is created' do
+  context 'when created' do
     it 'is empty' do
       expect(board.empty?).to be(true)
     end
-
-    it 'has a checkered pattern' do
-      expect(board.checkered?).to be(true)
-    end
-
+    
     it 'has 64 squares' do
       expect(board.number_of_squares).to eq(64)
     end
@@ -25,8 +21,8 @@ describe Board do
       expect(board.number_of_dark_squares).to eq(32)
     end
 
-    it 'has a square on a1' do
-      expect(board.square_at(Coordinate.new(:a1)) ).to eq(Square.new(color: :dark))
+    it 'has a checkered pattern' do
+      expect(board.checkered?).to be(true)
     end
   end
 
@@ -39,93 +35,159 @@ describe Board do
 
     context 'on side of the player with the white pieces' do
       it 'has a pawn on a2' do
-        expect(board.square_at(Coordinate.new(:a2)).piece).to eq(:pawn)
+        a2 = Coordinate.new(:a2)
+        hosting_square = board.square_at(a2)
+
+        expect(hosting_square.occupant_is_a? :pawn).to eq(true)
       end
   
       it 'has a pawn on b2' do
-        expect(board.square_at(Coordinate.new(:b2)).piece).to eq(:pawn)
+        b2 = Coordinate.new(:b2)
+        hosting_square = board.square_at(b2)
+
+        expect(hosting_square.occupant_is_a? :pawn).to eq(true)
       end
   
       it 'has a pawn on h2' do
-        expect(board.square_at(Coordinate.new(:h2)).piece).to eq(:pawn)
+        h2 = Coordinate.new(:h2)
+        hosting_square = board.square_at(h2)
+
+        expect(hosting_square.occupant_is_a? :pawn).to eq(true)
       end
   
       it 'has a rook on a1' do
-        expect(board.square_at(Coordinate.new(:a1)).piece).to eq(:rook)
+        a1 = Coordinate.new(:a1)
+        hosting_square = board.square_at(a1)
+
+        expect(hosting_square.occupant_is_a? :rook).to eq(true)
       end
   
       it 'has a rook on h1' do
-        expect(board.square_at(Coordinate.new(:h1)).piece).to eq(:rook)
+        h1 = Coordinate.new(:h1)
+        hosting_square = board.square_at(h1)
+
+        expect(hosting_square.occupant_is_a? :rook).to eq(true)
       end
   
       it 'has a knight on b1' do
-        expect(board.square_at(Coordinate.new(:b1)).piece).to eq(:knight)
+        b1 = Coordinate.new(:b1)
+        hosting_square = board.square_at(b1)
+
+        expect(hosting_square.occupant_is_a? :knight).to eq(true)
       end
   
       it 'has a knight on g1' do
-        expect(board.square_at(Coordinate.new(:g1)).piece).to eq(:knight)
+        g1 = Coordinate.new(:g1)
+        hosting_square = board.square_at(g1)
+
+        expect(hosting_square.occupant_is_a? :knight).to eq(true)
       end
   
       it 'has a bishop on c1' do
-        expect(board.square_at(Coordinate.new(:c1)).piece).to eq(:bishop)
+        c1 = Coordinate.new(:c1)
+        hosting_square = board.square_at(c1)
+
+        expect(hosting_square.occupant_is_a? :bishop).to eq(true)
       end
       
       it 'has a bishop on f1' do
-        expect(board.square_at(Coordinate.new(:f1)).piece).to eq(:bishop)
+        f1 = Coordinate.new(:f1)
+        hosting_square = board.square_at(f1)
+
+        expect(hosting_square.occupant_is_a? :bishop).to eq(true)
       end
   
       it 'has a queen on d1' do
-        expect(board.square_at(Coordinate.new(:d1)).piece).to eq(:queen)
+        d1 = Coordinate.new(:d1)
+        hosting_square = board.square_at(d1)
+
+        expect(hosting_square.occupant_is_a? :queen).to eq(true)
       end
   
       it 'has a king on e1' do
-        expect(board.square_at(Coordinate.new(:e1)).piece).to eq(:king)
+        e1 = Coordinate.new(:e1)
+        hosting_square = board.square_at(e1)
+
+        expect(hosting_square.occupant_is_a? :king).to eq(true)
       end
     end
 
     context 'on side of the player with the black pieces' do
       it 'has a pawn on a7' do
-        expect(board.square_at(Coordinate.new(:a7)).piece).to eq(:pawn)
+        a7 = Coordinate.new(:a7)
+        hosting_square = board.square_at(a7)
+
+        expect(hosting_square.occupant_is_a? :pawn).to eq(true)
       end
 
       it 'has a pawn on b7' do
-        expect(board.square_at(Coordinate.new(:b7)).piece).to eq(:pawn)
+        b7 = Coordinate.new(:b7)
+        hosting_square = board.square_at(b7)
+
+        expect(hosting_square.occupant_is_a? :pawn).to eq(true)
       end
 
       it 'has a pawn on g7' do
-        expect(board.square_at(Coordinate.new(:g7)).piece).to eq(:pawn)
+        g7 = Coordinate.new(:g7)
+        hosting_square = board.square_at(g7)
+
+        expect(hosting_square.occupant_is_a? :pawn).to eq(true)
       end
 
       it 'has a rook on a1' do
-        expect(board.square_at(Coordinate.new(:a8)).piece).to eq(:rook)
+        a8 = Coordinate.new(:a8)
+        hosting_square = board.square_at(a8)
+
+        expect(hosting_square.occupant_is_a? :rook).to eq(true)
       end
   
       it 'has a rook on h8' do
-        expect(board.square_at(Coordinate.new(:h8)).piece).to eq(:rook)
+        h8 = Coordinate.new(:h8)
+        hosting_square = board.square_at(h8)
+
+        expect(hosting_square.occupant_is_a? :rook).to eq(true)
       end
   
       it 'has a knight on b8' do
-        expect(board.square_at(Coordinate.new(:b8)).piece).to eq(:knight)
+        b8 = Coordinate.new(:b8)
+        hosting_square = board.square_at(b8)
+
+        expect(hosting_square.occupant_is_a? :knight).to eq(true)
       end
   
       it 'has a knight on g8' do
-        expect(board.square_at(Coordinate.new(:g8)).piece).to eq(:knight)
+        g8 = Coordinate.new(:g8)
+        hosting_square = board.square_at(g8)
+
+        expect(hosting_square.occupant_is_a? :knight).to eq(true)
       end
   
       it 'has a bishop on c8' do
-        expect(board.square_at(Coordinate.new(:c8)).piece).to eq(:bishop)
+        c8 = Coordinate.new(:c8)
+        hosting_square = board.square_at(c8)
+
+        expect(hosting_square.occupant_is_a? :bishop).to eq(true)
       end
       
       it 'has a bishop on f8' do
-        expect(board.square_at(Coordinate.new(:f8)).piece).to eq(:bishop)
+        f8 = Coordinate.new(:f8)
+        hosting_square = board.square_at(f8)
+
+        expect(hosting_square.occupant_is_a? :bishop).to eq(true)
       end
   
       it 'has a queen on d8' do
-        expect(board.square_at(Coordinate.new(:d8)).piece).to eq(:queen)
+        d8 = Coordinate.new(:d8)
+        hosting_square = board.square_at(d8)
+
+        expect(hosting_square.occupant_is_a? :queen).to eq(true)
       end
   
       it 'has a king on e8' do
-        expect(board.square_at(Coordinate.new(:e8)).piece).to eq(:king)
+        e8 = Coordinate.new(:e8)
+        hosting_square = board.square_at(e8)
+
+        expect(hosting_square.occupant_is_a? :king).to eq(true)
       end
     end
   end
