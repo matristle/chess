@@ -5,7 +5,7 @@ class Square
   using TemporaryPatch
 
   def initialize(color:)
-    foul_input_guard_for(color)
+    foul_color_input_guard(color)
 
     @color  = color
   end
@@ -35,7 +35,7 @@ class Square
   end
 
   def host(piece)
-    foul_input_guard(piece)
+    foul_piece_input_guard(piece)
 
     @piece = piece
   end
@@ -67,13 +67,13 @@ class Square
 
   private
 
-  def foul_input_guard_for(color)
+  def foul_color_input_guard(color)
     unless color == :light || color == :dark 
       raise "Foul color input. The square color must be either :dark or :light, not #{color}"
     end
   end
 
-  def foul_input_guard(piece, extra_reminder: :pending_abstraction)
+  def foul_piece_input_guard(piece)
     unless piece.belongs_to? BoardMaker.set_of_chess_pieces
       raise "The #{piece} is not in the set of domain pieces" 
     end

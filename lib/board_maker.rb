@@ -42,22 +42,22 @@ class BoardMaker
   def replace_placeholders_with_colored_squares
     (1..8).each do |rank_number|
       if rank_number.odd?
-        apply_dark_light_checker_pattern(rank_number)
+        apply_dark_light_checker_pattern_at(rank_number:)
       else
-        apply_light_dark_checker_pattern(rank_number)
+        apply_light_dark_checker_pattern_at(rank_number:)
       end
     end
   end
   
-  def apply_dark_light_checker_pattern(rank_number)
-    apply_checker_pattern(rank_number:, first_color: :dark, second_color: :light)
+  def apply_dark_light_checker_pattern_at(rank_number:)
+    apply_checker_pattern_at(rank_number:, first_color: :dark, second_color: :light)
   end
   
-  def apply_light_dark_checker_pattern(rank_number)
-    apply_checker_pattern(rank_number:, first_color: :light, second_color: :dark)
+  def apply_light_dark_checker_pattern_at(rank_number:)
+    apply_checker_pattern_at(rank_number:, first_color: :light, second_color: :dark)
   end
   
-  def apply_checker_pattern(rank_number:, first_color:, second_color:)
+  def apply_checker_pattern_at(rank_number:, first_color:, second_color:)
     odd_number_squares_at(rank_number).each  { |coordinate| @product[coordinate]  = Square.new(color: first_color)  }
     even_number_squares_at(rank_number).each { |coordinate| @product[coordinate]  = Square.new(color: second_color) }
   end
