@@ -1,8 +1,11 @@
 require_relative '../lib/board'
+require_relative '../lib/board_maker'
 require_relative '../lib/square'
 
+
 describe Board do
-  subject(:board) { Board.new }
+  subject(:board) { Board.new(board_maker) }
+  let(:board_maker) { BoardMaker.new }
 
   context 'when created' do
     it 'is empty' do

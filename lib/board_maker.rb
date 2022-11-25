@@ -40,7 +40,7 @@ class BoardMaker
   end
 
   def replace_placeholders_with_colored_squares
-    (1..8).each do |rank_number|
+    rank_numbers.map(&:to_i).each do |rank_number|
       if rank_number.odd?
         apply_dark_light_checker_pattern_at(rank_number:)
       else

@@ -1,7 +1,8 @@
 require_relative 'board_maker'
 
 class Board
-  def initialize
+  def initialize(board_maker)
+    @board_maker = board_maker
     @structure = board_maker.make
   end
 
@@ -26,7 +27,7 @@ class Board
   end
 
   def checkered?
-    (1..8).each.all? do |rank_number|
+    (1..8).all? do |rank_number|
       if rank_number.odd?
         dark_light_pattern_at?(rank_number:)
       else 
@@ -43,7 +44,7 @@ class Board
   def setup_pieces_for(piece_color)
     i, j = 0, 7
 
-    BoardMaker.set_of_chess_pieces.each do |piece|
+    board_maker.class.set_of_chess_pieces.each do |piece|
       if piece == :pawn
         case piece_color
         when :white
@@ -82,12 +83,8 @@ class Board
 
   private
   
-  attr_reader :structure
+  attr_reader :structure, :board_maker
   
-  def board_maker
-    @board_maker ||= BoardMaker.new
-  end
-
   def coordinates
     structure.keys
   end
