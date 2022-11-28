@@ -1,9 +1,6 @@
 require_relative 'board_maker'
-require_relative 'temporary_patch'
 
 class Square
-  using TemporaryPatch
-
   def initialize(color:)
     foul_color_input_guard(color)
 
@@ -43,22 +40,35 @@ class Square
   def ==(other)
     self.color == other.color && self.piece == other.piece
   end
+  
+  def white_piece_here?
+    piece.white?
+  end
 
-  def occupant_is_a?(target_piece)
-    case target_piece
-    when :pawn
-      piece == :pawn
-    when :rook
-      piece == :rook
-    when :bishop
-      piece == :bishop
-    when :queen
-      piece == :queen
-    when :king
-      piece == :king
-    when :knight
-      piece == :knight
-    end
+  def black_piece_here?
+    piece.black?
+  end
+
+  def pawn_here?
+    piece.is_a? Pawn
+  end
+
+  def rook_here?
+    piece.is_a? Rook
+  end
+
+  def knight_here?
+    piece.is_a? Knight
+  end
+  def bishop_here?
+    piece.is_a? Bishop
+  end
+  def queen_here?
+    piece.is_a? Queen
+  end
+  
+  def king_here?
+    piece.is_a? King
   end
   
   protected
@@ -74,8 +84,8 @@ class Square
   end
 
   def foul_piece_input_guard(piece)
-    unless piece.belongs_to? BoardMaker.set_of_chess_pieces
-      raise "The #{piece} is not in the set of domain pieces" 
+    unless BoardMaker.set_of_chess_pieces.include? piece.class
+      raise "The #{piece.class} is not in the set of domain pieces" 
     end
   end
 end

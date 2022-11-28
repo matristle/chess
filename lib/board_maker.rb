@@ -10,7 +10,16 @@ class BoardMaker
   end
 
   def self.set_of_chess_pieces
-    %i(pawn rook knight bishop queen king)
+    [Pawn, Rook, Knight, Bishop, Queen, King]
+  end
+
+  def setup_pieces_on(board)
+    setup_pieces_for(:white, board)
+    setup_pieces_for(:black, board)
+  end
+
+  def setup_pieces_for(color, board)
+    self.class.set_of_chess_pieces.each { |piece_class| piece_class.setup_on(board, color) }
   end
 
   private
@@ -22,8 +31,12 @@ class BoardMaker
   end
 
   def collected_coordinates
-    collected_coordinate_symbols.map { |symbol| Coordinate.new(symbol) }
-  end 
+    collected_coordinate_symbols.map { |symbol| make_coordinate(symbol) }
+  end
+
+  def make_coordinate(symbol)
+    Coordinate.new(symbol)
+  end
 
   def collected_coordinate_symbols
     file_letters.product(rank_numbers)
@@ -58,20 +71,28 @@ class BoardMaker
   end
   
   def apply_checker_pattern_at(rank_number:, first_color:, second_color:)
-    odd_number_squares_at(rank_number).each  { |coordinate| @product[coordinate]  = Square.new(color: first_color)  }
-    even_number_squares_at(rank_number).each { |coordinate| @product[coordinate]  = Square.new(color: second_color) }
-  end
-  
-  def odd_number_squares_at(rank_number)
-    coordinate_references_at(rank_number).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.odd?  }
-  end
-  
-  def even_number_squares_at(rank_number)
-    coordinate_references_at(rank_number).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.even? }
+    odd_number_squares_at(rank_number:).each  { |coordinate| @product[coordinate]  = make_square(first_color)  }
+    even_number_squares_at(rank_number:).each { |coordinate| @product[coordinate]  = make_square(second_color) }
   end
 
-  def coordinate_references_at(rank_number)
-    coordinates(product).select { |coordinate| coordinate.rank == rank_number.to_s }
+  def make_square(color)
+    Square.new(color:)
+  end
+  
+  def odd_number_squares_at(rank_number:)
+    coordinate_references_at(rank_number:, board: product).select { |coordinate| file_to_number(coordinate.file).to_i.odd?  }
+  end
+  
+  def even_number_squares_at(rank_number:)
+    coordinate_references_at(rank_number:, board: product).select { |coordinate| file_to_number(coordinate.file).to_i.even? }
+  end
+
+  def file_to_number(file)
+    Coordinate.file_to_number(file)
+  end
+
+  def coordinate_references_at(rank_number:, board:)
+    coordinates(board).select { |coordinate| coordinate.rank == rank_number.to_s }
   end
 
   def coordinates(board)

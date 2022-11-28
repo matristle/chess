@@ -26,59 +26,12 @@ class Board
     squares.count { |square| square.dark? }
   end
 
-  def checkered?
-    (1..8).all? do |rank_number|
-      if rank_number.odd?
-        dark_light_pattern_at?(rank_number:)
-      else 
-        light_dark_pattern_at?(rank_number:)
-      end
-    end
-  end
-
   def setup_pieces
-    setup_pieces_for(:white)
-    setup_pieces_for(:black)
+    board_maker.setup_pieces_on(self)
   end
 
-  def setup_pieces_for(piece_color)
-    i, j = 0, 7
-
-    board_maker.class.set_of_chess_pieces.each do |piece|
-      if piece == :pawn
-        case piece_color
-        when :white
-          setup_pawns(piece, 2)
-        when :black
-          setup_pawns(piece, 7)
-        end
-      else
-        case piece_color
-        when :white
-          current_leftside_coordinate  = coordinate_references_at(rank_number: 1)[i]
-          current_rightside_coordinate = coordinate_references_at(rank_number: 1)[j]  
-        when :black
-          current_leftside_coordinate  = coordinate_references_at(rank_number: 8)[i]
-          current_rightside_coordinate = coordinate_references_at(rank_number: 8)[j] 
-        end
-        
-        case piece
-        when :queen
-          square_at(current_leftside_coordinate).host(piece) 
-        when :king
-          square_at(current_rightside_coordinate).host(piece) 
-        else
-          square_at(current_leftside_coordinate).host(piece) 
-          square_at(current_rightside_coordinate).host(piece)
-
-          i += 1; j -= 1 
-        end
-      end
-    end
-  end
-
-  def setup_pawns(pawn, rank_number)
-    coordinate_references_at(rank_number:).each { |coordinate| square_at(coordinate).host(pawn) }
+  def coordinates_at(rank_number:)
+    coordinates.select { |coordinate| coordinate.rank == rank_number.to_s }
   end
 
   private
@@ -91,45 +44,5 @@ class Board
 
   def squares
     structure.values
-  end
-
-  def dark_light_pattern_at?(rank_number:)
-    dark_on_odd_number_squares?(rank_number:) && light_on_even_number_squares?(rank_number:)
-  end
-
-  def dark_on_odd_number_squares?(rank_number:)
-    odd_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).dark? }
-  end
-
-  def light_on_even_number_squares?(rank_number:)
-    even_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).light? }
-  end
-
-  def light_dark_pattern_at?(rank_number:)
-    light_on_odd_number_squares?(rank_number:) && dark_on_even_number_squares?(rank_number:)
-  end
-
-  def light_on_odd_number_squares?(rank_number:)
-    odd_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).light? }
-  end
-
-  def dark_on_even_number_squares?(rank_number:)
-    even_number_squares_at(rank_number:).all? { |coordinate| square_at(coordinate).dark? }
-  end
-
-  def odd_number_squares_at(rank_number:)
-    coordinate_references_at(rank_number:).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.odd?  }
-  end
-  
-  def even_number_squares_at(rank_number:)
-    coordinate_references_at(rank_number:).select { |coordinate| Coordinate.file_to_number(coordinate.file).to_i.even? }
-  end
-
-  def coordinate_references_at(rank_number:)
-    coordinates(structure).select { |coordinate| coordinate.rank == rank_number.to_s }
-  end
-
-  def coordinates(board)
-    board.keys
   end
 end
