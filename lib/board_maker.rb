@@ -18,10 +18,6 @@ class BoardMaker
     setup_pieces_for(:black, board)
   end
 
-  def setup_pieces_for(color, board)
-    self.class.set_of_chess_pieces.each { |piece_class| piece_class.setup_on(board, color) }
-  end
-
   private
 
   attr_reader :product
@@ -97,5 +93,9 @@ class BoardMaker
 
   def coordinates(board)
     board.keys
+  end
+
+  def setup_pieces_for(color, board)
+    self.class.set_of_chess_pieces.each_with_index { |piece_class, index| piece_class.setup_on(board, color, index - 1) }
   end
 end

@@ -15,7 +15,7 @@ describe Piece do
       let(:foul_color_input) { :green }
 
       it 'raises foul color input error' do
-        expect { not_to_be_created_piece }.to raise_error("Foul color input. The square color must be either :black or :white, not #{foul_color_input}")
+        expect { not_to_be_created_piece }.to raise_error("Foul color input. The piece color must be either :black or :white, not #{foul_color_input}")
       end
     end
   end

@@ -1,12 +1,14 @@
 class King < Piece
-  def self.setup_on(board, color)
+  def self.setup_on(board, color, index)
+    board.square_at(current_rightside_coordinate(board, color, index)).host(self.new(color)) 
+  end
+
+  def self.current_rightside_coordinate(board, color, index)
     case color
     when :white
-      current_rightside_coordinate  = board.coordinates_at(rank_number: 1)[4]
+      board.coordinates_at(rank_number: 1)[kingside index]
     when :black
-      current_rightside_coordinate  = board.coordinates_at(rank_number: 8)[4]
+      board.coordinates_at(rank_number: 8)[kingside index]
     end
-
-    board.square_at(current_rightside_coordinate).host(self.new(color)) 
   end
 end

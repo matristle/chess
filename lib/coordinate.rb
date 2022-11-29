@@ -26,7 +26,7 @@ class Coordinate
   end
 
   def hash
-    0000
+    array_of_values_hash
   end
 
   private
@@ -39,5 +39,9 @@ class Coordinate
     unless rank.between?('1', '8')
       raise "'#{rank}' is out of bounds: rank numbers must be between '1' and '8'"
     end
+  end
+
+  def array_of_values_hash
+    [self.class, file, rank].hash
   end
 end

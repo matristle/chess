@@ -1,3 +1,4 @@
+require_relative 'custom_matchers'
 require_relative '../lib/square'
 require_relative '../lib/pawn'
 require_relative '../lib/rook'
@@ -7,6 +8,8 @@ require_relative '../lib/queen'
 require_relative '../lib/king'
 
 describe Square do
+  include CustomMatchers
+
   context 'when passing in unwanted inputs during square initialization' do
     context 'and the foul input is for color' do
       let(:not_to_be_created_square) { Square.new(color: foul_color_input) }
@@ -21,40 +24,40 @@ describe Square do
   it 'can be light colored' do
     square = Square.new(color: :light)
 
-    expect(square.light?).to eq(true)
+    expect(square).to be_light
   end
 
   it 'can be dark colored' do
     square = Square.new(color: :dark)
 
-    expect(square.dark?).to eq(true)
+    expect(square).to be_dark
   end
 
   it 'can be empty' do
     square = Square.new(color: :light)
 
-    expect(square.empty?).to eq(true)
+    expect(square).to be_empty
   end
 
   it 'can be occupied' do
     square = Square.new(color: :dark)
     square.host(Pawn.new(:white))
 
-    expect(square.occupied?).to eq(true)
+    expect(square).to be_occupied
   end
 
   it 'can have the same color as another square' do
     a_square       = Square.new(color: :light)
     another_square = Square.new(color: :light)
     
-    expect(a_square.same_color_as?(another_square)).to be(true)
+    expect(a_square.same_color_as? another_square).to be(true)
   end
 
   it 'can have a different color compared to another square' do
     a_square       = Square.new(color: :dark )
     another_square = Square.new(color: :light)
 
-    expect(a_square.same_color_as?(another_square)).to be(false)
+    expect(a_square.same_color_as? another_square).to be(false)
   end
   
   it 'can be occupied by a piece like another square' do
@@ -63,7 +66,7 @@ describe Square do
     another_square = Square.new(color: :light)
     another_square.host(Pawn.new(:white))
 
-    expect(a_square.occupied_like?(another_square)).to be(true)
+    expect(a_square.occupied_like? another_square).to be(true)
   end
 
   it 'can be empty when another square is occupied by a piece' do
@@ -72,14 +75,14 @@ describe Square do
     another_square = Square.new(color: :light)
     another_square.host(Queen.new(:black))
     
-    expect(a_square.occupied_like?(another_square)).to be(false)
+    expect(a_square.occupied_like? another_square).to be(false)
   end
 
   it 'can be empty like another square but these squares should not be occupied' do
     a_square       = Square.new(color: :light)
     another_square = Square.new(color: :light)
 
-    expect(a_square.occupied_like?(another_square)).to be(false)
+    expect(a_square.occupied_like? another_square).to be(false)
   end
 
   it 'can host a pawn' do
@@ -87,7 +90,7 @@ describe Square do
 
     square.host(Pawn.new(:white))
 
-    expect(square.pawn_here?).to be(true)
+    expect(square).to be_pawn_here
   end
   
   it 'can host a rook' do
@@ -95,7 +98,7 @@ describe Square do
     
     square.host(Rook.new(:white))
     
-    expect(square.rook_here?).to be(true)
+    expect(square).to be_rook_here
   end
   
   it 'can host a bishop' do
@@ -103,7 +106,7 @@ describe Square do
     
     square.host(Bishop.new(:white))
     
-    expect(square.bishop_here?).to be(true)
+    expect(square).to be_bishop_here
   end
   
   it 'can host a queen' do
@@ -111,7 +114,7 @@ describe Square do
     
     square.host(Queen.new(:white))
     
-    expect(square.queen_here?).to be(true)
+    expect(square).to be_queen_here
   end
   
   it 'can host a king' do
@@ -119,7 +122,7 @@ describe Square do
 
     square.host(King.new(:white))
     
-    expect(square.king_here?).to be(true)
+    expect(square).to be_king_here
   end
   
   it 'can host a knight' do
@@ -127,7 +130,7 @@ describe Square do
     
     square.host(Knight.new(:white))
     
-    expect(square.knight_here?).to be(true)
+    expect(square).to be_knight_here
   end
   
   it "doesn't host a rook when the occupant is actually a bishop" do
@@ -135,7 +138,7 @@ describe Square do
     
     square.host(Bishop.new(:black))
     
-    expect(square.rook_here?).to be(false)
+    expect(square).to_not be_rook_here
   end
 
   it "doesn't host a horse" do
