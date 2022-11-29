@@ -144,7 +144,7 @@ describe Square do
   it "doesn't host a horse" do
     square = Square.new(color: :dark) 
     Horse = Struct.new(:class, :color)
-    out_of_domain_piece = Horse.new(Horse, :white) 
+    out_of_domain_piece = Horse.new(Horse, :white)
 
     expect { square.host(out_of_domain_piece) }.to raise_error("The #{out_of_domain_piece.class} is not in the set of domain pieces")
   end
@@ -154,7 +154,7 @@ describe Square do
 
     square.host(Knight.new(:white))
 
-    expect(square).to be_white_piece_here
+    expect(square).to have_a_white_piece
   end
 
   it 'can have a black occupant piece' do
@@ -162,7 +162,7 @@ describe Square do
 
     square.host(Bishop.new(:black))
 
-    expect(square).to be_black_piece_here
+    expect(square).to have_a_black_piece
   end
 
   it 'does not have a white occupant piece when the occupant piece is black' do
@@ -170,7 +170,7 @@ describe Square do
 
     square.host(Knight.new(:black))
 
-    expect(square).to_not be_white_piece_here
+    expect(square).to_not have_a_white_piece
   end
 
   it 'does not have a black occupant piece when the occupant piece is white' do
@@ -178,6 +178,6 @@ describe Square do
 
     square.host(Knight.new(:white))
 
-    expect(square).to_not be_black_piece_here
+    expect(square).to_not have_a_black_piece
   end
 end

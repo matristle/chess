@@ -1,6 +1,6 @@
 class King < Piece
   def self.setup_on(board, color, index)
-    board.square_at(current_rightside_coordinate(board, color, index)).host(self.new(color)) 
+    board.place(self.new(color), current_rightside_coordinate(board, color, index))
   end
 
   def self.current_rightside_coordinate(board, color, index)

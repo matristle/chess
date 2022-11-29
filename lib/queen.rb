@@ -1,6 +1,6 @@
 class Queen < Piece
   def self.setup_on(board, color, index)
-    board.square_at(current_leftside_coordinate(board, color, index)).host(self.new(color)) 
+    board.place(self.new(color), current_leftside_coordinate(board, color, index)) 
   end
 
   def self.current_leftside_coordinate(board, color, index)

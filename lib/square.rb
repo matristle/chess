@@ -4,7 +4,7 @@ class Square
   def initialize(color:)
     foul_color_input_guard(color)
 
-    @color  = color
+    @color = color
   end
 
   def light?
@@ -37,6 +37,10 @@ class Square
     @piece = piece
   end
 
+  def kick_out_piece
+    @piece = nil
+  end
+
   def ==(other)
     self.color == other.color && self.piece == other.piece
   end
@@ -60,9 +64,11 @@ class Square
   def knight_here?
     piece.is_a? Knight
   end
+
   def bishop_here?
     piece.is_a? Bishop
   end
+
   def queen_here?
     piece.is_a? Queen
   end
@@ -78,7 +84,7 @@ class Square
   private
 
   def foul_color_input_guard(color)
-    unless color == :light || color == :dark 
+    unless %i[light dark].include? color
       raise "Foul color input. The square color must be either :dark or :light, not #{color}"
     end
   end
