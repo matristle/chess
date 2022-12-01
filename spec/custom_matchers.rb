@@ -13,36 +13,36 @@ module CustomMatchers
 
   # Board matchers
   
-  matcher :have_a_white_piece_at do |coordinate|
-    match { |board| board.white_piece_at?(coordinate) }
+  matcher :have_a_white_piece_on do |coordinate|
+    match { |board| board.white_piece_on?(coordinate) }
   end
-  matcher :have_a_black_piece_at do |coordinate|
-    match { |board| board.black_piece_at?(coordinate) }
-  end
-
-  matcher :have_a_pawn_at do |coordinate|
-    match { |board| board.pawn_at?(coordinate) }
-  end
-  matcher :have_a_rook_at do |coordinate|
-    match { |board| board.rook_at?(coordinate) }
-  end
-  matcher :have_a_knight_at do |coordinate|
-    match { |board| board.knight_at?(coordinate) }
-  end
-  matcher :have_a_bishop_at do |coordinate|
-    match { |board| board.bishop_at?(coordinate) }
-  end
-  matcher :have_a_queen_at do |coordinate|
-    match { |board| board.queen_at?(coordinate) }
-  end
-  matcher :have_a_king_at do |coordinate|
-    match { |board| board.king_at?(coordinate) }
+  matcher :have_a_black_piece_on do |coordinate|
+    match { |board| board.black_piece_on?(coordinate) }
   end
 
-  matcher :have_a_dark_square_at do |coordinate|
-    match { |board| board.dark_square_at?(coordinate) }
+  matcher :have_a_pawn_on do |coordinate|
+    match { |board| board.pawn_on?(coordinate) }
   end
-  matcher :have_a_light_square_at do |coordinate|
-    match { |board| board.light_square_at?(coordinate) }
+  matcher :have_a_rook_on do |coordinate|
+    match { |board| board.rook_on?(coordinate) }
+  end
+  matcher :have_a_knight_on do |coordinate|
+    match { |board| board.knight_on?(coordinate) }
+  end
+  matcher :have_a_bishop_on do |coordinate|
+    match { |board| board.bishop_on?(coordinate) }
+  end
+  matcher :have_a_queen_on do |coordinate|
+    match { |board| board.queen_on?(coordinate) }
+  end
+  matcher :have_a_king_on do |coordinate|
+    match { |board| board.king_on?(coordinate) }
+  end
+
+  matcher :have_a_dark_square_on do |coordinate|
+    match { |board| board.dark_square_on?(coordinate) }
+  end
+  matcher :have_a_light_square_on do |coordinate|
+    match { |board| board.light_square_on?(coordinate) }
   end
 end

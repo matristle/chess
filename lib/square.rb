@@ -76,6 +76,10 @@ class Square
   def king_here?
     piece.is_a? King
   end
+
+  def move_piece_to(destination_coordinate, board)
+  
+  end
   
   protected
   

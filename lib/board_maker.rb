@@ -6,7 +6,14 @@ class BoardMaker
     bind_empty_square_placeholders_to_coordinates
     replace_placeholders_with_colored_squares
     
-    product
+    detach_and_return product
+  end
+
+  def detach_and_return(product)
+    result = product
+    @product = nil
+    
+    result
   end
 
   def self.set_of_chess_pieces

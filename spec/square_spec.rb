@@ -180,4 +180,19 @@ describe Square do
 
     expect(square).to_not have_a_black_piece
   end
+
+  context 'when passed a board' do
+    it 'passes its occupant piece to g8 square' do
+      board_maker = BoardMaker.new
+      board = Board.new(board_maker)
+      square = Square.new(color: :dark)
+      rook = Rook.new(:black)
+      square.host(rook)
+      g8 = Coordinate.new(:g8)
+
+      square.move_piece_to(g8, board)
+
+      expect(board).to have_a_rook_on g8
+    end
+  end
 end
