@@ -25,6 +25,11 @@ class Piece
     7 - leftside(index)
   end
 
+  def self.setup_on(board, color, index)
+    board.place(self.new(color), current_leftside_coordinate(board, color, index)) 
+    board.place(self.new(color), current_rightside_coordinate(board, color, index)) 
+  end
+  
   def self.current_leftside_coordinate(board, color, index)
     case color
     when :white
@@ -43,10 +48,6 @@ class Piece
     end
   end
 
-  def self.setup_on(board, color, index)
-    board.place(self.new(color), current_leftside_coordinate(board, color, index)) 
-    board.place(self.new(color), current_rightside_coordinate(board, color, index)) 
-  end
 
   private
 

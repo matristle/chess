@@ -1,6 +1,9 @@
 require_relative 'custom_matchers'
 require_relative '../lib/board'
 require_relative '../lib/board_maker'
+require_relative '../lib/rook'
+require_relative '../lib/knight'
+
 
 describe Board do
   include CustomMatchers
@@ -225,41 +228,38 @@ describe Board do
     expect(board).to have_a_black_piece_on(b3)
   end
 
-  context 'moving pieces' do
+  context 'freemoving pieces' do
     it 'freemoves rook from a1 to a2 on the board' do
-      board_maker = BoardMaker.new
-      board = Board.new(board_maker)
-      rook = Rook.new(:white)
       current_coordinate     = Coordinate.new(:a1)
       destination_coordinate = Coordinate.new(:a2)
+      rook = Rook.new(:white)
+      board.place(rook, current_coordinate)
       
-      board.move(rook, current_coordinate, destination_coordinate)
-  
+      board.move(current_coordinate, destination_coordinate)
+      
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
     end
-
+    
     it 'freemoves rook from b5 to h8 on the board' do
-      board_maker = BoardMaker.new
-      board = Board.new(board_maker)
-      rook = Rook.new(:white)
       current_coordinate     = Coordinate.new(:b5)
       destination_coordinate = Coordinate.new(:h8)
+      rook = Rook.new(:white)
+      board.place(rook, current_coordinate)
       
-      board.move(rook, current_coordinate, destination_coordinate)
-  
+      board.move(current_coordinate, destination_coordinate)
+      
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
     end
-
+    
     it 'freemoves knight from g8 to b2 on the board' do
-      board_maker = BoardMaker.new
-      board = Board.new(board_maker)
-      knight = Knight.new(:white)
       current_coordinate     = Coordinate.new(:g8)
       destination_coordinate = Coordinate.new(:b2)
+      knight = Knight.new(:white)
+      board.place(knight, current_coordinate)
       
-      board.move(knight, current_coordinate, destination_coordinate)
+      board.move(current_coordinate, destination_coordinate)
   
       expect(board).to_not have_a_knight_on current_coordinate
       expect(board).to have_a_knight_on destination_coordinate

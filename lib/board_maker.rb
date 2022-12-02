@@ -1,5 +1,11 @@
 require_relative 'coordinate'
 require_relative 'square'
+require_relative '../lib/pawn'
+require_relative '../lib/rook'
+require_relative '../lib/knight'
+require_relative '../lib/bishop'
+require_relative '../lib/queen'
+require_relative '../lib/king'
 
 class BoardMaker
   def make
@@ -18,11 +24,6 @@ class BoardMaker
 
   def self.set_of_chess_pieces
     [Pawn, Rook, Knight, Bishop, Queen, King]
-  end
-
-  def setup_pieces_on(board)
-    setup_pieces_for(:white, board)
-    setup_pieces_for(:black, board)
   end
 
   private
@@ -100,9 +101,5 @@ class BoardMaker
 
   def coordinates(board)
     board.keys
-  end
-
-  def setup_pieces_for(color, board)
-    self.class.set_of_chess_pieces.each_with_index { |piece_class, index| piece_class.setup_on(board, color, index - 1) }
   end
 end

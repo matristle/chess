@@ -1,8 +1,9 @@
-require_relative 'board_maker'
+require_relative 'piece_arranger'
 
 class Board
   def initialize(board_maker)
-    @board_maker = board_maker
+    @board_maker    = board_maker
+    @piece_arranger = PieceArranger.new
     @structure = board_maker.make
   end
   
@@ -23,7 +24,7 @@ class Board
   end
 
   def setup_pieces
-    board_maker.setup_pieces_on(self)
+    @piece_arranger.setup_pieces_on(self)
   end
 
   def coordinates_at(rank_number:)
@@ -82,9 +83,8 @@ class Board
     square_on(coordinate).light?
   end
 
-  def move(piece, current_coordinate, destination_coordinate) 
-    place(piece, destination_coordinate)
-    square_on(current_coordinate).kick_out_piece
+  def move(current_coordinate, destination_coordinate) 
+    square_on(current_coordinate).move_piece_to(destination_coordinate, self)
   end
 
   private
@@ -94,7 +94,7 @@ class Board
   def square_on(coordinate)
     structure[coordinate]
   end
-
+  
   def coordinates
     structure.keys
   end

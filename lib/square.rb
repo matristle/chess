@@ -4,7 +4,8 @@ class Square
   def initialize(color:)
     foul_color_input_guard(color)
 
-    @color = color
+    @color  = color
+    @status = :empty
   end
 
   def light?
@@ -16,11 +17,11 @@ class Square
   end
 
   def empty?
-    piece.nil?
+    status == :empty
   end
   
   def occupied?
-    !empty?
+    status == :occupied
   end
   
   def same_color_as?(other)
@@ -34,11 +35,8 @@ class Square
   def host(piece)
     foul_piece_input_guard(piece)
 
-    @piece = piece
-  end
-
-  def kick_out_piece
-    @piece = nil
+    @piece  = piece
+    @status = :occupied
   end
 
   def ==(other)
@@ -78,14 +76,20 @@ class Square
   end
 
   def move_piece_to(destination_coordinate, board)
-  
+    board.place(piece, destination_coordinate)
+    kick_out_piece
   end
   
   protected
   
-  attr_reader :color, :piece
+  attr_reader :color, :piece, :status
 
   private
+
+  def kick_out_piece
+    @piece  = nil
+    @status = :empty 
+  end
 
   def foul_color_input_guard(color)
     unless %i[light dark].include? color
