@@ -183,8 +183,9 @@ describe Square do
 
   context 'when passed a board' do
     it 'passes its occupant piece to g8 square' do
-      board_maker = BoardMaker.new
-      board = Board.new(board_maker)
+      board_maker    = BoardMaker.new
+      piece_arranger = PieceArranger.new
+      board = Board.new(board_maker, piece_arranger)
       square = Square.new(color: :dark)
       rook = Rook.new(:black)
       square.host(rook)

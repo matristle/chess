@@ -1,53 +1,62 @@
 require_relative 'piece_maker'
 
 class PieceArranger
-  def initialize
-    @piece_maker = PieceMaker.new
-  end
-
-  def self.set_of_chess_pieces
-    [Pawn, Rook, Knight, Bishop, Queen, King]
-  end
-
   def setup_pieces_on(board)
     setup_pieces_for(:white, board)
     setup_pieces_for(:black, board)
   end
 
   private
+  
+  attr_reader :piece_maker
 
   def setup_pieces_for(color, board)
-    left_index, right_index = 0, 7
-
-    PieceArranger.set_of_chess_pieces.each do |piece_class|
-      if piece_class == Pawn
+    queenside_index, kingside_index = 0, 7
+    
+    PieceMaker.set_of_piece_classes.each do |piece_class|
+      case piece_class.to_s.to_sym
+      when :Pawn
         case color
         when :white
-          board.coordinates_at(rank_number: 2).each { |coordinate| board.place(Pawn.new(color), coordinate) }
+          board.coordinates_at(rank_number: 2).each { |coordinate| board.place(new_piece(piece_class, color), coordinate) }
         when :black
-          board.coordinates_at(rank_number: 7).each { |coordinate| board.place(Pawn.new(color), coordinate) }
+          board.coordinates_at(rank_number: 7).each { |coordinate| board.place(new_piece(piece_class, color), coordinate) }
         end
       else
-        case color
-        when :white
-          current_leftside_coordinate  = board.coordinates_at(rank_number: 1)[left_index]
-          current_rightside_coordinate = board.coordinates_at(rank_number: 1)[right_index]  
-        when :black
-          current_leftside_coordinate  = board.coordinates_at(rank_number: 8)[left_index]
-          current_rightside_coordinate = board.coordinates_at(rank_number: 8)[right_index] 
-        end
-
-        if piece_class == Queen
-          board.place(piece_class.new(color), current_leftside_coordinate)
-        elsif piece_class == King
-          board.place(piece_class.new(color), current_rightside_coordinate)
+        case piece_class.to_s.to_sym
+        when :Queen
+          board.place(new_piece(piece_class, color), queenside_coordinate_at(queenside_index, color, board))
+        when :King
+          board.place(new_piece(piece_class, color), kingside_coordinate_at(kingside_index, color, board))
         else
-          board.place(piece_class.new(color), current_leftside_coordinate)
-          board.place(piece_class.new(color), current_rightside_coordinate)
+          board.place(new_piece(piece_class, color), queenside_coordinate_at(queenside_index, color, board))
+          board.place(new_piece(piece_class, color), kingside_coordinate_at(kingside_index, color, board))
 
-          left_index += 1; right_index -= 1 
+          queenside_index += 1; kingside_index -= 1 
         end
       end
+    end
+  end
+
+  def new_piece(piece_class, color)
+    PieceMaker.make(piece_class, color)
+  end
+
+  def queenside_coordinate_at(queenside_index, color, board)
+    case color
+    when :white
+      board.coordinates_at(rank_number: 1)[queenside_index] 
+    when :black
+      board.coordinates_at(rank_number: 8)[queenside_index]
+    end
+  end
+
+  def kingside_coordinate_at(kingside_index, color, board)
+    case color
+    when :white
+      board.coordinates_at(rank_number: 1)[kingside_index] 
+    when :black
+      board.coordinates_at(rank_number: 8)[kingside_index]
     end
   end
 end

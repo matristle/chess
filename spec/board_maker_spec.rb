@@ -6,7 +6,9 @@ describe BoardMaker do
   include CustomMatchers
 
   subject(:board_maker) { BoardMaker.new }
-  let(:board) { Board.new(board_maker) }
+
+  let(:board)          { Board.new(board_maker, piece_arranger) }
+  let(:piece_arranger) { PieceArranger.new }
 
   context 'when board is made' do
     it 'has a dark square on a1' do

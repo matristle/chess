@@ -1,6 +1,7 @@
 require_relative 'custom_matchers'
 require_relative '../lib/board'
 require_relative '../lib/board_maker'
+require_relative '../lib/piece_arranger'
 require_relative '../lib/rook'
 require_relative '../lib/knight'
 
@@ -8,8 +9,10 @@ require_relative '../lib/knight'
 describe Board do
   include CustomMatchers
 
-  subject(:board) { Board.new(board_maker) }
-  let(:board_maker) { BoardMaker.new }
+  subject(:board) { Board.new(board_maker, piece_arranger) }
+
+  let(:board_maker)    { BoardMaker.new }
+  let(:piece_arranger) { PieceArranger.new }
 
   context 'when created' do
     it 'is empty' do

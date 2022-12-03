@@ -1,9 +1,10 @@
 require_relative 'piece_arranger'
 
 class Board
-  def initialize(board_maker)
+  def initialize(board_maker, piece_arranger)
     @board_maker    = board_maker
-    @piece_arranger = PieceArranger.new
+    @piece_arranger = piece_arranger
+    
     @structure = board_maker.make
   end
   
