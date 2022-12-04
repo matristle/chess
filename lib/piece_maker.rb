@@ -4,17 +4,18 @@ class PieceMaker
   end
 
   def self.make(piece_class, color)
-    if piece_class == Pawn
+    case piece_class.to_s.to_sym
+    when :Pawn
       Pawn
-    elsif piece_class == Rook
+    when :Rook
       Rook
-    elsif piece_class == Knight
+    when :Knight
       Knight
-    elsif piece_class == Bishop
+    when :Bishop
       Bishop
-    elsif piece_class == Queen
+    when :Queen
       Queen
-    elsif piece_class == King
+    when :King
       King
     end.new(color)
   end

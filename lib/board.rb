@@ -25,7 +25,7 @@ class Board
   end
 
   def setup_pieces
-    @piece_arranger.setup_pieces_on(self)
+    piece_arranger.setup_pieces_on(self)
   end
 
   def coordinates_at(rank_number:)
@@ -84,14 +84,24 @@ class Board
     square_on(coordinate).light?
   end
 
-  def move(current_coordinate, destination_coordinate) 
+  def move(current_coordinate, destination_coordinate)
+    if square_on(current_coordinate).rook_here?
+      unless same_file_or_rank?(current_coordinate, destination_coordinate)
+        raise "That piece can't move to #{destination_coordinate.symbol}" 
+      end
+    end
+
     square_on(current_coordinate).move_piece_to(destination_coordinate, self)
   end
 
   private
   
-  attr_reader :structure, :board_maker
+  attr_reader :structure, :board_maker, :piece_arranger
   
+  def same_file_or_rank?(current_coordinate, destination_coordinate)
+    current_coordinate.file == destination_coordinate.file || current_coordinate.rank == destination_coordinate.rank
+  end
+
   def square_on(coordinate)
     structure[coordinate]
   end

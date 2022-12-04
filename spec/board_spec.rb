@@ -231,8 +231,8 @@ describe Board do
     expect(board).to have_a_black_piece_on(b3)
   end
 
-  context 'freemoving pieces' do
-    it 'freemoves rook from a1 to a2 on the board' do
+  xcontext 'freemoving pieces' do
+    it 'freemoves rook from a1 to a2' do
       current_coordinate     = Coordinate.new(:a1)
       destination_coordinate = Coordinate.new(:a2)
       rook = Rook.new(:white)
@@ -244,7 +244,7 @@ describe Board do
       expect(board).to have_a_rook_on destination_coordinate
     end
     
-    it 'freemoves rook from b5 to h8 on the board' do
+    it 'freemoves rook from b5 to h8' do
       current_coordinate     = Coordinate.new(:b5)
       destination_coordinate = Coordinate.new(:h8)
       rook = Rook.new(:white)
@@ -256,7 +256,7 @@ describe Board do
       expect(board).to have_a_rook_on destination_coordinate
     end
     
-    it 'freemoves knight from g8 to b2 on the board' do
+    it 'freemoves knight from g8 to b2' do
       current_coordinate     = Coordinate.new(:g8)
       destination_coordinate = Coordinate.new(:b2)
       knight = Knight.new(:white)
@@ -266,6 +266,75 @@ describe Board do
   
       expect(board).to_not have_a_knight_on current_coordinate
       expect(board).to have_a_knight_on destination_coordinate
+    end
+  end
+
+  context 'moving rooks' do
+    it 'moves rook from f5 to f6 -- upwards on the same file' do
+      current_coordinate     = Coordinate.new(:f5)
+      destination_coordinate = Coordinate.new(:f6)
+      rook = Rook.new(:white)
+      board.place(rook, current_coordinate)
+      
+      board.move(current_coordinate, destination_coordinate)
+      
+      expect(board).to_not have_a_rook_on current_coordinate
+      expect(board).to have_a_rook_on destination_coordinate
+    end
+
+    it 'moves rook from d4 to d2 -- downwards on the same file' do
+      current_coordinate     = Coordinate.new(:f5)
+      destination_coordinate = Coordinate.new(:f6)
+      rook = Rook.new(:white)
+      board.place(rook, current_coordinate)
+      
+      board.move(current_coordinate, destination_coordinate)
+      
+      expect(board).to_not have_a_rook_on current_coordinate
+      expect(board).to have_a_rook_on destination_coordinate
+    end
+
+    it 'moves rook from d3 to b3 -- leftwards on the same rank' do
+      current_coordinate     = Coordinate.new(:d3)
+      destination_coordinate = Coordinate.new(:b3)
+      rook = Rook.new(:black)
+      board.place(rook, current_coordinate)
+      
+      board.move(current_coordinate, destination_coordinate)
+      
+      expect(board).to_not have_a_rook_on current_coordinate
+      expect(board).to have_a_rook_on destination_coordinate
+    end
+
+    it 'moves rook from c5 to g5 -- rightwards on the same rank' do
+      current_coordinate     = Coordinate.new(:d3)
+      destination_coordinate = Coordinate.new(:b3)
+      rook = Rook.new(:black)
+      board.place(rook, current_coordinate)
+      
+      board.move(current_coordinate, destination_coordinate)
+      
+      expect(board).to_not have_a_rook_on current_coordinate
+      expect(board).to have_a_rook_on destination_coordinate
+    end
+
+    
+    it "doesn't move rook from g6 to h7" do
+      current_coordinate     = Coordinate.new(:g6)
+      destination_coordinate = Coordinate.new(:h7)
+      rook = Rook.new(:white)
+      board.place(rook, current_coordinate)
+      
+      expect { board.move(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+    end
+    
+    it "doesn't move rook from a4 to e1" do
+      current_coordinate     = Coordinate.new(:a4)
+      destination_coordinate = Coordinate.new(:e1)
+      rook = Rook.new(:white)
+      board.place(rook, current_coordinate)
+      
+      expect { board.move(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
     end
   end
 end
