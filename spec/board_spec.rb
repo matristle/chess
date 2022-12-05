@@ -238,7 +238,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, current_coordinate)
       
-      board.move(current_coordinate, destination_coordinate)
+      board.move_piece(current_coordinate, destination_coordinate)
       
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
@@ -250,7 +250,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, current_coordinate)
       
-      board.move(current_coordinate, destination_coordinate)
+      board.move_piece(current_coordinate, destination_coordinate)
       
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
@@ -262,7 +262,7 @@ describe Board do
       knight = Knight.new(:white)
       board.place(knight, current_coordinate)
       
-      board.move(current_coordinate, destination_coordinate)
+      board.move_piece(current_coordinate, destination_coordinate)
   
       expect(board).to_not have_a_knight_on current_coordinate
       expect(board).to have_a_knight_on destination_coordinate
@@ -276,7 +276,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, current_coordinate)
       
-      board.move(current_coordinate, destination_coordinate)
+      board.move_piece(current_coordinate, destination_coordinate)
       
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
@@ -288,7 +288,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, current_coordinate)
       
-      board.move(current_coordinate, destination_coordinate)
+      board.move_piece(current_coordinate, destination_coordinate)
       
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
@@ -300,7 +300,7 @@ describe Board do
       rook = Rook.new(:black)
       board.place(rook, current_coordinate)
       
-      board.move(current_coordinate, destination_coordinate)
+      board.move_piece(current_coordinate, destination_coordinate)
       
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
@@ -312,7 +312,7 @@ describe Board do
       rook = Rook.new(:black)
       board.place(rook, current_coordinate)
       
-      board.move(current_coordinate, destination_coordinate)
+      board.move_piece(current_coordinate, destination_coordinate)
       
       expect(board).to_not have_a_rook_on current_coordinate
       expect(board).to have_a_rook_on destination_coordinate
@@ -325,7 +325,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, current_coordinate)
       
-      expect { board.move(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
     end
     
     it "doesn't move rook from a4 to e1" do
@@ -334,7 +334,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, current_coordinate)
       
-      expect { board.move(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
     end
   end
 end

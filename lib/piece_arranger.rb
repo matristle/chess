@@ -15,56 +15,53 @@ class PieceArranger
   attr_reader :piece_maker, :board
 
   def setup_pieces_for(color)
-    queenside_index, kingside_index = 0, 7
+    queenside_placement_index, kingside_placement_index = 0, 7
     
-    PieceMaker.set_of_piece_classes.each do |piece_class|
-      case piece_class.to_s.to_sym
-      when :Pawn
-        place_pawns_on_respective_row(color, piece_class)
+    PieceMaker.set_of_piece_class_symbols.each do |piece_class_symbol|
+      case piece_class_symbol
+      when :pawn
+        place_pawns_on_respective_row(color, piece_class_symbol)
+      when :queen
+        board.place(new_piece(piece_class_symbol, color), queenside_coordinate_at(queenside_placement_index, color))
+      when :king
+        board.place(new_piece(piece_class_symbol, color), kingside_coordinate_at(kingside_placement_index, color))
       else
-        case piece_class.to_s.to_sym
-        when :Queen
-          board.place(new_piece(piece_class, color), queenside_coordinate_at(queenside_index, color))
-        when :King
-          board.place(new_piece(piece_class, color), kingside_coordinate_at(kingside_index, color))
-        else
-          board.place(new_piece(piece_class, color), queenside_coordinate_at(queenside_index, color))
-          board.place(new_piece(piece_class, color), kingside_coordinate_at(kingside_index, color))
-          
-          queenside_index += 1; kingside_index -= 1 
-        end
+        board.place(new_piece(piece_class_symbol, color), queenside_coordinate_at(queenside_placement_index, color))
+        board.place(new_piece(piece_class_symbol, color), kingside_coordinate_at(kingside_placement_index, color))
+        
+        queenside_placement_index += 1; kingside_placement_index -= 1 
       end
     end
   end
   
-  def place_pawns_on_respective_row(color, piece_class)
+  def place_pawns_on_respective_row(color, piece_class_symbol)
     case color
     when :white
-      board.coordinates_at(rank_number: 2).each { |coordinate| board.place(new_piece(piece_class, color), coordinate) }
+      board.coordinates_at(rank_number: 2).each { |coordinate| board.place(new_piece(piece_class_symbol, color), coordinate) }
     when :black
-      board.coordinates_at(rank_number: 7).each { |coordinate| board.place(new_piece(piece_class, color), coordinate) }
+      board.coordinates_at(rank_number: 7).each { |coordinate| board.place(new_piece(piece_class_symbol, color), coordinate) }
     end
   end
   
-  def new_piece(piece_class, color)
-    PieceMaker.make(piece_class, color)
+  def new_piece(piece_class_symbol, color)
+    PieceMaker.make(piece_class_symbol, color)
   end
   
-  def queenside_coordinate_at(queenside_index, color)
+  def queenside_coordinate_at(queenside_placement_index, color)
     case color
     when :white
-      board.coordinates_at(rank_number: 1)[queenside_index] 
+      board.coordinates_at(rank_number: 1)[queenside_placement_index] 
     when :black
-      board.coordinates_at(rank_number: 8)[queenside_index]
+      board.coordinates_at(rank_number: 8)[queenside_placement_index]
     end
   end
   
-  def kingside_coordinate_at(kingside_index, color)
+  def kingside_coordinate_at(kingside_placement_index, color)
     case color
     when :white
-      board.coordinates_at(rank_number: 1)[kingside_index] 
+      board.coordinates_at(rank_number: 1)[kingside_placement_index] 
     when :black
-      board.coordinates_at(rank_number: 8)[kingside_index]
+      board.coordinates_at(rank_number: 8)[kingside_placement_index]
     end
   end
 end

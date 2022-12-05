@@ -1,11 +1,5 @@
 require_relative 'coordinate'
 require_relative 'square'
-require_relative '../lib/pawn'
-require_relative '../lib/rook'
-require_relative '../lib/knight'
-require_relative '../lib/bishop'
-require_relative '../lib/queen'
-require_relative '../lib/king'
 
 class BoardMaker
   def make
@@ -20,10 +14,6 @@ class BoardMaker
     @product = nil
     
     result
-  end
-
-  def self.set_of_chess_pieces
-    [Pawn, Rook, Knight, Bishop, Queen, King]
   end
 
   private

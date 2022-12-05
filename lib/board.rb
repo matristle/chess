@@ -84,7 +84,7 @@ class Board
     square_on(coordinate).light?
   end
 
-  def move(current_coordinate, destination_coordinate)
+  def move_piece(current_coordinate, destination_coordinate)
     if square_on(current_coordinate).rook_here?
       unless same_file_or_rank?(current_coordinate, destination_coordinate)
         raise "That piece can't move to #{destination_coordinate.symbol}" 

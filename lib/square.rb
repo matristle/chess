@@ -1,4 +1,4 @@
-require_relative 'board_maker'
+require_relative 'piece_maker'
 
 class Square
   def initialize(color:)
@@ -98,7 +98,7 @@ class Square
   end
 
   def foul_piece_input_guard(piece)
-    unless BoardMaker.set_of_chess_pieces.include? piece.class
+    unless PieceMaker.piece_classes.include? piece.class
       raise "The #{piece.class} is not in the set of domain pieces" 
     end
   end
