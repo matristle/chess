@@ -9,12 +9,12 @@ require_relative '../lib/knight'
 describe Board do
   include CustomMatchers
 
-  subject(:board) { Board.new(board_maker, piece_arranger) }
-
   let(:board_maker)    { BoardMaker.new }
   let(:piece_arranger) { PieceArranger.new }
-
+  
   context 'when created' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
+    
     it 'is empty' do
       expect(board).to be_empty
     end
@@ -33,6 +33,8 @@ describe Board do
   end
 
   context 'after setting up pieces on board' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
+
     before { board.setup_pieces }
     
     it 'is not empty' do
@@ -199,39 +201,57 @@ describe Board do
     end
   end
 
-  it 'can know if there is a rook on d5' do
-    d5 = Coordinate.new(:d5)
+  describe '#rook_on?' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
 
-    board.place(Rook.new(:black), d5)
-
-    expect(board).to have_a_rook_on(d5)
+    it 'can know if there is a rook on d5' do
+      d5 = Coordinate.new(:d5)
+  
+      board.place(Rook.new(:black), d5)
+  
+      expect(board).to have_a_rook_on(d5)
+    end
   end
 
-  it 'can place a rook on c4' do
-    c4 = Coordinate.new(:c4)
-
-    board.place(Rook.new(:black), c4)
+  describe '#place' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
     
-    expect(board).to have_a_rook_on(c4)
+    it 'can place a rook on c4' do
+      c4 = Coordinate.new(:c4)
+      
+      board.place(Rook.new(:black), c4)
+      
+      expect(board).to have_a_rook_on(c4)
+    end
   end
-
-  it 'can know if there is a white piece on f6' do
-    f6 = Coordinate.new(:f6)
-
-    board.place(King.new(:white), f6)
-
-    expect(board).to have_a_white_piece_on f6
+  
+  describe '#white_piece_on?' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
+    
+    it 'can know if there is a white piece on f6' do
+      f6 = Coordinate.new(:f6)
+      
+      board.place(King.new(:white), f6)
+      
+      expect(board).to have_a_white_piece_on f6
+    end
   end
-
-  it 'can know if there is a black piece on b3' do
-    b3 = Coordinate.new(:b3)
-
-    board.place(Knight.new(:black), b3)
-
-    expect(board).to have_a_black_piece_on(b3)
+  
+  describe '#black_piece_on?' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
+    
+    it 'can know if there is a black piece on b3' do
+      b3 = Coordinate.new(:b3)
+      
+      board.place(Knight.new(:black), b3)
+      
+      expect(board).to have_a_black_piece_on(b3)
+    end
   end
-
+  
   xcontext 'freemoving pieces' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
+
     it 'freemoves rook from a1 to a2' do
       current_coordinate     = Coordinate.new(:a1)
       destination_coordinate = Coordinate.new(:a2)
@@ -270,6 +290,8 @@ describe Board do
   end
 
   context 'moving rooks' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
+
     it 'moves rook from f5 to f6 -- upwards on the same file' do
       current_coordinate     = Coordinate.new(:f5)
       destination_coordinate = Coordinate.new(:f6)
@@ -335,6 +357,22 @@ describe Board do
       board.place(rook, current_coordinate)
       
       expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+    end
+  end
+
+  context 'moving knights' do
+    subject(:board) { Board.new(board_maker, piece_arranger) }
+
+    it 'moves a knight from b6 to c8 -- making an upper-right narrow L' do
+      current_coordinate     = Coordinate.new(:b6)
+      destination_coordinate = Coordinate.new(:c8)
+      knight = Knight.new(:black)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
     end
   end
 end

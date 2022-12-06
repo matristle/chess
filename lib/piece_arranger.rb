@@ -42,7 +42,7 @@ class PieceArranger
       board.coordinates_at(rank_number: 7).each { |coordinate| board.place(new_piece(piece_class_symbol, color), coordinate) }
     end
   end
-  
+
   def new_piece(piece_class_symbol, color)
     PieceMaker.make(piece_class_symbol, color)
   end
