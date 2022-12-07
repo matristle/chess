@@ -57,6 +57,16 @@ describe Coordinate do
     end
   end
 
+  describe '::number_to_file' do
+    it 'returns a for 1' do
+      expect(Coordinate.number_to_file('1')).to eq('a')
+    end
+
+    it 'returns d for 4' do
+      expect(Coordinate.number_to_file('4')).to eq('d')
+    end
+  end
+
   it 'can be equal to another coordinate' do
     expect(Coordinate.new(:g4)).to eq(Coordinate.new(:g4))
   end

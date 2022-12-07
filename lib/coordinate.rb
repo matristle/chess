@@ -10,11 +10,19 @@ class Coordinate
   end
 
   def self.file_to_number(file_letter)
-    file_number_mapping[file_letter.to_sym].to_s
+    file_to_number_mapping[file_letter.to_sym].to_s
   end
 
-  def self.file_number_mapping
+  def self.number_to_file(file_number)
+    number_to_file_mapping[file_number.to_i].to_s
+  end
+
+  def self.file_to_number_mapping
     { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8 }
+  end
+
+  def self.number_to_file_mapping
+    file_to_number_mapping.invert
   end
 
   def ==(other)

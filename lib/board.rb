@@ -85,8 +85,8 @@ class Board
   end
 
   def move_piece(current_coordinate, destination_coordinate)
-    if square_on(current_coordinate).rook_here?
-      unless same_file_or_rank?(current_coordinate, destination_coordinate)
+    if square_on(current_coordinate).rook_here? || square_on(current_coordinate).knight_here?
+      unless same_file_or_rank?(current_coordinate, destination_coordinate) || two_up_one_right?(current_coordinate, destination_coordinate)
         raise "That piece can't move to #{destination_coordinate.symbol}" 
       end
     end
@@ -100,6 +100,15 @@ class Board
   
   def same_file_or_rank?(current_coordinate, destination_coordinate)
     current_coordinate.file == destination_coordinate.file || current_coordinate.rank == destination_coordinate.rank
+  end
+
+  def  two_up_one_right?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i + 2).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 1).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
   end
 
   def square_on(coordinate)

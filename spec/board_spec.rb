@@ -374,5 +374,14 @@ describe Board do
       expect(board).to_not have_a_knight_on current_coordinate
       expect(board).to have_a_knight_on destination_coordinate
     end
+    
+    it "doesn't move a knight from d5 to a2" do
+      current_coordinate     = Coordinate.new(:d5)
+      destination_coordinate = Coordinate.new(:a2)
+      knight = Knight.new(:white)
+      board.place(knight, current_coordinate)
+
+      expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+    end
   end
 end
