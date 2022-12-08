@@ -20,7 +20,7 @@ class PieceArranger
     PieceMaker.set_of_piece_class_symbols.each do |piece_class_symbol|
       case piece_class_symbol
       when :pawn
-        place_pawns_on_respective_row(color, piece_class_symbol)
+        place_pawns_on_respective_rank(color, piece_class_symbol)
       when :queen
         board.place(new_piece(piece_class_symbol, color), queenside_coordinate_at(queenside_placement_index, color))
       when :king
@@ -34,7 +34,7 @@ class PieceArranger
     end
   end
   
-  def place_pawns_on_respective_row(color, piece_class_symbol)
+  def place_pawns_on_respective_rank(color, piece_class_symbol)
     case color
     when :white
       board.coordinates_at(rank_number: 2).each { |coordinate| board.place(new_piece(piece_class_symbol, color), coordinate) }

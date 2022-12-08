@@ -32,14 +32,6 @@ class Board
     coordinates.select { |coordinate| coordinate.rank == rank_number.to_s }
   end
 
-  def white_piece_here?
-    piece.white?
-  end
-
-  def black_piece_here?
-    piece.black?
-  end
-
   def pawn_on?(coordinate)
     square_on(coordinate).pawn_here?
   end

@@ -7,6 +7,8 @@ class Coordinate
     @rank = symbol[1]
 
     out_of_bounds_input_guards_for(file, rank)
+    
+    freeze
   end
 
   def self.file_to_number(file_letter)
@@ -34,6 +36,7 @@ class Coordinate
   end
 
   def hash
+    # This array exploits the attribute values of `self` to create a unique Array hash value which is the hash value that is returned and used
     array_of_values_hash
   end
 
