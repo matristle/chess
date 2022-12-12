@@ -1,9 +1,10 @@
-require_relative 'piece_arranger'
+require_relative 'move_validator'
 
 class Board
   def initialize(board_maker, piece_arranger)
     @board_maker    = board_maker
     @piece_arranger = piece_arranger
+    @move_validator = MoveValidator.new
     
     @structure = board_maker.make
   end
@@ -76,103 +77,18 @@ class Board
     square_on(coordinate).light?
   end
 
-  def move_piece(current_coordinate, destination_coordinate)
-    if square_on(current_coordinate).rook_here? || square_on(current_coordinate).knight_here? || square_on(current_coordinate).bishop_here?
-      unless rook_move?(current_coordinate, destination_coordinate) || knight_move?(current_coordinate, destination_coordinate)
-        raise "That piece can't move to #{destination_coordinate.symbol}" 
-      end
-    end
+  def move_piece(current_coordinate, destination_coordinate) 
+    invalid_move_error_message(destination_coordinate) unless move_validator.valid_move?(current_coordinate, destination_coordinate, self)
 
     square_on(current_coordinate).move_piece_to(destination_coordinate, self)
   end
 
   private
   
-  attr_reader :structure, :board_maker, :piece_arranger
+  attr_reader :structure, :board_maker, :piece_arranger, :move_validator
 
-  def rook_move?(current_coordinate, destination_coordinate)
-    same_file_or_rank?(current_coordinate, destination_coordinate)
-  end
-
-  def same_file_or_rank?(current_coordinate, destination_coordinate)
-    current_coordinate.file == destination_coordinate.file || current_coordinate.rank == destination_coordinate.rank
-  end
-
-  def knight_move?(current_coordinate, destination_coordinate)
-    two_up_one_right?(current_coordinate, destination_coordinate)   || one_up_two_right?(current_coordinate, destination_coordinate)   || two_up_one_left?(current_coordinate, destination_coordinate)   || one_up_two_left?(current_coordinate, destination_coordinate) ||
-    two_down_one_right?(current_coordinate, destination_coordinate) || one_down_two_right?(current_coordinate, destination_coordinate) || two_down_one_left?(current_coordinate, destination_coordinate) || one_down_two_left?(current_coordinate, destination_coordinate)
-  end
-
-  def two_up_one_right?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i + 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
-  end
-  
-  def one_up_two_right?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i + 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
-  end
-
-  def two_up_one_left?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i + 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
-  end
-
-  def one_up_two_left?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i + 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
-  end
-
-  def two_down_one_right?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i - 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
-  end
-
-  def one_down_two_right?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i - 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
-  end
-
-  def two_down_one_left?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i - 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
-  end
-
-  def one_down_two_left?(current_coordinate, destination_coordinate)
-    traversal_rank = (current_coordinate.rank.to_i - 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+  def invalid_move_error_message(destination_coordinate)
+    raise "That piece can't move to #{destination_coordinate.symbol}" 
   end
 
   def square_on(coordinate)

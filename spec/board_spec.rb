@@ -336,55 +336,82 @@ describe Board do
   end
   
   context 'moving rooks' do
-    it 'moves rook from f5 to f6 -- upwards on the same file' do
-      current_coordinate     = Coordinate.new(:f5)
-      destination_coordinate = Coordinate.new(:f6)
-      rook = Rook.new(:white)
-      board.place(rook, current_coordinate)
-      
-      board.move_piece(current_coordinate, destination_coordinate)
-      
-      expect(board).to_not have_a_rook_on current_coordinate
-      expect(board).to have_a_rook_on destination_coordinate
+    context 'when no interrupting pieces available' do
+      it 'moves rook from f5 to f6 -- upwards on the same file' do
+        current_coordinate     = Coordinate.new(:f5)
+        destination_coordinate = Coordinate.new(:f6)
+        rook = Rook.new(:white)
+        board.place(rook, current_coordinate)
+        
+        board.move_piece(current_coordinate, destination_coordinate)
+        
+        expect(board).to_not have_a_rook_on current_coordinate
+        expect(board).to have_a_rook_on destination_coordinate
+      end
+  
+      it 'moves rook from d4 to d2 -- downwards on the same file' do
+        current_coordinate     = Coordinate.new(:f5)
+        destination_coordinate = Coordinate.new(:f6)
+        rook = Rook.new(:white)
+        board.place(rook, current_coordinate)
+        
+        board.move_piece(current_coordinate, destination_coordinate)
+        
+        expect(board).to_not have_a_rook_on current_coordinate
+        expect(board).to have_a_rook_on destination_coordinate
+      end
+  
+      it 'moves rook from d3 to b3 -- leftwards on the same rank' do
+        current_coordinate     = Coordinate.new(:d3)
+        destination_coordinate = Coordinate.new(:b3)
+        rook = Rook.new(:black)
+        board.place(rook, current_coordinate)
+        
+        board.move_piece(current_coordinate, destination_coordinate)
+        
+        expect(board).to_not have_a_rook_on current_coordinate
+        expect(board).to have_a_rook_on destination_coordinate
+      end
+  
+      it 'moves rook from c5 to g5 -- rightwards on the same rank' do
+        current_coordinate     = Coordinate.new(:d3)
+        destination_coordinate = Coordinate.new(:b3)
+        rook = Rook.new(:black)
+        board.place(rook, current_coordinate)
+        
+        board.move_piece(current_coordinate, destination_coordinate)
+        
+        expect(board).to_not have_a_rook_on current_coordinate
+        expect(board).to have_a_rook_on destination_coordinate
+      end
     end
-
-    it 'moves rook from d4 to d2 -- downwards on the same file' do
-      current_coordinate     = Coordinate.new(:f5)
-      destination_coordinate = Coordinate.new(:f6)
-      rook = Rook.new(:white)
-      board.place(rook, current_coordinate)
-      
-      board.move_piece(current_coordinate, destination_coordinate)
-      
-      expect(board).to_not have_a_rook_on current_coordinate
-      expect(board).to have_a_rook_on destination_coordinate
-    end
-
-    it 'moves rook from d3 to b3 -- leftwards on the same rank' do
-      current_coordinate     = Coordinate.new(:d3)
-      destination_coordinate = Coordinate.new(:b3)
-      rook = Rook.new(:black)
-      board.place(rook, current_coordinate)
-      
-      board.move_piece(current_coordinate, destination_coordinate)
-      
-      expect(board).to_not have_a_rook_on current_coordinate
-      expect(board).to have_a_rook_on destination_coordinate
-    end
-
-    it 'moves rook from c5 to g5 -- rightwards on the same rank' do
-      current_coordinate     = Coordinate.new(:d3)
-      destination_coordinate = Coordinate.new(:b3)
-      rook = Rook.new(:black)
-      board.place(rook, current_coordinate)
-      
-      board.move_piece(current_coordinate, destination_coordinate)
-      
-      expect(board).to_not have_a_rook_on current_coordinate
-      expect(board).to have_a_rook_on destination_coordinate
-    end
-
     
+    xcontext 'when capturing another piece' do
+      it 'captures an enemy piece -- upwards on the same file' do
+        current_coordinate = Coordinate.new(:e5)
+        destination_coordinate = Coordinate.new(:e7)
+        capturing_rook = Rook.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_rook, current_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to have_a_rook_on destination_coordinate
+      end
+
+      it "doesn't capture an ally piece" do
+        current_coordinate = Coordinate.new(:e5)
+        destination_coordinate = Coordinate.new(:e7)
+        capturing_rook = Rook.new(:black)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_rook, current_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+
+        expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so it can't be captured")
+      end
+    end
+
     it "doesn't move rook from g6 to h7" do
       current_coordinate     = Coordinate.new(:g6)
       destination_coordinate = Coordinate.new(:h7)
@@ -524,12 +551,270 @@ describe Board do
       expect(board).to have_a_bishop_on destination_coordinate
     end
 
+    it 'moves a bishop from f5 to c8 -- moving along a top-left diagonal' do
+      current_coordinate     = Coordinate.new(:f5)
+      destination_coordinate = Coordinate.new(:c8)
+      bishop = Bishop.new(:black)
+      board.place(bishop, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_bishop_on current_coordinate
+      expect(board).to have_a_bishop_on destination_coordinate
+    end
+
+    it 'moves a bishop from e6 to g4 -- moving along a bottom-right diagonal' do
+      current_coordinate     = Coordinate.new(:e6)
+      destination_coordinate = Coordinate.new(:g4)
+      bishop = Bishop.new(:white)
+      board.place(bishop, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_bishop_on current_coordinate
+      expect(board).to have_a_bishop_on destination_coordinate
+    end
+
+    it 'moves a bishop from c7 to a5 -- moving along a bottom-left diagonal' do
+      current_coordinate     = Coordinate.new(:c7)
+      destination_coordinate = Coordinate.new(:a5)
+      bishop = Bishop.new(:black)
+      board.place(bishop, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_bishop_on current_coordinate
+      expect(board).to have_a_bishop_on destination_coordinate
+    end
+
     it "doesn't move a bishop from f1 to a5" do
       current_coordinate     = Coordinate.new(:f1)
       destination_coordinate = Coordinate.new(:a5)
       bishop = Bishop.new(:white)
       board.place(bishop, current_coordinate)
       
+      expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+    end
+  end
+
+  context 'moving queens' do
+    context 'rook-like behavior' do
+      it 'moves queen from c3 to c7 -- upwards on the same file' do
+        current_coordinate     = Coordinate.new(:c3)
+        destination_coordinate = Coordinate.new(:c7)
+        queen = Queen.new(:black)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+
+      it 'moves queen from b5 to b1 -- downwards on the same file' do
+        current_coordinate     = Coordinate.new(:b5)
+        destination_coordinate = Coordinate.new(:b1)
+        queen = Queen.new(:white)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+
+      it 'moves queen from f6 to c6 -- leftwards on the same rank' do
+        current_coordinate     = Coordinate.new(:f6)
+        destination_coordinate = Coordinate.new(:c6)
+        queen = Queen.new(:white)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+
+      it 'moves queen from e2 to g2 -- rightwards on the same rank' do
+        current_coordinate     = Coordinate.new(:e2)
+        destination_coordinate = Coordinate.new(:g2)
+        queen = Queen.new(:black)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+    end
+
+    context 'bishop-like behavior' do
+      it 'moves queen from d6 to f8 -- moving along a top-right diagonal' do
+        current_coordinate     = Coordinate.new(:d6)
+        destination_coordinate = Coordinate.new(:f8)
+        queen = Queen.new(:white)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+
+      it 'moves queen from e2 to c4 -- moving along a top-left diagonal' do
+        current_coordinate     = Coordinate.new(:e2)
+        destination_coordinate = Coordinate.new(:c4)
+        queen = Queen.new(:black)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+
+      it 'moves queen from c6 to g2 -- moving along a bottom-right diagonal' do
+        current_coordinate     = Coordinate.new(:c6)
+        destination_coordinate = Coordinate.new(:g2)
+        queen = Queen.new(:white)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+
+      it 'moves queen from g7 to a1 -- moving along a bottom-left diagonal' do
+        current_coordinate     = Coordinate.new(:g7)
+        destination_coordinate = Coordinate.new(:a1)
+        queen = Queen.new(:black)
+        board.place(queen, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_queen_on current_coordinate
+        expect(board).to have_a_queen_on destination_coordinate
+      end
+    end
+
+    it "doesn't move queen from d2 to g7" do
+      current_coordinate     = Coordinate.new(:d2)
+      destination_coordinate = Coordinate.new(:g7)
+      queen = Queen.new(:white)
+      board.place(queen, current_coordinate)
+
+      expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+    end
+  end
+
+  context 'moving kings' do
+    context 'rook-like behavior' do
+      it 'moves king from a6 to a7 -- upwards on the same file' do
+        current_coordinate     = Coordinate.new(:a6)
+        destination_coordinate = Coordinate.new(:a7)
+        king = King.new(:white)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+
+      it 'moves king from c6 to c5 -- downwards on the same file' do
+        current_coordinate     = Coordinate.new(:c6)
+        destination_coordinate = Coordinate.new(:c5)
+        king = King.new(:black)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+
+      it 'moves king from e7 to d7 -- leftwards on the same rank' do
+        current_coordinate     = Coordinate.new(:e7)
+        destination_coordinate = Coordinate.new(:d7)
+        king = King.new(:white)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+
+      it 'moves king from c3 to d3 -- rightwards on the same rank' do
+        current_coordinate     = Coordinate.new(:c3)
+        destination_coordinate = Coordinate.new(:d3)
+        king = King.new(:black)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+    end
+
+    context 'bishop-like behavior' do
+      it 'moves king from g2 to h3 -- moving along a top-right diagonal' do
+        current_coordinate     = Coordinate.new(:g2)
+        destination_coordinate = Coordinate.new(:h3)
+        king = King.new(:black)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+
+      it 'moves king from b5 to a6 -- moving along a top-left diagonal' do
+        current_coordinate     = Coordinate.new(:b5)
+        destination_coordinate = Coordinate.new(:a6)
+        king = King.new(:white)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+
+      it 'moves king from g7 to h6 -- moving along a bottom-right diagonal' do
+        current_coordinate = Coordinate.new(:g7)
+        destination_coordinate = Coordinate.new(:h6)
+        king = King.new(:black)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+
+      it 'moves king from f3 to e2 -- moving along a bottom-left diagonal' do
+        current_coordinate     = Coordinate.new(:f3)
+        destination_coordinate = Coordinate.new(:e2)
+        king = King.new(:black)
+        board.place(king, current_coordinate)
+
+        board.move_piece(current_coordinate, destination_coordinate)
+
+        expect(board).to_not have_a_king_on current_coordinate
+        expect(board).to have_a_king_on destination_coordinate
+      end
+    end
+
+    it "doesn't move king from g2 to c7" do
+      current_coordinate     = Coordinate.new(:g2)
+      destination_coordinate = Coordinate.new(:c7)
+      king = King.new(:black)
+      board.place(king, current_coordinate)
+
       expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
     end
   end
