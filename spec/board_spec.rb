@@ -510,4 +510,27 @@ describe Board do
       expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
     end
   end
+
+  context 'moving bishops' do
+    it 'moves a bishop from f1 to h3 -- moving along a top-right diagonal' do
+      current_coordinate     = Coordinate.new(:f1)
+      destination_coordinate = Coordinate.new(:h3)
+      bishop = Bishop.new(:white)
+      board.place(bishop, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_bishop_on current_coordinate
+      expect(board).to have_a_bishop_on destination_coordinate
+    end
+
+    it "doesn't move a bishop from f1 to a5" do
+      current_coordinate     = Coordinate.new(:f1)
+      destination_coordinate = Coordinate.new(:a5)
+      bishop = Bishop.new(:white)
+      board.place(bishop, current_coordinate)
+      
+      expect { board.move_piece(current_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+    end
+  end
 end

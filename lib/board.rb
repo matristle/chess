@@ -77,7 +77,7 @@ class Board
   end
 
   def move_piece(current_coordinate, destination_coordinate)
-    if square_on(current_coordinate).rook_here? || square_on(current_coordinate).knight_here?
+    if square_on(current_coordinate).rook_here? || square_on(current_coordinate).knight_here? || square_on(current_coordinate).bishop_here?
       unless rook_move?(current_coordinate, destination_coordinate) || knight_move?(current_coordinate, destination_coordinate)
         raise "That piece can't move to #{destination_coordinate.symbol}" 
       end
