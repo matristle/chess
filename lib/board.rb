@@ -78,7 +78,7 @@ class Board
 
   def move_piece(current_coordinate, destination_coordinate)
     if square_on(current_coordinate).rook_here? || square_on(current_coordinate).knight_here?
-      unless same_file_or_rank?(current_coordinate, destination_coordinate) || two_up_one_right?(current_coordinate, destination_coordinate)
+      unless rook_move?(current_coordinate, destination_coordinate) || knight_move?(current_coordinate, destination_coordinate)
         raise "That piece can't move to #{destination_coordinate.symbol}" 
       end
     end
@@ -89,14 +89,86 @@ class Board
   private
   
   attr_reader :structure, :board_maker, :piece_arranger
-  
+
+  def rook_move?(current_coordinate, destination_coordinate)
+    same_file_or_rank?(current_coordinate, destination_coordinate)
+  end
+
   def same_file_or_rank?(current_coordinate, destination_coordinate)
     current_coordinate.file == destination_coordinate.file || current_coordinate.rank == destination_coordinate.rank
   end
 
-  def  two_up_one_right?(current_coordinate, destination_coordinate)
+  def knight_move?(current_coordinate, destination_coordinate)
+    two_up_one_right?(current_coordinate, destination_coordinate)   || one_up_two_right?(current_coordinate, destination_coordinate)   || two_up_one_left?(current_coordinate, destination_coordinate)   || one_up_two_left?(current_coordinate, destination_coordinate) ||
+    two_down_one_right?(current_coordinate, destination_coordinate) || one_down_two_right?(current_coordinate, destination_coordinate) || two_down_one_left?(current_coordinate, destination_coordinate) || one_down_two_left?(current_coordinate, destination_coordinate)
+  end
+
+  def two_up_one_right?(current_coordinate, destination_coordinate)
     traversal_rank = (current_coordinate.rank.to_i + 2).to_s
     traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 1).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
+  end
+  
+  def one_up_two_right?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i + 1).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 2).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
+  end
+
+  def two_up_one_left?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i + 2).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 1).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
+  end
+
+  def one_up_two_left?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i + 1).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 2).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
+  end
+
+  def two_down_one_right?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i - 2).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 1).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
+  end
+
+  def one_down_two_right?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i - 1).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i + 2).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
+  end
+
+  def two_down_one_left?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i - 2).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 1).to_s
+    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
+    traversal_symbol = (traversal_file + traversal_rank).to_sym
+
+    traversal_symbol == destination_coordinate.symbol
+  end
+
+  def one_down_two_left?(current_coordinate, destination_coordinate)
+    traversal_rank = (current_coordinate.rank.to_i - 1).to_s
+    traversal_file_number = (Coordinate.file_to_number(current_coordinate.file).to_i - 2).to_s
     traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
     traversal_symbol = (traversal_file + traversal_rank).to_sym
 

@@ -335,46 +335,6 @@ describe Board do
     end
   end
   
-  
-  
-  xcontext 'freemoving pieces' do
-    it 'freemoves rook from a1 to a2' do
-      current_coordinate     = Coordinate.new(:a1)
-      destination_coordinate = Coordinate.new(:a2)
-      rook = Rook.new(:white)
-      board.place(rook, current_coordinate)
-      
-      board.move_piece(current_coordinate, destination_coordinate)
-      
-      expect(board).to_not have_a_rook_on current_coordinate
-      expect(board).to have_a_rook_on destination_coordinate
-    end
-    
-    it 'freemoves rook from b5 to h8' do
-      current_coordinate     = Coordinate.new(:b5)
-      destination_coordinate = Coordinate.new(:h8)
-      rook = Rook.new(:white)
-      board.place(rook, current_coordinate)
-      
-      board.move_piece(current_coordinate, destination_coordinate)
-      
-      expect(board).to_not have_a_rook_on current_coordinate
-      expect(board).to have_a_rook_on destination_coordinate
-    end
-    
-    it 'freemoves knight from g8 to b2' do
-      current_coordinate     = Coordinate.new(:g8)
-      destination_coordinate = Coordinate.new(:b2)
-      knight = Knight.new(:white)
-      board.place(knight, current_coordinate)
-      
-      board.move_piece(current_coordinate, destination_coordinate)
-  
-      expect(board).to_not have_a_knight_on current_coordinate
-      expect(board).to have_a_knight_on destination_coordinate
-    end
-  end
-
   context 'moving rooks' do
     it 'moves rook from f5 to f6 -- upwards on the same file' do
       current_coordinate     = Coordinate.new(:f5)
@@ -456,7 +416,91 @@ describe Board do
       expect(board).to_not have_a_knight_on current_coordinate
       expect(board).to have_a_knight_on destination_coordinate
     end
-    
+
+    it 'moves a knight from d4 to f5 -- making an upper-right wide L' do
+      current_coordinate     = Coordinate.new(:d4)
+      destination_coordinate = Coordinate.new(:f5)
+      knight = Knight.new(:white)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
+    end
+
+    it 'moves a knight from c5 to b7 -- making an upper-left narrow L' do
+      current_coordinate     = Coordinate.new(:c5)
+      destination_coordinate = Coordinate.new(:b7)
+      knight = Knight.new(:black)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
+    end
+
+    it 'moves a knight from d1 to b2 -- making an upper-left wide L' do
+      current_coordinate     = Coordinate.new(:d1)
+      destination_coordinate = Coordinate.new(:b2)
+      knight = Knight.new(:white)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
+    end
+
+    it 'moves a knight from d6 to e4 -- making a lower-right narrow L' do
+      current_coordinate     = Coordinate.new(:d6)
+      destination_coordinate = Coordinate.new(:e4)
+      knight = Knight.new(:black)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
+    end
+
+    it 'moves a knight from f3 to h2 -- making a lower-right wide L' do
+      current_coordinate     = Coordinate.new(:f3)
+      destination_coordinate = Coordinate.new(:h2)
+      knight = Knight.new(:white)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
+    end
+
+    it 'moves a knight from g6 to f4 -- making a lower-left narrow L' do
+      current_coordinate     = Coordinate.new(:g6)
+      destination_coordinate = Coordinate.new(:f4)
+      knight = Knight.new(:black)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
+    end
+
+    it 'moves a knight from c5 to a4 -- making a lower-left wide L' do 
+      current_coordinate     = Coordinate.new(:c5)
+      destination_coordinate = Coordinate.new(:a4)
+      knight = Knight.new(:white)
+      board.place(knight, current_coordinate)
+
+      board.move_piece(current_coordinate, destination_coordinate)
+
+      expect(board).to_not have_a_knight_on current_coordinate
+      expect(board).to have_a_knight_on destination_coordinate
+    end
+
     it "doesn't move a knight from d5 to a2" do
       current_coordinate     = Coordinate.new(:d5)
       destination_coordinate = Coordinate.new(:a2)
