@@ -80,6 +80,14 @@ class Square
     kick_out_piece
   end
   
+  def has_piece_with_diff_color_than?(other)
+    !has_piece_with_same_color_as? other
+  end
+
+  def has_piece_with_same_color_as?(other)
+    self.piece.same_color_as? other.piece
+  end
+  
   protected
   
   attr_reader :color, :piece, :status

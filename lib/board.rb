@@ -77,10 +77,16 @@ class Board
     square_on(coordinate).light?
   end
 
-  def move_piece(current_coordinate, destination_coordinate) 
-    invalid_move_error_message(destination_coordinate) unless move_validator.valid_move?(current_coordinate, destination_coordinate, self)
+  def same_piece_color_between?(initial_coordinate, destination_coordinate)
+    return false if square_on(initial_coordinate).empty? || square_on(destination_coordinate).empty?
 
-    square_on(current_coordinate).move_piece_to(destination_coordinate, self)
+    square_on(initial_coordinate).has_piece_with_same_color_as? square_on(destination_coordinate)
+  end
+
+  def move_piece(initial_coordinate, destination_coordinate) 
+    invalid_move_error_message(destination_coordinate) unless move_validator.valid_move?(initial_coordinate, destination_coordinate, self)
+
+    square_on(initial_coordinate).move_piece_to(destination_coordinate, self)
   end
 
   private

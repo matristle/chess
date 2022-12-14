@@ -13,7 +13,15 @@ class Piece
     color == :black
   end
 
-  private
+  def same_color_as?(other)
+    self.color == other.color
+  end
+
+  def different_color_from?(other)
+    !same_color_as?(other)
+  end
+
+  protected
 
   attr_reader :color
 

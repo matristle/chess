@@ -196,4 +196,22 @@ describe Square do
       expect(board).to have_a_rook_on g8
     end
   end
+
+  it 'can check if its occupant piece has the same color as another occupant piece on another square' do
+    first_square  = Square.new(color: :light)
+    second_square = Square.new(color: :dark)
+    first_square.host(Rook.new(:white))
+    second_square.host(Bishop.new(:white))
+
+    expect(first_square).to be_has_piece_with_same_color_as second_square
+  end
+
+  it 'can check if its occupant piece has a different color from another occupant piece on another square' do
+    first_square  = Square.new(color: :light)
+    second_square = Square.new(color: :dark)
+    first_square.host(Rook.new(:white))
+    second_square.host(Bishop.new(:black))
+
+    expect(first_square).to be_has_piece_with_diff_color_than second_square
+  end
 end
