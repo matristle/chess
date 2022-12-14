@@ -581,8 +581,133 @@ describe Board do
     end
 
     context 'when capturing another piece' do
-    end
+      it 'captures an enemy piece -- making an upper-right narrow L' do
+        initial_coordinate     = Coordinate.new(:c2)
+        destination_coordinate = Coordinate.new(:d4)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
 
+        board.move_piece(initial_coordinate, destination_coordinate)
+
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+
+      it 'captures an enemy piece -- making an upper-right wide L' do
+        initial_coordinate     = Coordinate.new(:e4)
+        destination_coordinate = Coordinate.new(:g5)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+  
+      it 'captures an enemy piece -- making an upper-left narrow L' do
+        initial_coordinate     = Coordinate.new(:b2)
+        destination_coordinate = Coordinate.new(:a4)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+  
+      it 'captures an enemy piece -- making an upper-left wide L' do
+        initial_coordinate     = Coordinate.new(:d5)
+        destination_coordinate = Coordinate.new(:b6)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+  
+      it 'captures an enemy piece -- making a lower-right narrow L' do
+        initial_coordinate     = Coordinate.new(:c3)
+        destination_coordinate = Coordinate.new(:d1)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+  
+      it 'captures an enemy piece -- making a lower-right wide L' do
+        initial_coordinate     = Coordinate.new(:e4)
+        destination_coordinate = Coordinate.new(:g3)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+  
+      it 'captures an enemy piece -- making a lower-left narrow L' do
+        initial_coordinate     = Coordinate.new(:c6)
+        destination_coordinate = Coordinate.new(:b4)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+  
+      it 'captures an enemy piece -- making a lower-left wide L' do
+        initial_coordinate     = Coordinate.new(:d8)
+        destination_coordinate = Coordinate.new(:b7)
+        capturing_knight = Knight.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to have_a_knight_on destination_coordinate
+      end
+
+      it "doesn't capture an ally piece" do
+        initial_coordinate     = Coordinate.new(:e5)
+        destination_coordinate = Coordinate.new(:e7)
+        capturing_knight = Knight.new(:black)
+        ally_knight = Knight.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(ally_knight, destination_coordinate)
+
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+      end
+
+      it "doesn't capture a king" do
+        initial_coordinate     = Coordinate.new(:a3)
+        destination_coordinate = Coordinate.new(:a7)
+        capturing_knight = Knight.new(:white)
+        uncaptureable_enemy_king = King.new(:black)
+        board.place(capturing_knight, initial_coordinate)
+        board.place(uncaptureable_enemy_king, destination_coordinate)
+        
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+      end
+    end
+    
     it "doesn't move a knight from d5 to a2" do
       initial_coordinate     = Coordinate.new(:d5)
       destination_coordinate = Coordinate.new(:a2)
@@ -594,52 +719,130 @@ describe Board do
   end
 
   context 'moving bishops' do
-    it 'moves a bishop from f1 to h3 -- moving along a top-right diagonal' do
-      initial_coordinate     = Coordinate.new(:f1)
-      destination_coordinate = Coordinate.new(:h3)
-      bishop = Bishop.new(:white)
-      board.place(bishop, initial_coordinate)
-
-      board.move_piece(initial_coordinate, destination_coordinate)
-
-      expect(board).to_not have_a_bishop_on initial_coordinate
-      expect(board).to have_a_bishop_on destination_coordinate
+    context 'without intervening pieces' do
+      it 'moves a bishop from f1 to h3 -- moving along a top-right diagonal' do
+        initial_coordinate     = Coordinate.new(:f1)
+        destination_coordinate = Coordinate.new(:h3)
+        bishop = Bishop.new(:white)
+        board.place(bishop, initial_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to_not have_a_bishop_on initial_coordinate
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
+  
+      it 'moves a bishop from f5 to c8 -- moving along a top-left diagonal' do
+        initial_coordinate     = Coordinate.new(:f5)
+        destination_coordinate = Coordinate.new(:c8)
+        bishop = Bishop.new(:black)
+        board.place(bishop, initial_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to_not have_a_bishop_on initial_coordinate
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
+  
+      it 'moves a bishop from e6 to g4 -- moving along a bottom-right diagonal' do
+        initial_coordinate     = Coordinate.new(:e6)
+        destination_coordinate = Coordinate.new(:g4)
+        bishop = Bishop.new(:white)
+        board.place(bishop, initial_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to_not have_a_bishop_on initial_coordinate
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
+  
+      it 'moves a bishop from c7 to a5 -- moving along a bottom-left diagonal' do
+        initial_coordinate     = Coordinate.new(:c7)
+        destination_coordinate = Coordinate.new(:a5)
+        bishop = Bishop.new(:black)
+        board.place(bishop, initial_coordinate)
+  
+        board.move_piece(initial_coordinate, destination_coordinate)
+  
+        expect(board).to_not have_a_bishop_on initial_coordinate
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
     end
 
-    it 'moves a bishop from f5 to c8 -- moving along a top-left diagonal' do
-      initial_coordinate     = Coordinate.new(:f5)
-      destination_coordinate = Coordinate.new(:c8)
-      bishop = Bishop.new(:black)
-      board.place(bishop, initial_coordinate)
+    context 'when capturing another piece' do
+      it 'captures an enemy piece -- moving along a top-right diagonal' do
+        initial_coordinate     = Coordinate.new(:e3)
+        destination_coordinate = Coordinate.new(:g5)
+        capturing_bishop = Bishop.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_bishop, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
 
-      board.move_piece(initial_coordinate, destination_coordinate)
+        board.move_piece(initial_coordinate, destination_coordinate)
 
-      expect(board).to_not have_a_bishop_on initial_coordinate
-      expect(board).to have_a_bishop_on destination_coordinate
-    end
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
 
-    it 'moves a bishop from e6 to g4 -- moving along a bottom-right diagonal' do
-      initial_coordinate     = Coordinate.new(:e6)
-      destination_coordinate = Coordinate.new(:g4)
-      bishop = Bishop.new(:white)
-      board.place(bishop, initial_coordinate)
+      it 'captures an enemy piece -- moving along a top-left diagonal' do
+        initial_coordinate     = Coordinate.new(:d2)
+        destination_coordinate = Coordinate.new(:a5)
+        capturing_bishop = Bishop.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_bishop, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
 
-      board.move_piece(initial_coordinate, destination_coordinate)
+        board.move_piece(initial_coordinate, destination_coordinate)
 
-      expect(board).to_not have_a_bishop_on initial_coordinate
-      expect(board).to have_a_bishop_on destination_coordinate
-    end
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
 
-    it 'moves a bishop from c7 to a5 -- moving along a bottom-left diagonal' do
-      initial_coordinate     = Coordinate.new(:c7)
-      destination_coordinate = Coordinate.new(:a5)
-      bishop = Bishop.new(:black)
-      board.place(bishop, initial_coordinate)
+      it 'captures an enemy piece -- moving along a bottom-right diagonal' do
+        initial_coordinate     = Coordinate.new(:c5)
+        destination_coordinate = Coordinate.new(:f2)
+        capturing_bishop = Bishop.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_bishop, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
 
-      board.move_piece(initial_coordinate, destination_coordinate)
+        board.move_piece(initial_coordinate, destination_coordinate)
 
-      expect(board).to_not have_a_bishop_on initial_coordinate
-      expect(board).to have_a_bishop_on destination_coordinate
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
+
+      it 'captures an enemy piece -- moving along a bottom-left diagonal' do
+        initial_coordinate     = Coordinate.new(:h6)
+        destination_coordinate = Coordinate.new(:c1)
+        capturing_bishop = Bishop.new(:white)
+        target_enemy_knight = Knight.new(:black)
+        board.place(capturing_bishop, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+
+        board.move_piece(initial_coordinate, destination_coordinate)
+
+        expect(board).to have_a_bishop_on destination_coordinate
+      end
+
+      it "doesn't capture an ally piece" do
+        initial_coordinate     = Coordinate.new(:e5)
+        destination_coordinate = Coordinate.new(:e7)
+        capturing_bishop = Bishop.new(:black)
+        ally_knight = Knight.new(:black)
+        board.place(capturing_bishop, initial_coordinate)
+        board.place(ally_knight, destination_coordinate)
+
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+      end
+
+      it "doesn't capture a king" do
+        initial_coordinate     = Coordinate.new(:a3)
+        destination_coordinate = Coordinate.new(:a7)
+        capturing_bishop = Bishop.new(:white)
+        uncaptureable_enemy_king = King.new(:black)
+        board.place(capturing_bishop, initial_coordinate)
+        board.place(uncaptureable_enemy_king, destination_coordinate)
+        
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+      end
     end
 
     it "doesn't move a bishop from f1 to a5" do
@@ -653,103 +856,237 @@ describe Board do
   end
 
   context 'moving queens' do
-    context 'rook-like behavior' do
-      it 'moves queen from c3 to c7 -- upwards on the same file' do
-        initial_coordinate     = Coordinate.new(:c3)
-        destination_coordinate = Coordinate.new(:c7)
-        queen = Queen.new(:black)
-        board.place(queen, initial_coordinate)
-
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
+    context 'without intervening pieces' do
+      context 'rook-like behavior' do
+        it 'moves queen from c3 to c7 -- upwards on the same file' do
+          initial_coordinate     = Coordinate.new(:c3)
+          destination_coordinate = Coordinate.new(:c7)
+          queen = Queen.new(:black)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'moves queen from b5 to b1 -- downwards on the same file' do
+          initial_coordinate     = Coordinate.new(:b5)
+          destination_coordinate = Coordinate.new(:b1)
+          queen = Queen.new(:white)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'moves queen from f6 to c6 -- leftwards on the same rank' do
+          initial_coordinate     = Coordinate.new(:f6)
+          destination_coordinate = Coordinate.new(:c6)
+          queen = Queen.new(:white)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'moves queen from e2 to g2 -- rightwards on the same rank' do
+          initial_coordinate     = Coordinate.new(:e2)
+          destination_coordinate = Coordinate.new(:g2)
+          queen = Queen.new(:black)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
       end
-
-      it 'moves queen from b5 to b1 -- downwards on the same file' do
-        initial_coordinate     = Coordinate.new(:b5)
-        destination_coordinate = Coordinate.new(:b1)
-        queen = Queen.new(:white)
-        board.place(queen, initial_coordinate)
-
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
-      end
-
-      it 'moves queen from f6 to c6 -- leftwards on the same rank' do
-        initial_coordinate     = Coordinate.new(:f6)
-        destination_coordinate = Coordinate.new(:c6)
-        queen = Queen.new(:white)
-        board.place(queen, initial_coordinate)
-
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
-      end
-
-      it 'moves queen from e2 to g2 -- rightwards on the same rank' do
-        initial_coordinate     = Coordinate.new(:e2)
-        destination_coordinate = Coordinate.new(:g2)
-        queen = Queen.new(:black)
-        board.place(queen, initial_coordinate)
-
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
+  
+      context 'bishop-like behavior' do
+        it 'moves queen from d6 to f8 -- moving along a top-right diagonal' do
+          initial_coordinate     = Coordinate.new(:d6)
+          destination_coordinate = Coordinate.new(:f8)
+          queen = Queen.new(:white)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'moves queen from e2 to c4 -- moving along a top-left diagonal' do
+          initial_coordinate     = Coordinate.new(:e2)
+          destination_coordinate = Coordinate.new(:c4)
+          queen = Queen.new(:black)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'moves queen from c6 to g2 -- moving along a bottom-right diagonal' do
+          initial_coordinate     = Coordinate.new(:c6)
+          destination_coordinate = Coordinate.new(:g2)
+          queen = Queen.new(:white)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'moves queen from g7 to a1 -- moving along a bottom-left diagonal' do
+          initial_coordinate     = Coordinate.new(:g7)
+          destination_coordinate = Coordinate.new(:a1)
+          queen = Queen.new(:black)
+          board.place(queen, initial_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to_not have_a_queen_on initial_coordinate
+          expect(board).to have_a_queen_on destination_coordinate
+        end
       end
     end
 
-    context 'bishop-like behavior' do
-      it 'moves queen from d6 to f8 -- moving along a top-right diagonal' do
-        initial_coordinate     = Coordinate.new(:d6)
-        destination_coordinate = Coordinate.new(:f8)
-        queen = Queen.new(:white)
-        board.place(queen, initial_coordinate)
-
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
+    context 'when capturing another piece' do
+      context 'rook-like behavior' do
+        it 'captures an enemy piece -- upwards on the same file' do
+          initial_coordinate     = Coordinate.new(:e5)
+          destination_coordinate = Coordinate.new(:e7)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'captures an enemy piece -- downwards on the same file' do
+          initial_coordinate     = Coordinate.new(:g3)
+          destination_coordinate = Coordinate.new(:g1)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'captures an enemy piece -- leftwards on the same rank' do
+          initial_coordinate     = Coordinate.new(:c6)
+          destination_coordinate = Coordinate.new(:a6)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'captures an enemy piece -- rightwards on the same rank' do
+          initial_coordinate     = Coordinate.new(:f1)
+          destination_coordinate = Coordinate.new(:h1)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
       end
 
-      it 'moves queen from e2 to c4 -- moving along a top-left diagonal' do
-        initial_coordinate     = Coordinate.new(:e2)
-        destination_coordinate = Coordinate.new(:c4)
-        queen = Queen.new(:black)
-        board.place(queen, initial_coordinate)
-
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
+      context 'bishop-like behavior' do
+        it 'captures an enemy piece -- moving along a top-right diagonal' do
+          initial_coordinate     = Coordinate.new(:e3)
+          destination_coordinate = Coordinate.new(:g5)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'captures an enemy piece -- moving along a top-left diagonal' do
+          initial_coordinate     = Coordinate.new(:d2)
+          destination_coordinate = Coordinate.new(:a5)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'captures an enemy piece -- moving along a bottom-right diagonal' do
+          initial_coordinate     = Coordinate.new(:c5)
+          destination_coordinate = Coordinate.new(:f2)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
+  
+        it 'captures an enemy piece -- moving along a bottom-left diagonal' do
+          initial_coordinate     = Coordinate.new(:h6)
+          destination_coordinate = Coordinate.new(:c1)
+          capturing_queen = Queen.new(:white)
+          target_enemy_knight = Knight.new(:black)
+          board.place(capturing_queen, initial_coordinate)
+          board.place(target_enemy_knight, destination_coordinate)
+  
+          board.move_piece(initial_coordinate, destination_coordinate)
+  
+          expect(board).to have_a_queen_on destination_coordinate
+        end
       end
 
-      it 'moves queen from c6 to g2 -- moving along a bottom-right diagonal' do
-        initial_coordinate     = Coordinate.new(:c6)
-        destination_coordinate = Coordinate.new(:g2)
-        queen = Queen.new(:white)
-        board.place(queen, initial_coordinate)
+      it "doesn't capture an ally piece" do
+        initial_coordinate     = Coordinate.new(:e5)
+        destination_coordinate = Coordinate.new(:e7)
+        capturing_queen = Queen.new(:black)
+        ally_knight = Knight.new(:black)
+        board.place(capturing_queen, initial_coordinate)
+        board.place(ally_knight, destination_coordinate)
 
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
       end
 
-      it 'moves queen from g7 to a1 -- moving along a bottom-left diagonal' do
-        initial_coordinate     = Coordinate.new(:g7)
-        destination_coordinate = Coordinate.new(:a1)
-        queen = Queen.new(:black)
-        board.place(queen, initial_coordinate)
-
-        board.move_piece(initial_coordinate, destination_coordinate)
-
-        expect(board).to_not have_a_queen_on initial_coordinate
-        expect(board).to have_a_queen_on destination_coordinate
+      it "doesn't capture a king" do
+        initial_coordinate     = Coordinate.new(:a3)
+        destination_coordinate = Coordinate.new(:a7)
+        capturing_queen = Queen.new(:white)
+        uncaptureable_enemy_king = King.new(:black)
+        board.place(capturing_queen, initial_coordinate)
+        board.place(uncaptureable_enemy_king, destination_coordinate)
+        
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
       end
     end
 
