@@ -1,6 +1,6 @@
 class MoveValidator
   def valid_move?(initial_coordinate, destination_coordinate, board)
-    if board.same_piece_color_between?(initial_coordinate, destination_coordinate) || board.king_on?(destination_coordinate)
+    if board.same_piece_color_on?(initial_coordinate, destination_coordinate) || board.king_on?(destination_coordinate)
       raise "The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it"
     end
 

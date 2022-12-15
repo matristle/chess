@@ -1335,6 +1335,20 @@ describe Board do
       end
     end
     
+    context "when moving an enemy piece's moveset" do
+      it "doesn't work -- enemy piece being a rook -- on destination coordinate rank" do
+        initial_coordinate     = Coordinate.new(:d3)
+        destination_coordinate = Coordinate.new(:d4)
+        guarding_rook_coordinate = Coordinate.new(:b4)
+        moving_king = King.new(:white)
+        guarding_rook = Rook.new(:black)
+        board.place(moving_king, initial_coordinate)
+        board.place(guarding_rook, guarding_rook_coordinate)
+
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+      end
+    end
+    
     it "doesn't move king from g2 to c7" do
       initial_coordinate     = Coordinate.new(:g2)
       destination_coordinate = Coordinate.new(:c7)

@@ -77,7 +77,7 @@ class Board
     square_on(coordinate).light?
   end
 
-  def same_piece_color_between?(initial_coordinate, destination_coordinate)
+  def same_piece_color_on?(initial_coordinate, destination_coordinate)
     return false if square_on(initial_coordinate).empty? || square_on(destination_coordinate).empty?
 
     square_on(initial_coordinate).has_piece_with_same_color_as? square_on(destination_coordinate)

@@ -202,6 +202,8 @@ describe Square do
     second_square = Square.new(color: :dark)
     first_square.host(Rook.new(:white))
     second_square.host(Bishop.new(:white))
+    
+    # TODO: make helper methods for methods similar to be_has_*
 
     expect(first_square).to be_has_piece_with_same_color_as second_square
   end
