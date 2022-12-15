@@ -336,7 +336,7 @@ describe Board do
   end
   
   context 'moving rooks' do
-    context 'without intervening pieces' do
+    context 'without any other piece on the board' do
       it 'moves rook from f5 to f6 -- upwards on the same file' do
         initial_coordinate     = Coordinate.new(:f5)
         destination_coordinate = Coordinate.new(:f6)
@@ -460,6 +460,20 @@ describe Board do
         
         expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
       end
+
+      it "doesn't capture when there's an intervening piece between the move" do
+        initial_coordinate     = Coordinate.new(:e5)
+        destination_coordinate = Coordinate.new(:e8)
+        intervening_bishop_coordinate = Coordinate.new(:e7)
+        capturing_rook = Rook.new(:black)
+        target_enemy_knight = Knight.new(:white)
+        intervening_bishop = Bishop.new(:white)
+        board.place(capturing_rook, initial_coordinate)
+        board.place(target_enemy_knight, destination_coordinate)
+        board.place(intervening_bishop, intervening_bishop_coordinate)
+
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The move is invalid since there's an intervening piece on #{intervening_bishop_coordinate.symbol} between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}")
+      end
     end
 
     it "doesn't move rook from g6 to h7" do
@@ -482,7 +496,7 @@ describe Board do
   end
 
   context 'moving knights' do
-    context 'without intervening pieces' do
+    context 'without any other piece on the board' do
       it 'moves a knight from b6 to c8 -- making an upper-right narrow L' do
         initial_coordinate     = Coordinate.new(:b6)
         destination_coordinate = Coordinate.new(:c8)
@@ -719,7 +733,7 @@ describe Board do
   end
 
   context 'moving bishops' do
-    context 'without intervening pieces' do
+    context 'without any other piece on the board' do
       it 'moves a bishop from f1 to h3 -- moving along a top-right diagonal' do
         initial_coordinate     = Coordinate.new(:f1)
         destination_coordinate = Coordinate.new(:h3)
@@ -856,7 +870,7 @@ describe Board do
   end
 
   context 'moving queens' do
-    context 'without intervening pieces' do
+    context 'without any other piece on the board' do
       context 'rook-like behavior' do
         it 'moves queen from c3 to c7 -- upwards on the same file' do
           initial_coordinate     = Coordinate.new(:c3)
@@ -1101,7 +1115,7 @@ describe Board do
   end
 
   context 'moving kings' do
-    context 'without intervening pieces' do
+    context 'without any other piece on the board' do
       context 'rook-like behavior' do
         it 'moves king from a6 to a7 -- upwards on the same file' do
           initial_coordinate     = Coordinate.new(:a6)
@@ -1335,8 +1349,8 @@ describe Board do
       end
     end
     
-    context "when moving an enemy piece's moveset" do
-      it "doesn't work -- enemy piece being a rook -- on destination coordinate rank" do
+    xcontext "when moving an enemy piece's moveset" do
+      it "raises an error -- enemy piece being a rook -- on destination coordinate rank" do
         initial_coordinate     = Coordinate.new(:d3)
         destination_coordinate = Coordinate.new(:d4)
         guarding_rook_coordinate = Coordinate.new(:b4)
