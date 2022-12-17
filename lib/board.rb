@@ -1,10 +1,8 @@
-require_relative 'move_validator'
-
 class Board
-  def initialize(board_maker, piece_arranger)
+  def initialize(board_maker:, piece_arranger:, move_validator:)
     @board_maker    = board_maker
     @piece_arranger = piece_arranger
-    @move_validator = MoveValidator.new
+    @move_validator = move_validator
     
     @structure = board_maker.make
   end
@@ -31,6 +29,10 @@ class Board
 
   def coordinates_at(rank_number:)
     coordinates.select { |coordinate| coordinate.rank == rank_number.to_s }
+  end
+
+  def piece_on?(coordinate)
+    square_on(coordinate).occupied?
   end
 
   def pawn_on?(coordinate)
@@ -89,6 +91,37 @@ class Board
     square_on(initial_coordinate).move_piece_to(destination_coordinate, self)
   end
 
+  def coordinate_references_at(file: nil, rank: nil)
+    if file
+      coordinates.select { |coordinate| coordinate.file == file }
+    elsif rank 
+      coordinates.select { |coordinate| coordinate.rank == rank } 
+    end
+  end
+
+  def diagonal_coordinates_between(initial_coordinate, destination_coordinate)
+    file_number_difference = Coordinate.file_to_number(destination_coordinate.file).to_i - Coordinate.file_to_number(initial_coordinate.file).to_i
+    rank_number_difference = destination_coordinate.rank.to_i - initial_coordinate.rank.to_i 
+
+    file_traversal = file_number_difference.positive? ? 1 : -1
+    rank_traversal = rank_number_difference.positive? ? 1 : -1
+
+    traversal_coordinate = initial_coordinate
+    result = []
+
+    until traversal_coordinate == destination_coordinate
+      result << traversal_coordinate
+
+      file_number = Coordinate.file_to_number(traversal_coordinate.file).to_i + file_traversal
+      file = Coordinate.number_to_file(file_number)
+      rank = (traversal_coordinate.rank.to_i + rank_traversal).to_s
+
+      traversal_coordinate_symbol = (file + rank).to_sym
+      traversal_coordinate = Coordinate.new(traversal_coordinate_symbol)
+    end
+
+    result
+  end
   private
   
   attr_reader :structure, :board_maker, :piece_arranger, :move_validator
@@ -100,7 +133,7 @@ class Board
   def square_on(coordinate)
     structure[coordinate]
   end
-  
+
   def coordinates
     structure.keys
   end

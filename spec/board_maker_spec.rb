@@ -7,8 +7,9 @@ describe BoardMaker do
 
   subject(:board_maker) { BoardMaker.new }
 
-  let(:board)          { Board.new(board_maker, piece_arranger) }
+  let(:board)          { Board.new(board_maker:, piece_arranger:, move_validator:) }
   let(:piece_arranger) { PieceArranger.new }
+  let(:move_validator) { MoveValidator.new }
 
   context 'when board is made' do
     it 'has a dark square on a1' do

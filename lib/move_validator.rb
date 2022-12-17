@@ -4,6 +4,10 @@ class MoveValidator
       raise "The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it"
     end
 
+    if any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)
+      raise "The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}"
+    end
+
     if board.rook_on? initial_coordinate
       return false unless rook_move?(initial_coordinate, destination_coordinate)
       
@@ -27,7 +31,36 @@ class MoveValidator
     end
   end
 
+  def any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)
+    if rook_move?(initial_coordinate, destination_coordinate)
+      traversal_coordinates = []
+
+      if same_rank?(initial_coordinate, destination_coordinate)
+        traversal_coordinates = board.coordinate_references_at(rank: initial_coordinate.rank)
+      else
+        traversal_coordinates = board.coordinate_references_at(file: initial_coordinate.file)
+      end
+
+      discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)
+      
+      traversal_coordinates.each { |traversal_coordinate| return true if board.piece_on? traversal_coordinate }
+    elsif bishop_move?(initial_coordinate, destination_coordinate)
+      traversal_coordinates = board.diagonal_coordinates_between(initial_coordinate, destination_coordinate)
+      discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)
+
+      traversal_coordinates.each { |traversal_coordinate| return true if board.piece_on? traversal_coordinate }
+    end
+
+
+
+    false
+  end
+
   private
+
+  def discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)
+    traversal_coordinates.reject! { |coordinate| coordinate == initial_coordinate || coordinate == destination_coordinate }
+  end
 
   def king_move?(initial_coordinate, destination_coordinate)
     queen_move?(initial_coordinate, destination_coordinate) && one_step?(initial_coordinate, destination_coordinate)
@@ -49,7 +82,15 @@ class MoveValidator
   end
 
   def same_file_or_rank?(initial_coordinate, destination_coordinate)
-    initial_coordinate.file == destination_coordinate.file || initial_coordinate.rank == destination_coordinate.rank
+    same_file?(initial_coordinate, destination_coordinate) || same_rank?(initial_coordinate, destination_coordinate)
+  end
+
+  def same_file?(initial_coordinate, destination_coordinate)
+    initial_coordinate.file == destination_coordinate.file
+  end
+
+  def same_rank?(initial_coordinate, destination_coordinate)
+    initial_coordinate.rank == destination_coordinate.rank
   end
 
   def knight_move?(initial_coordinate, destination_coordinate)

@@ -9,10 +9,11 @@ require_relative '../lib/knight'
 describe Board do
   include CustomMatchers
 
-  subject(:board) { Board.new(board_maker, piece_arranger) }
+  subject(:board) { Board.new(board_maker:, piece_arranger:, move_validator:) }
 
   let(:board_maker)    { BoardMaker.new }
   let(:piece_arranger) { PieceArranger.new }
+  let(:move_validator) { MoveValidator.new }
   
   context 'when created' do
     it 'is empty' do
@@ -472,7 +473,7 @@ describe Board do
         board.place(target_enemy_knight, destination_coordinate)
         board.place(intervening_bishop, intervening_bishop_coordinate)
 
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The move is invalid since there's an intervening piece on #{intervening_bishop_coordinate.symbol} between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}")
       end
     end
 

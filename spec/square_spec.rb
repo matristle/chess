@@ -182,10 +182,12 @@ describe Square do
   end
 
   context 'when passed a board' do
+    let(:board) { Board.new(board_maker:, piece_arranger:, move_validator:) }
+      let(:board_maker)    { BoardMaker.new }
+      let(:piece_arranger) { PieceArranger.new }
+      let(:move_validator) { MoveValidator.new }
+
     it 'passes its occupant piece to g8 square' do
-      board_maker    = BoardMaker.new
-      piece_arranger = PieceArranger.new
-      board = Board.new(board_maker, piece_arranger)
       square = Square.new(color: :dark)
       rook = Rook.new(:black)
       square.host(rook)
