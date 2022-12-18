@@ -2,6 +2,7 @@ require_relative 'custom_matchers'
 require_relative '../lib/board'
 require_relative '../lib/board_maker'
 require_relative '../lib/piece_arranger'
+require_relative '../lib/move_validator'
 require_relative '../lib/rook'
 require_relative '../lib/knight'
 
@@ -1338,7 +1339,7 @@ describe Board do
         expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
       end
 
-      it "doesn't capture a king" do
+      it "doesn't capture an enemy king" do
         initial_coordinate     = Coordinate.new(:a3)
         destination_coordinate = Coordinate.new(:a4)
         capturing_king = King.new(:white)
@@ -1350,18 +1351,21 @@ describe Board do
       end
     end
     
-    xcontext "when moving an enemy piece's moveset" do
-      it "raises an error -- enemy piece being a rook -- on destination coordinate rank" do
-        initial_coordinate     = Coordinate.new(:d3)
-        destination_coordinate = Coordinate.new(:d4)
-        guarding_rook_coordinate = Coordinate.new(:b4)
-        moving_king = King.new(:white)
-        guarding_rook = Rook.new(:black)
-        board.place(moving_king, initial_coordinate)
-        board.place(guarding_rook, guarding_rook_coordinate)
-
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+    context "when moving an enemy piece's moveset" do
+      context 'rook moveset' do
+        it "raises an error when a rook is holding the rank from the queenside" do
+          initial_coordinate     = Coordinate.new(:d3)
+          destination_coordinate = Coordinate.new(:d4)
+          guarding_rook_coordinate = Coordinate.new(:b4)
+          moving_king = King.new(:white)
+          guarding_rook = Rook.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
       end
+      
     end
     
     it "doesn't move king from g2 to c7" do

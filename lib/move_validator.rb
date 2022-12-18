@@ -8,6 +8,12 @@ class MoveValidator
       raise "The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}"
     end
 
+    if king_move?(initial_coordinate, destination_coordinate)
+      if guarding_pieces_on?(destination_coordinate, board)
+        raise "The king can't move into an opponent's piece moveset"
+      end   
+    end
+
     if board.rook_on? initial_coordinate
       return false unless rook_move?(initial_coordinate, destination_coordinate)
       
@@ -51,12 +57,27 @@ class MoveValidator
       traversal_coordinates.each { |traversal_coordinate| return true if board.piece_on? traversal_coordinate }
     end
 
-
-
     false
   end
 
   private
+
+  def guarding_pieces_on?(destination_coordinate, board)
+    destination_rank = board.coordinate_references_at(rank: destination_coordinate.rank)
+    leftside_rank = destination_rank[0..3].reverse
+
+    found_piece_coordinate_index = leftside_rank.index { |coordinate| board.piece_on? coordinate }
+
+    if found_piece_coordinate_index
+      found_piece_coordinate = leftside_rank[found_piece_coordinate_index] 
+
+      if board.rook_on? found_piece_coordinate
+        return true
+      end
+    end
+
+    false
+  end
 
   def discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)
     traversal_coordinates.reject! { |coordinate| coordinate == initial_coordinate || coordinate == destination_coordinate }

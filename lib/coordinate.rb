@@ -36,7 +36,7 @@ class Coordinate
   end
 
   def hash
-    # this exploits the attribute values of `self` to create a unique Array hash value which is the hash value that is returned and used
+    # exploits the attribute values of `self` to create a unique Array hash value which is the hash value that is returned and used
     array_of_values_hash
   end
 
