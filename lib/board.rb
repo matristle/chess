@@ -99,6 +99,54 @@ class Board
     end
   end
 
+  def top_right_diagonal_references_from(starting_coordinate)
+    diagonal = []
+    current_coordinate = starting_coordinate
+
+    while current_coordinate
+      current_coordinate = current_coordinate.change_coordinate_by(file_amount: 1, rank_amount: 1)
+      diagonal << current_coordinate
+    end
+
+    diagonal
+  end
+
+  def top_left_diagonal_references_from(starting_coordinate)
+    diagonal = []
+    current_coordinate = starting_coordinate
+
+    while current_coordinate
+      current_coordinate = current_coordinate.change_coordinate_by(file_amount: -1, rank_amount: 1)
+      diagonal << current_coordinate
+    end
+
+    diagonal
+  end
+
+  def bottom_right_diagonal_references_from(starting_coordinate)
+    diagonal = []
+    current_coordinate = starting_coordinate
+
+    while current_coordinate
+      current_coordinate = current_coordinate.change_coordinate_by(file_amount: 1, rank_amount: -1)
+      diagonal << current_coordinate
+    end
+
+    diagonal
+  end
+
+  def bottom_left_diagonal_references_from(starting_coordinate)
+    diagonal = []
+    current_coordinate = starting_coordinate
+
+    while current_coordinate
+      current_coordinate = current_coordinate.change_coordinate_by(file_amount: -1, rank_amount: -1)
+      diagonal << current_coordinate
+    end
+
+    diagonal
+  end
+
   def diagonal_coordinates_between(initial_coordinate, destination_coordinate)
     file_number_difference = Coordinate.file_to_number(destination_coordinate.file).to_i - Coordinate.file_to_number(initial_coordinate.file).to_i
     rank_number_difference = destination_coordinate.rank.to_i - initial_coordinate.rank.to_i 
@@ -122,6 +170,7 @@ class Board
 
     result
   end
+
   private
   
   attr_reader :structure, :board_maker, :piece_arranger, :move_validator

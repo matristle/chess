@@ -1351,9 +1351,9 @@ describe Board do
       end
     end
     
-    context "when moving an enemy piece's moveset" do
+    context "when moving into an enemy piece's moveset" do
       context 'rook moveset' do
-        it "raises an error when a rook is holding the rank from the queenside" do
+        it "raises an error when a rook is holding the rank from the left side" do
           initial_coordinate     = Coordinate.new(:d3)
           destination_coordinate = Coordinate.new(:d4)
           guarding_rook_coordinate = Coordinate.new(:b4)
@@ -1364,8 +1364,93 @@ describe Board do
   
           expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
         end
+
+        it "raises an error when a rook is holding the rank from the right side" do
+          initial_coordinate     = Coordinate.new(:d3)
+          destination_coordinate = Coordinate.new(:d4)
+          guarding_rook_coordinate = Coordinate.new(:h4)
+          moving_king = King.new(:white)
+          guarding_rook = Rook.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
+
+        it "raises an error when a rook is holding the file from upwards" do
+          initial_coordinate     = Coordinate.new(:e5)
+          destination_coordinate = Coordinate.new(:f5)
+          guarding_rook_coordinate = Coordinate.new(:f7)
+          moving_king = King.new(:white)
+          guarding_rook = Rook.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
+
+        it "raises an error when a rook is holding the file from downwards" do
+          initial_coordinate     = Coordinate.new(:b6)
+          destination_coordinate = Coordinate.new(:c6)
+          guarding_rook_coordinate = Coordinate.new(:c1)
+          moving_king = King.new(:white)
+          guarding_rook = Rook.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
       end
       
+      context 'bishop moveset' do
+        it "raises an error when a bishop is holding the square from top right diagonal" do
+          initial_coordinate     = Coordinate.new(:e1)
+          destination_coordinate = Coordinate.new(:e2)
+          guarding_rook_coordinate = Coordinate.new(:g4)
+          moving_king = King.new(:white)
+          guarding_rook = Bishop.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
+
+        it "raises an error when a bishop is holding the square from top left diagonal" do
+          initial_coordinate     = Coordinate.new(:g4)
+          destination_coordinate = Coordinate.new(:g5)
+          guarding_rook_coordinate = Coordinate.new(:d8)
+          moving_king = King.new(:white)
+          guarding_rook = Bishop.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
+
+        it "raises an error when a bishop is holding the square from bottom right diagonal" do
+          initial_coordinate     = Coordinate.new(:b5)
+          destination_coordinate = Coordinate.new(:b6)
+          guarding_rook_coordinate = Coordinate.new(:e3)
+          moving_king = King.new(:white)
+          guarding_rook = Bishop.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
+
+        it "raises an error when a bishop is holding the square from bottom left diagonal" do
+          initial_coordinate     = Coordinate.new(:f6)
+          destination_coordinate = Coordinate.new(:f7)
+          guarding_rook_coordinate = Coordinate.new(:d5)
+          moving_king = King.new(:white)
+          guarding_rook = Bishop.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(guarding_rook, guarding_rook_coordinate)
+  
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+        end
+      end
     end
     
     it "doesn't move king from g2 to c7" do

@@ -8,8 +8,8 @@ class MoveValidator
       raise "The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}"
     end
 
-    if king_move?(initial_coordinate, destination_coordinate)
-      if guarding_pieces_on?(destination_coordinate, board)
+    if board.king_on?(initial_coordinate)
+      if guarding_piece_on?(destination_coordinate, board)
         raise "The king can't move into an opponent's piece moveset"
       end   
     end
@@ -62,18 +62,108 @@ class MoveValidator
 
   private
 
-  def guarding_pieces_on?(destination_coordinate, board)
+  def guarding_piece_on?(destination_coordinate, board)
+    guarding_piece_on_file_or_rank?(destination_coordinate, board) || guarding_piece_on_diagonals?(destination_coordinate, board)
+  end
+  
+  def guarding_piece_on_file_or_rank?(destination_coordinate, board)
+    guarding_piece_on_file?(destination_coordinate, board) || guarding_piece_on_rank?(destination_coordinate, board)
+  end
+
+  def guarding_piece_on_file?(destination_coordinate, board)
+    destination_file = board.coordinate_references_at(file: destination_coordinate.file)
+    split_point_index = destination_file.index(destination_coordinate)
+    leftside_file, rightside_file = destination_file[0...split_point_index], destination_file[split_point_index+1..-1]
+
+    found_piece_coordinate_index = leftside_file.index { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = leftside_file[found_piece_coordinate_index] if found_piece_coordinate_index
+
+    unless found_piece_coordinate_index
+      found_piece_coordinate_index = rightside_file.index { |coordinate| board.piece_on? coordinate }
+
+      found_piece_coordinate = rightside_file[found_piece_coordinate_index] if found_piece_coordinate_index
+    end
+
+    if found_piece_coordinate_index 
+      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    end
+
+    false
+  end
+
+  def guarding_piece_on_rank?(destination_coordinate, board)
     destination_rank = board.coordinate_references_at(rank: destination_coordinate.rank)
-    leftside_rank = destination_rank[0..3].reverse
+    leftside_rank = destination_rank[0...destination_coordinate.rank.to_i]
+    rightside_rank  = destination_rank[destination_coordinate.rank.to_i+1..-1]
 
     found_piece_coordinate_index = leftside_rank.index { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = leftside_rank[found_piece_coordinate_index] if found_piece_coordinate_index
 
-    if found_piece_coordinate_index
-      found_piece_coordinate = leftside_rank[found_piece_coordinate_index] 
+    unless found_piece_coordinate_index
+      found_piece_coordinate_index = rightside_rank.index { |coordinate| board.piece_on? coordinate }
 
-      if board.rook_on? found_piece_coordinate
-        return true
-      end
+      found_piece_coordinate = rightside_rank[found_piece_coordinate_index] if found_piece_coordinate_index
+    end
+
+    if found_piece_coordinate_index 
+      return true if board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    end
+
+    false
+  end
+
+  def guarding_piece_on_diagonals?(destination_coordinate, board)
+    guarding_piece_on_top_right_diagonal?(destination_coordinate, board)    || guarding_piece_on_top_left_diagonal?(destination_coordinate, board) ||
+    guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board) || guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board)
+  end
+
+  def guarding_piece_on_top_right_diagonal?(destination_coordinate, board)
+    top_right_diagonal = board.top_right_diagonal_references_from(destination_coordinate)
+
+    found_piece_coordinate_index = top_right_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = top_right_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
+
+    if found_piece_coordinate_index 
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    end
+
+    false
+  end
+
+  def guarding_piece_on_top_left_diagonal?(destination_coordinate, board)
+    top_left_diagonal = board.top_left_diagonal_references_from(destination_coordinate)
+
+    found_piece_coordinate_index = top_left_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = top_left_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
+
+    if found_piece_coordinate_index 
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    end
+
+    false
+  end
+
+  def guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board)
+    bottom_right_diagonal = board.bottom_right_diagonal_references_from(destination_coordinate)
+
+    found_piece_coordinate_index = bottom_right_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = bottom_right_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
+
+    if found_piece_coordinate_index 
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    end
+
+    false
+  end
+
+  def guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board)
+    bottom_left_diagonal = board.bottom_left_diagonal_references_from(destination_coordinate)
+
+    found_piece_coordinate_index = bottom_left_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = bottom_left_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
+
+    if found_piece_coordinate_index 
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
     end
 
     false
@@ -88,10 +178,7 @@ class MoveValidator
   end
 
   def one_step?(initial_coordinate, destination_coordinate)
-    initial_coordinate_file_number     = Coordinate.file_to_number(initial_coordinate.file)
-    destination_coordinate_file_number = Coordinate.file_to_number(destination_coordinate.file)
-
-    (destination_coordinate_file_number.to_i - initial_coordinate_file_number.to_i).abs == 1 || (destination_coordinate.rank.to_i - initial_coordinate.rank.to_i).abs == 1
+    Coordinate.file_difference(initial_coordinate.file, destination_coordinate.file).abs == 1 || Coordinate.rank_difference(initial_coordinate.rank, destination_coordinate.rank).abs == 1
   end
 
   def queen_move?(initial_coordinate, destination_coordinate)
@@ -128,82 +215,54 @@ class MoveValidator
   end
 
   def same_number_of_file_and_rank_steps?(initial_coordinate, destination_coordinate)
-    initial_coordinate_file_number     = Coordinate.file_to_number(initial_coordinate.file)
-    destination_coordinate_file_number = Coordinate.file_to_number(destination_coordinate.file)
-
-
-    (destination_coordinate_file_number.to_i - initial_coordinate_file_number.to_i).abs == (destination_coordinate.rank.to_i - initial_coordinate.rank.to_i).abs
+    Coordinate.file_difference(initial_coordinate.file, destination_coordinate.file).abs == Coordinate.rank_difference(initial_coordinate.rank, destination_coordinate.rank).abs
   end
 
   def two_up_one_right?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i + 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i + 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: 1, rank_amount: 2)
+ 
+    traversal_coordinate == destination_coordinate
   end
   
   def one_up_two_right?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i + 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i + 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: 2, rank_amount: 1)
+ 
+    traversal_coordinate == destination_coordinate
   end
 
   def two_up_one_left?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i + 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i - 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: -1, rank_amount: 2)
+ 
+    traversal_coordinate == destination_coordinate
   end
 
   def one_up_two_left?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i + 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i - 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: -2, rank_amount: 1)
+ 
+    traversal_coordinate == destination_coordinate
   end
 
   def two_down_one_right?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i - 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i + 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: 1, rank_amount: -2)
+ 
+    traversal_coordinate == destination_coordinate
   end
 
   def one_down_two_right?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i - 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i + 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: 2, rank_amount: -1)
+ 
+    traversal_coordinate == destination_coordinate
   end
 
   def two_down_one_left?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i - 2).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i - 1).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: -1, rank_amount: -2)
+ 
+    traversal_coordinate == destination_coordinate
   end
 
   def one_down_two_left?(initial_coordinate, destination_coordinate)
-    traversal_rank = (initial_coordinate.rank.to_i - 1).to_s
-    traversal_file_number = (Coordinate.file_to_number(initial_coordinate.file).to_i - 2).to_s
-    traversal_file = Coordinate.number_to_file(traversal_file_number).to_s
-    traversal_symbol = (traversal_file + traversal_rank).to_sym
-
-    traversal_symbol == destination_coordinate.symbol
+    traversal_coordinate = initial_coordinate.change_coordinate_by(file_amount: -2, rank_amount: -1)
+ 
+    traversal_coordinate == destination_coordinate
   end
 end

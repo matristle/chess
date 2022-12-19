@@ -11,6 +11,24 @@ class Coordinate
     freeze
   end
 
+  def self.file_difference(file, other)
+    file_number       = file_to_number(file).to_i
+    other_file_number = file_to_number(other).to_i
+
+    file_number - other_file_number
+  end
+
+  def self.rank_difference(rank_number, other)
+    rank_number.to_i - other.to_i
+  end
+
+  def change_coordinate_by(file_amount: , rank_amount:)
+    changed_file = self.class.number_to_file(self.class.file_to_number(self.file).to_i + file_amount)
+    changed_rank = (self.rank.to_i + rank_amount).to_s
+
+    self.class.new((changed_file + changed_rank).to_sym) if changed_file.between?('a', 'h') && changed_rank.between?('1', '8')
+  end
+
   def self.file_to_number(file_letter)
     file_to_number_mapping[file_letter.to_sym].to_s
   end

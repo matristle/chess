@@ -19,11 +19,24 @@ class PieceMaker
     PIECE_CLASSES[piece_class_symbol].new(color)
   end
 
+  def make(piece_class_symbol, color)
+    PIECE_CLASSES[piece_class_symbol].new(color)
+  end
+  
+
   def self.set_of_piece_class_symbols
     PIECE_CLASSES.keys
   end
 
+  def set_of_piece_class_symbols
+    PIECE_CLASSES.keys
+  end
+
   def self.piece_classes
+    PIECE_CLASSES.values
+  end
+
+  def piece_classes
     PIECE_CLASSES.values
   end
 end
