@@ -1,79 +1,82 @@
 class MoveValidator
   def valid_move?(initial_coordinate, destination_coordinate, board)
-    if board.same_piece_color_on?(initial_coordinate, destination_coordinate) || board.king_on?(destination_coordinate)
-      raise "The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it"
-    end
-
-    if any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)
-      raise "The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}"
-    end
-
-    if board.king_on?(initial_coordinate)
-      if guarding_piece_on?(destination_coordinate, board)
-        raise "The king can't move into an opponent's piece moveset"
-      end   
-    end
-
-    if board.rook_on? initial_coordinate
-      return false unless rook_move?(initial_coordinate, destination_coordinate)
-      
-      true
-    elsif board.knight_on? initial_coordinate
-      return false unless knight_move?(initial_coordinate, destination_coordinate)
-      
-      true
-    elsif board.bishop_on? initial_coordinate
-      return false unless bishop_move?(initial_coordinate, destination_coordinate)
-      
-      true
-    elsif board.queen_on? initial_coordinate
-      return false unless queen_move?(initial_coordinate, destination_coordinate)
-      
-      true
-    elsif board.king_on? initial_coordinate 
-      return false unless king_move?(initial_coordinate, destination_coordinate)
-      
-      true
-    end
+    check_for_imminent_captured_king_on(destination_coordinate, board)
+    check_for_imminent_ally_piece_capturing_from(initial_coordinate, destination_coordinate, board)
+    check_for_intervening_pieces_between(initial_coordinate, destination_coordinate, board)
+    check_validity_based_on_piece(initial_coordinate, destination_coordinate, board)
   end
 
   def any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)
-    if rook_move?(initial_coordinate, destination_coordinate)
-      traversal_coordinates = []
+    return false if one_step?(initial_coordinate, destination_coordinate)
 
-      if same_rank?(initial_coordinate, destination_coordinate)
-        traversal_coordinates = board.coordinate_references_at(rank: initial_coordinate.rank)
-      else
-        traversal_coordinates = board.coordinate_references_at(file: initial_coordinate.file)
-      end
-
-      discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)
-      
-      traversal_coordinates.each { |traversal_coordinate| return true if board.piece_on? traversal_coordinate }
-    elsif bishop_move?(initial_coordinate, destination_coordinate)
-      traversal_coordinates = board.diagonal_coordinates_between(initial_coordinate, destination_coordinate)
-      discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)
-
-      traversal_coordinates.each { |traversal_coordinate| return true if board.piece_on? traversal_coordinate }
-    end
-
-    false
+    traversal_coordinates(initial_coordinate, destination_coordinate, board).any? { |traversal_coordinate| board.piece_on? traversal_coordinate }
   end
 
   private
 
-  def guarding_piece_on?(destination_coordinate, board)
-    guarding_piece_on_file_or_rank?(destination_coordinate, board) || guarding_piece_on_diagonals?(destination_coordinate, board)
-  end
-  
-  def guarding_piece_on_file_or_rank?(destination_coordinate, board)
-    guarding_piece_on_file?(destination_coordinate, board) || guarding_piece_on_rank?(destination_coordinate, board)
+  def check_validity_based_on_piece(initial_coordinate, destination_coordinate, board)
+    if board.rook_on?(initial_coordinate)
+      return rook_move?(initial_coordinate, destination_coordinate)
+    elsif board.knight_on?(initial_coordinate)
+      return knight_move?(initial_coordinate, destination_coordinate)
+    elsif board.bishop_on?(initial_coordinate)
+      return bishop_move?(initial_coordinate, destination_coordinate)
+    elsif board.queen_on?(initial_coordinate)
+      return queen_move?(initial_coordinate, destination_coordinate)
+    elsif board.king_on?(initial_coordinate) 
+      check_for_guarding_piece_on(destination_coordinate, board, initial_coordinate)
+      return king_move?(initial_coordinate, destination_coordinate)
+    end
   end
 
-  def guarding_piece_on_file?(destination_coordinate, board)
+  def traversal_coordinates(initial_coordinate, destination_coordinate, board)
+    if rook_move?(initial_coordinate, destination_coordinate)
+      if same_rank?(initial_coordinate, destination_coordinate)
+        result = board.coordinate_references_at(rank: initial_coordinate.rank)
+      else
+        result = board.coordinate_references_at(file: initial_coordinate.file)
+      end
+
+      discard_boundary_coordinates(result, initial_coordinate, destination_coordinate)
+    elsif bishop_move?(initial_coordinate, destination_coordinate)
+      result = board.diagonal_coordinates_between(initial_coordinate, destination_coordinate)
+      discard_boundary_coordinates(result, initial_coordinate, destination_coordinate)
+    else
+      result = []
+    end
+  end
+
+  def check_for_imminent_captured_king_on(destination_coordinate, board)
+    raise "The king can't be captured/replaced" if board.king_on? destination_coordinate
+  end
+
+  def check_for_imminent_ally_piece_capturing_from(initial_coordinate, destination_coordinate, board)
+    raise "The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it" if board.same_piece_color_on?(initial_coordinate, destination_coordinate)
+  end
+
+  def check_for_intervening_pieces_between(initial_coordinate, destination_coordinate, board)
+    raise "The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}" if any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)
+  end
+
+  def check_for_guarding_piece_on(destination_coordinate, board, initial_coordinate)
+    raise "The king can't move into an opponent's piece moveset" if guarding_piece_on?(destination_coordinate, board, initial_coordinate)
+  end
+
+  def guarding_piece_on?(destination_coordinate, board, initial_coordinate)
+    guarding_piece_on_file_or_rank?(destination_coordinate, board, initial_coordinate) || guarding_piece_on_diagonals?(destination_coordinate, board, initial_coordinate) ||
+    guarding_knight_on(destination_coordinate, board, initial_coordinate)
+  end
+  
+  def guarding_piece_on_file_or_rank?(destination_coordinate, board, initial_coordinate)
+    guarding_piece_on_file?(destination_coordinate, board, initial_coordinate) || guarding_piece_on_rank?(destination_coordinate, board, initial_coordinate) 
+  end
+
+  def guarding_piece_on_file?(destination_coordinate, board, initial_coordinate)
     destination_file = board.coordinate_references_at(file: destination_coordinate.file)
     split_point_index = destination_file.index(destination_coordinate)
     leftside_file, rightside_file = destination_file[0...split_point_index], destination_file[split_point_index+1..-1]
+    leftside_file.delete(initial_coordinate)
+    rightside_file.delete(initial_coordinate)
 
     found_piece_coordinate_index = leftside_file.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = leftside_file[found_piece_coordinate_index] if found_piece_coordinate_index
@@ -84,17 +87,20 @@ class MoveValidator
       found_piece_coordinate = rightside_file[found_piece_coordinate_index] if found_piece_coordinate_index
     end
 
-    if found_piece_coordinate_index 
-      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    if found_piece_coordinate && found_piece_coordinate != initial_coordinate 
+      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
 
     false
   end
 
-  def guarding_piece_on_rank?(destination_coordinate, board)
+  def guarding_piece_on_rank?(destination_coordinate, board, initial_coordinate)
     destination_rank = board.coordinate_references_at(rank: destination_coordinate.rank)
-    leftside_rank = destination_rank[0...destination_coordinate.rank.to_i]
-    rightside_rank  = destination_rank[destination_coordinate.rank.to_i+1..-1]
+    split_point_index = destination_coordinate.rank.to_i - 1
+    leftside_rank, rightside_rank = destination_rank[0...split_point_index], destination_rank[split_point_index+1..-1]
+    leftside_rank.delete(initial_coordinate)
+    rightside_rank.delete(initial_coordinate)
+
 
     found_piece_coordinate_index = leftside_rank.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = leftside_rank[found_piece_coordinate_index] if found_piece_coordinate_index
@@ -105,65 +111,79 @@ class MoveValidator
       found_piece_coordinate = rightside_rank[found_piece_coordinate_index] if found_piece_coordinate_index
     end
 
-    if found_piece_coordinate_index 
-      return true if board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    if found_piece_coordinate && found_piece_coordinate != initial_coordinate
+      return true if board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
 
     false
   end
 
-  def guarding_piece_on_diagonals?(destination_coordinate, board)
-    guarding_piece_on_top_right_diagonal?(destination_coordinate, board)    || guarding_piece_on_top_left_diagonal?(destination_coordinate, board) ||
-    guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board) || guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board)
+  def guarding_piece_on_diagonals?(destination_coordinate, board, initial_coordinate)
+    guarding_piece_on_top_right_diagonal?(destination_coordinate, board, initial_coordinate)    || guarding_piece_on_top_left_diagonal?(destination_coordinate, board, initial_coordinate) ||
+    guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board, initial_coordinate) || guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board, initial_coordinate)
   end
 
-  def guarding_piece_on_top_right_diagonal?(destination_coordinate, board)
+  def guarding_piece_on_top_right_diagonal?(destination_coordinate, board, initial_coordinate)
     top_right_diagonal = board.top_right_diagonal_references_from(destination_coordinate)
 
     found_piece_coordinate_index = top_right_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = top_right_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
 
-    if found_piece_coordinate_index 
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    if found_piece_coordinate && found_piece_coordinate != initial_coordinate
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
 
     false
   end
 
-  def guarding_piece_on_top_left_diagonal?(destination_coordinate, board)
+  def guarding_piece_on_top_left_diagonal?(destination_coordinate, board, initial_coordinate)
     top_left_diagonal = board.top_left_diagonal_references_from(destination_coordinate)
 
     found_piece_coordinate_index = top_left_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = top_left_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
 
-    if found_piece_coordinate_index 
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    if found_piece_coordinate && found_piece_coordinate != initial_coordinate
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
 
     false
   end
 
-  def guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board)
+  def guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board, initial_coordinate)
     bottom_right_diagonal = board.bottom_right_diagonal_references_from(destination_coordinate)
 
     found_piece_coordinate_index = bottom_right_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = bottom_right_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
 
-    if found_piece_coordinate_index 
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    if found_piece_coordinate && found_piece_coordinate != initial_coordinate
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
 
     false
   end
 
-  def guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board)
+  def guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board, initial_coordinate)
     bottom_left_diagonal = board.bottom_left_diagonal_references_from(destination_coordinate)
 
     found_piece_coordinate_index = bottom_left_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = bottom_left_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
 
-    if found_piece_coordinate_index 
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate)
+    if found_piece_coordinate && found_piece_coordinate != initial_coordinate
+      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+    end
+
+    false
+  end
+
+  def guarding_knight_on(destination_coordinate, board, initial_coordinate)
+    l_shapes = board.l_shape_coordinates_from(destination_coordinate).compact
+
+    found_piece_coordinate_index = l_shapes.index { |coordinate| board.piece_on? coordinate }
+    
+    if found_piece_coordinate_index
+      found_piece_coordinate = l_shapes[found_piece_coordinate_index]
+      
+      return true if board.knight_on?(found_piece_coordinate)
     end
 
     false

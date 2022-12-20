@@ -147,12 +147,20 @@ class Board
     diagonal
   end
 
+  def l_shape_coordinates_from(starting_coordinate)
+    l_shape_variations.inject([]) { |result, l_shape_variation| result << starting_coordinate.change_coordinate_by(file_amount: l_shape_variation[0], rank_amount: l_shape_variation[1]) }
+  end
+
+  def l_shape_variations
+    [ [1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1] ]
+  end
+
   def diagonal_coordinates_between(initial_coordinate, destination_coordinate)
     file_number_difference = Coordinate.file_to_number(destination_coordinate.file).to_i - Coordinate.file_to_number(initial_coordinate.file).to_i
     rank_number_difference = destination_coordinate.rank.to_i - initial_coordinate.rank.to_i 
 
-    file_traversal = file_number_difference.positive? ? 1 : -1
-    rank_traversal = rank_number_difference.positive? ? 1 : -1
+    file_traversal_amount = file_number_difference.positive? ? 1 : -1
+    rank_traversal_amount = rank_number_difference.positive? ? 1 : -1
 
     traversal_coordinate = initial_coordinate
     result = []
@@ -160,12 +168,7 @@ class Board
     until traversal_coordinate == destination_coordinate
       result << traversal_coordinate
 
-      file_number = Coordinate.file_to_number(traversal_coordinate.file).to_i + file_traversal
-      file = Coordinate.number_to_file(file_number)
-      rank = (traversal_coordinate.rank.to_i + rank_traversal).to_s
-
-      traversal_coordinate_symbol = (file + rank).to_sym
-      traversal_coordinate = Coordinate.new(traversal_coordinate_symbol)
+      traversal_coordinate = traversal_coordinate.change_coordinate_by(file_amount: file_traversal_amount, rank_amount: rank_traversal_amount)
     end
 
     result
