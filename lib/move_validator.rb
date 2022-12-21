@@ -87,8 +87,10 @@ class MoveValidator
       found_piece_coordinate = rightside_file[found_piece_coordinate_index] if found_piece_coordinate_index
     end
 
-    if found_piece_coordinate && found_piece_coordinate != initial_coordinate 
-      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+    if found_piece_coordinate && found_piece_coordinate != initial_coordinate
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+
+      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate) 
     end
 
     false
@@ -112,80 +114,91 @@ class MoveValidator
     end
 
     if found_piece_coordinate && found_piece_coordinate != initial_coordinate
-      return true if board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+      
+      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-
+    
     false
   end
-
+  
   def guarding_piece_on_diagonals?(destination_coordinate, board, initial_coordinate)
     guarding_piece_on_top_right_diagonal?(destination_coordinate, board, initial_coordinate)    || guarding_piece_on_top_left_diagonal?(destination_coordinate, board, initial_coordinate) ||
     guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board, initial_coordinate) || guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board, initial_coordinate)
   end
-
+  
   def guarding_piece_on_top_right_diagonal?(destination_coordinate, board, initial_coordinate)
     top_right_diagonal = board.top_right_diagonal_references_from(destination_coordinate)
-
+    
     found_piece_coordinate_index = top_right_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = top_right_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
-
+    
     if found_piece_coordinate && found_piece_coordinate != initial_coordinate
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+      
+      return board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-
+    
     false
   end
-
+  
   def guarding_piece_on_top_left_diagonal?(destination_coordinate, board, initial_coordinate)
     top_left_diagonal = board.top_left_diagonal_references_from(destination_coordinate)
-
+    
     found_piece_coordinate_index = top_left_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = top_left_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
-
+    
     if found_piece_coordinate && found_piece_coordinate != initial_coordinate
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+      
       return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-
+    
     false
   end
-
+  
   def guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board, initial_coordinate)
     bottom_right_diagonal = board.bottom_right_diagonal_references_from(destination_coordinate)
-
+    
     found_piece_coordinate_index = bottom_right_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = bottom_right_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
-
+    
     if found_piece_coordinate && found_piece_coordinate != initial_coordinate
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+      
+      return board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-
+    
     false
   end
-
+  
   def guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board, initial_coordinate)
     bottom_left_diagonal = board.bottom_left_diagonal_references_from(destination_coordinate)
-
+    
     found_piece_coordinate_index = bottom_left_diagonal.compact.index { |coordinate| board.piece_on? coordinate }
     found_piece_coordinate = bottom_left_diagonal[found_piece_coordinate_index] if found_piece_coordinate_index
-
+    
     if found_piece_coordinate && found_piece_coordinate != initial_coordinate
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+      
+      return board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-
+    
     false
   end
-
+  
   def guarding_knight_on(destination_coordinate, board, initial_coordinate)
     l_shapes = board.l_shape_coordinates_from(destination_coordinate).compact
-
+    
     found_piece_coordinate_index = l_shapes.index { |coordinate| board.piece_on? coordinate }
     
     if found_piece_coordinate_index
       found_piece_coordinate = l_shapes[found_piece_coordinate_index]
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
-      return true if board.knight_on?(found_piece_coordinate)
+      return board.knight_on?(found_piece_coordinate)
     end
-
+    
     false
   end
 

@@ -1353,6 +1353,68 @@ describe Board do
     
     context "when moving into an enemy piece's moveset" do
       context 'rook moveset' do
+        context 'when guarding pieces are allies' do
+          it 'can move king from c2 to b2 if guarding piece from the top is an ally' do
+            initial_coordinate     = Coordinate.new(:c2)
+            destination_coordinate = Coordinate.new(:b2)
+            guarding_ally_rook_coordinate = Coordinate.new(:b5)
+            moving_king = King.new(:black)
+            guarding_ally_rook = Rook.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_rook, guarding_ally_rook_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from e6 to f7 if guarding piece from the bottom is an ally' do
+            initial_coordinate     = Coordinate.new(:e6)
+            destination_coordinate = Coordinate.new(:f7)
+            guarding_ally_rook_coordinate = Coordinate.new(:f1)
+            moving_king = King.new(:black)
+            guarding_ally_rook = Rook.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_rook, guarding_ally_rook_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from c5 to d4 if guarding piece from the left is an ally' do
+            initial_coordinate     = Coordinate.new(:c5)
+            destination_coordinate = Coordinate.new(:d4)
+            guarding_ally_rook_coordinate = Coordinate.new(:a4)
+            moving_king = King.new(:black)
+            guarding_ally_rook = Rook.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_rook, guarding_ally_rook_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from d7 to d6 if guarding piece from the right is an ally' do
+            initial_coordinate     = Coordinate.new(:d7)
+            destination_coordinate = Coordinate.new(:d6)
+            guarding_ally_rook_coordinate = Coordinate.new(:h6)
+            moving_king = King.new(:black)
+            guarding_ally_rook = Rook.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_rook, guarding_ally_rook_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+        end
+
         it "raises an error when a rook is holding the rank from the left side" do
           initial_coordinate     = Coordinate.new(:d3)
           destination_coordinate = Coordinate.new(:d4)
@@ -1403,6 +1465,68 @@ describe Board do
       end
       
       context 'bishop moveset' do
+        context 'when guarding pieces are allies' do
+          it 'can move king from c2 to b2 if guarding piece from the top-right diagonal is an ally' do
+            initial_coordinate     = Coordinate.new(:c2)
+            destination_coordinate = Coordinate.new(:b2)
+            guarding_ally_bishop_coordinate = Coordinate.new(:g7)
+            moving_king = King.new(:black)
+            guarding_ally_bishop = Bishop.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_bishop, guarding_ally_bishop_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from g1 to h1 if guarding piece from the top-left diagonal is an ally' do
+            initial_coordinate     = Coordinate.new(:g1)
+            destination_coordinate = Coordinate.new(:h1)
+            guarding_ally_bishop_coordinate = Coordinate.new(:d5)
+            moving_king = King.new(:black)
+            guarding_ally_bishop = Bishop.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_bishop, guarding_ally_bishop_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from a8 to a7 if guarding piece from the bottom-right diagonal is an ally' do
+            initial_coordinate     = Coordinate.new(:a8)
+            destination_coordinate = Coordinate.new(:a7)
+            guarding_ally_bishop_coordinate = Coordinate.new(:e3)
+            capturing_king = King.new(:black)
+            guarding_ally_bishop = Bishop.new(:black)
+            board.place(capturing_king, initial_coordinate)
+            board.place(guarding_ally_bishop, guarding_ally_bishop_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from g4 to h4 if guarding piece from the bottom-left diagonal is an ally' do
+            initial_coordinate     = Coordinate.new(:g4)
+            destination_coordinate = Coordinate.new(:h4)
+            guarding_ally_bishop_coordinate = Coordinate.new(:f2)
+            capturing_king = King.new(:black)
+            guarding_ally_bishop = Bishop.new(:black)
+            board.place(capturing_king, initial_coordinate)
+            board.place(guarding_ally_bishop, guarding_ally_bishop_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+        end
+
         it "raises an error when a bishop is holding the square from top right diagonal" do
           initial_coordinate     = Coordinate.new(:e1)
           destination_coordinate = Coordinate.new(:e2)
@@ -1453,6 +1577,132 @@ describe Board do
       end
 
       context 'queen moveset' do
+        context 'when guarding pieces are allies' do
+          context 'rook-like moveset' do
+            it 'can move king from c2 to b2 if guarding piece from the top-right diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:c2)
+              destination_coordinate = Coordinate.new(:b2)
+              guarding_ally_queen_coordinate = Coordinate.new(:g7)
+              moving_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(moving_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+  
+            it 'can move king from g1 to h1 if guarding piece from the top-left diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:g1)
+              destination_coordinate = Coordinate.new(:h1)
+              guarding_ally_queen_coordinate = Coordinate.new(:d5)
+              moving_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(moving_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+  
+            it 'can move king from a8 to a7 if guarding piece from the bottom-right diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:a8)
+              destination_coordinate = Coordinate.new(:a7)
+              guarding_ally_queen_coordinate = Coordinate.new(:e3)
+              capturing_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(capturing_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+  
+            it 'can move king from g4 to h4 if guarding piece from the bottom-left diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:g4)
+              destination_coordinate = Coordinate.new(:h4)
+              guarding_ally_queen_coordinate = Coordinate.new(:f2)
+              capturing_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(capturing_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+          end
+
+          context 'bishop-like moveset' do
+            it 'can move king from c2 to b2 if guarding piece from the top-right diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:c2)
+              destination_coordinate = Coordinate.new(:b2)
+              guarding_ally_queen_coordinate = Coordinate.new(:g7)
+              moving_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(moving_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+  
+            it 'can move king from g1 to h1 if guarding piece from the top-left diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:g1)
+              destination_coordinate = Coordinate.new(:h1)
+              guarding_ally_queen_coordinate = Coordinate.new(:d5)
+              moving_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(moving_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+  
+            it 'can move king from a8 to a7 if guarding piece from the bottom-right diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:a8)
+              destination_coordinate = Coordinate.new(:a7)
+              guarding_ally_queen_coordinate = Coordinate.new(:e3)
+              capturing_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(capturing_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+  
+            it 'can move king from g4 to h4 if guarding piece from the bottom-left diagonal is an ally' do
+              initial_coordinate     = Coordinate.new(:g4)
+              destination_coordinate = Coordinate.new(:h4)
+              guarding_ally_queen_coordinate = Coordinate.new(:f2)
+              capturing_king = King.new(:black)
+              guarding_ally_queen = Queen.new(:black)
+              board.place(capturing_king, initial_coordinate)
+              board.place(guarding_ally_queen, guarding_ally_queen_coordinate)
+      
+              board.move_piece(initial_coordinate, destination_coordinate)
+      
+              expect(board).to_not have_a_king_on initial_coordinate
+              expect(board).to have_a_king_on destination_coordinate  
+            end
+          end
+        end
+
         context 'rook-like moveset' do
           it "raises an error when a queen is holding the rank from the left side" do
             initial_coordinate     = Coordinate.new(:d3)
@@ -1657,6 +1907,128 @@ describe Board do
       end
 
       context 'knight moveset' do
+        context 'when guarding pieces are allies' do
+          it 'can move king from a5 to b5 if guarding piece from upper-right narrow L is an ally' do
+            initial_coordinate     = Coordinate.new(:a5)
+            destination_coordinate = Coordinate.new(:b5)
+            guarding_ally_knight_coordinate = Coordinate.new(:c7)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from f4 to e5 if guarding piece from upper-right wide L is an ally' do
+            initial_coordinate     = Coordinate.new(:f4)
+            destination_coordinate = Coordinate.new(:e5)
+            guarding_ally_knight_coordinate = Coordinate.new(:d7)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from d2 to d3 if guarding piece from upper-left narrow L is an ally' do
+            initial_coordinate     = Coordinate.new(:d2)
+            destination_coordinate = Coordinate.new(:d3)
+            guarding_ally_knight_coordinate = Coordinate.new(:c5)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from g5 to f4 if guarding piece from upper-left wide L is an ally' do
+            initial_coordinate     = Coordinate.new(:g5)
+            destination_coordinate = Coordinate.new(:f4)
+            guarding_ally_knight_coordinate = Coordinate.new(:d5)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from d6 to c7 if guarding piece from lower-right narrow L is an ally' do
+            initial_coordinate     = Coordinate.new(:d6)
+            destination_coordinate = Coordinate.new(:c7)
+            guarding_ally_knight_coordinate = Coordinate.new(:d5)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from b3 to c4 if guarding piece from lower-right wide L is an ally' do
+            initial_coordinate     = Coordinate.new(:b3)
+            destination_coordinate = Coordinate.new(:c4)
+            guarding_ally_knight_coordinate = Coordinate.new(:e3)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from f5 to f4 if guarding piece from lower-left narrow L is an ally' do
+            initial_coordinate     = Coordinate.new(:f5)
+            destination_coordinate = Coordinate.new(:f4)
+            guarding_ally_knight_coordinate = Coordinate.new(:e2)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+
+          it 'can move king from e4 to d3 if guarding piece from lower-left wide L is an ally' do
+            initial_coordinate     = Coordinate.new(:e4)
+            destination_coordinate = Coordinate.new(:d3)
+            guarding_ally_knight_coordinate = Coordinate.new(:b2)
+            moving_king = King.new(:black)
+            guarding_ally_knight = Knight.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_ally_knight, guarding_ally_knight_coordinate)
+    
+            board.move_piece(initial_coordinate, destination_coordinate)
+    
+            expect(board).to_not have_a_king_on initial_coordinate
+            expect(board).to have_a_king_on destination_coordinate  
+          end
+        end
+
         it "raises an error when a knight is holding the square from an upper-right narrow L" do
           initial_coordinate     = Coordinate.new(:e3)
           destination_coordinate = Coordinate.new(:d4)
