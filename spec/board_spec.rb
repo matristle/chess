@@ -2124,4 +2124,24 @@ describe Board do
       expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
     end
   end
+
+  context 'castling' do
+    context 'when all castling criteria are met' do
+      it 'can short castle white king' do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:g1)
+        rook_initial_coordinate      = Coordinate.new(:h1)
+        rook_destination_coordinate  = Coordinate.new(:f1)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+
+        expect(board).to have_a_king_on king_destination_coordinate
+        expect(board).to have_a_rook_on rook_destination_coordinate
+      end
+    end
+  end
 end

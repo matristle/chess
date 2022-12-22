@@ -37,10 +37,10 @@ class MoveValidator
         result = board.coordinate_references_at(file: initial_coordinate.file)
       end
 
-      discard_boundary_coordinates(result, initial_coordinate, destination_coordinate)
+      result = discard_boundary_coordinates(result, initial_coordinate, destination_coordinate)
     elsif bishop_move?(initial_coordinate, destination_coordinate)
       result = board.diagonal_coordinates_between(initial_coordinate, destination_coordinate)
-      discard_boundary_coordinates(result, initial_coordinate, destination_coordinate)
+      result = discard_boundary_coordinates(result, initial_coordinate, destination_coordinate)
     else
       result = []
     end
@@ -203,7 +203,24 @@ class MoveValidator
   end
 
   def discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)
-    traversal_coordinates.reject! { |coordinate| coordinate == initial_coordinate || coordinate == destination_coordinate }
+    initial_coordinate_index     = traversal_coordinates.index(initial_coordinate)
+    destination_coordinate_index = traversal_coordinates.index(destination_coordinate)
+
+    if rook_move?(initial_coordinate, destination_coordinate)
+      if Coordinate.file_difference(destination_coordinate.file, initial_coordinate.file) > 0 || Coordinate.rank_difference(destination_coordinate.rank, initial_coordinate.rank) > 0
+        result = traversal_coordinates[initial_coordinate_index+1..destination_coordinate_index-1]
+      else
+        result = traversal_coordinates[destination_coordinate_index+1..initial_coordinate_index-1]
+      end
+    else bishop_move?(initial_coordinate, destination_coordinate)
+      if Coordinate.file_difference(destination_coordinate.file, initial_coordinate.file) > 0 || Coordinate.rank_difference(destination_coordinate.rank, initial_coordinate.rank) > 0
+        result = traversal_coordinates[initial_coordinate_index+1..destination_coordinate_index-1]
+      else
+        result = traversal_coordinates.reverse[initial_coordinate_index+1..destination_coordinate_index-1]
+      end
+    end
+    
+    result
   end
 
   def king_move?(initial_coordinate, destination_coordinate)

@@ -171,7 +171,7 @@ class Board
       traversal_coordinate = traversal_coordinate.change_coordinate_by(file_amount: file_traversal_amount, rank_amount: rank_traversal_amount)
     end
 
-    result
+    result << destination_coordinate
   end
 
   private

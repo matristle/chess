@@ -90,18 +90,6 @@ describe MoveValidator do
           expect(move_validator.any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)).to be(true) 
         end
 
-        it 'returns true when scanning top-left diagonal' do
-          initial_coordinate     = Coordinate.new(:e1)
-          destination_coordinate = Coordinate.new(:b4)
-          intervening_knight_coordinate = Coordinate.new(:d2)
-          intervening_knight = Knight.new(:white)
-          bishop = Bishop.new(:white)
-          board.place(bishop, initial_coordinate)
-          board.place(intervening_knight, intervening_knight_coordinate)
-    
-          expect(move_validator.any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)).to be(true) 
-        end
-
         it 'returns true when scanning bottom-right diagonal' do
           initial_coordinate     = Coordinate.new(:c7)
           destination_coordinate = Coordinate.new(:h2)
