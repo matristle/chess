@@ -32,6 +32,14 @@ class Square
     self.occupied? && other.occupied?
   end
 
+  def occupant_has_moved_before?
+    piece.moved_before?
+  end
+
+  def mark_occupant_as_moved_before
+    piece.mark_as_moved_before
+  end
+
   def host(piece)
     foul_piece_input_guard(piece)
 
@@ -44,10 +52,14 @@ class Square
   end
   
   def white_piece_here?
+    return false unless piece
+
     piece.white?
   end
 
   def black_piece_here?
+    return false unless piece
+    
     piece.black?
   end
 

@@ -385,6 +385,19 @@ describe Board do
         expect(board).to_not have_a_rook_on initial_coordinate
         expect(board).to have_a_rook_on destination_coordinate
       end
+
+      it 'can move rook from f5 to f6 then back to f5' do
+        initial_coordinate     = Coordinate.new(:f5)
+        destination_coordinate = Coordinate.new(:f6)
+        rook = Rook.new(:white)
+        board.place(rook, initial_coordinate)
+        
+        board.move_piece(initial_coordinate, destination_coordinate)
+        board.move_piece(destination_coordinate, initial_coordinate)
+        
+        expect(board).to_not have_a_rook_on destination_coordinate
+        expect(board).to have_a_rook_on initial_coordinate
+      end
     end
     
     context 'when capturing another piece' do
@@ -1164,6 +1177,19 @@ describe Board do
   
           expect(board).to_not have_a_king_on initial_coordinate
           expect(board).to have_a_king_on destination_coordinate
+        end
+
+        it 'can move king from f5 to f6 then back to f5' do
+          initial_coordinate     = Coordinate.new(:f5)
+          destination_coordinate = Coordinate.new(:f6)
+          king = King.new(:white)
+          board.place(king, initial_coordinate)
+          
+          board.move_piece(initial_coordinate, destination_coordinate)
+          board.move_piece(destination_coordinate, initial_coordinate)
+          
+          expect(board).to_not have_a_king_on destination_coordinate
+          expect(board).to have_a_king_on initial_coordinate
         end
       end
   
@@ -2126,7 +2152,7 @@ describe Board do
   end
 
   context 'castling' do
-    context 'when all castling criteria are met' do
+    context 'short castling' do
       it 'can short castle white king' do
         king_initial_coordinate     = Coordinate.new(:e1)
         king_destination_coordinate = Coordinate.new(:g1)
@@ -2141,6 +2167,216 @@ describe Board do
 
         expect(board).to have_a_king_on king_destination_coordinate
         expect(board).to have_a_rook_on rook_destination_coordinate
+      end
+
+      it 'can short castle black king' do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:g8)
+        rook_initial_coordinate      = Coordinate.new(:h8)
+        rook_destination_coordinate  = Coordinate.new(:f8)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+
+        expect(board).to have_a_king_on king_destination_coordinate
+        expect(board).to have_a_rook_on rook_destination_coordinate
+      end
+
+      it "can't short castle white king when its destination square is covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:g1)
+        rook_initial_coordinate      = Coordinate.new(:h1)
+        rook_destination_coordinate  = Coordinate.new(:f1)
+        sniping_bishop_coordinate = Coordinate.new(:c5)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        sniping_bishop = Bishop.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+      end
+
+      it "can't short castle white king when the squares before its destination square covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:g1)
+        rook_initial_coordinate      = Coordinate.new(:h1)
+        rook_destination_coordinate  = Coordinate.new(:f1)
+        sniping_bishop_coordinate = Coordinate.new(:a6)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        sniping_bishop = Bishop.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+      end
+
+      it "can't short castle black king when its destination square is covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:g8)
+        rook_initial_coordinate      = Coordinate.new(:h8)
+        rook_destination_coordinate  = Coordinate.new(:f8)
+        sniping_bishop_coordinate = Coordinate.new(:a2)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        sniping_bishop = Bishop.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+      end
+
+      it "can't short castle black king when the squares before its destination square covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:g8)
+        rook_initial_coordinate      = Coordinate.new(:h8)
+        rook_destination_coordinate  = Coordinate.new(:f8)
+        sniping_bishop_coordinate = Coordinate.new(:a3)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        sniping_bishop = Bishop.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+      end
+
+      it "can't short castle white king when it has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:g1)
+        rook_initial_coordinate      = Coordinate.new(:h1)
+        rook_destination_coordinate  = Coordinate.new(:f1)
+        castle_restricting_coordinate = Coordinate.new(:e2)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+      end
+
+      it "can't short castle white king when its corresponding rook on h1 has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:g1)
+        rook_initial_coordinate      = Coordinate.new(:h1)
+        rook_destination_coordinate  = Coordinate.new(:f1)
+        castle_restricting_coordinate = Coordinate.new(:h2)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+      end
+    end
+
+    context 'long castling' do
+      it 'can long castle white king' do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:c1)
+        rook_initial_coordinate      = Coordinate.new(:a1)
+        rook_destination_coordinate  = Coordinate.new(:d1)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+
+        expect(board).to have_a_king_on king_destination_coordinate
+        expect(board).to have_a_rook_on rook_destination_coordinate
+      end
+
+      it 'can long castle black king' do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:c8)
+        rook_initial_coordinate      = Coordinate.new(:a8)
+        rook_destination_coordinate  = Coordinate.new(:d8)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+
+        expect(board).to have_a_king_on king_destination_coordinate
+        expect(board).to have_a_rook_on rook_destination_coordinate
+      end
+
+      it "can't long castle white king when its destination square is covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:c1)
+        rook_initial_coordinate      = Coordinate.new(:a1)
+        rook_destination_coordinate  = Coordinate.new(:d1)
+        sniping_bishop_coordinate = Coordinate.new(:f4)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        sniping_bishop = Bishop.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+      end
+
+      it "can't long castle white king when the square before its destination square covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:c1)
+        rook_initial_coordinate      = Coordinate.new(:a1)
+        rook_destination_coordinate  = Coordinate.new(:d1)
+        sniping_bishop_coordinate = Coordinate.new(:a4)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        sniping_bishop = Bishop.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+      end
+
+      it "can't long castle black king when its destination square is covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:c8)
+        rook_initial_coordinate      = Coordinate.new(:a8)
+        rook_destination_coordinate  = Coordinate.new(:d8)
+        sniping_bishop_coordinate = Coordinate.new(:e6)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        sniping_bishop = Bishop.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+      end
+
+      it "can't long castle black king when the square before its destination square covered by another piece" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:c8)
+        rook_initial_coordinate      = Coordinate.new(:a8)
+        rook_destination_coordinate  = Coordinate.new(:d8)
+        sniping_bishop_coordinate = Coordinate.new(:h4)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        sniping_bishop = Bishop.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.place(sniping_bishop, sniping_bishop_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
       end
     end
   end

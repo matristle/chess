@@ -1,12 +1,37 @@
 require_relative '../lib/piece'
+require_relative '../lib/king'
+require_relative '../lib/board'
+require_relative '../lib/board_maker'
+require_relative '../lib/piece_arranger'
+require_relative '../lib/move_validator'
+require_relative '../lib/coordinate'
 
 describe Piece do
+  let(:board) { Board.new(board_maker:, piece_arranger:, move_validator:) }
+    let(:board_maker)    { BoardMaker.new }
+    let(:piece_arranger) { PieceArranger.new }
+    let(:move_validator) { MoveValidator.new }
+
   it 'is white' do
     expect(Piece.new(:white)).to be_white
   end
 
   it 'is black' do
     expect(Piece.new(:black)).to be_black
+  end
+
+  it "hasn't moved before" do
+    expect(Piece.new(:white).moved_before?).to be(false)
+  end
+
+  it "has moved before" do
+    initial_coordinate = Coordinate.new(:e1)
+    destination_coordinate = Coordinate.new(:e2)
+    king = King.new(:white)
+    board.place(king, initial_coordinate)
+    board.move_piece(initial_coordinate, destination_coordinate)
+
+    expect(king.moved_before?).to be(true)
   end
 
   it 'can have the same color as another piece' do

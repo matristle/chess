@@ -3,6 +3,7 @@ class Piece
     foul_input_guard_for(color)
 
     @color = color
+    @activity_status = :not_moved_yet
   end
 
   def white?
@@ -11,6 +12,18 @@ class Piece
 
   def black?
     color == :black
+  end
+
+  def mark_as_moved_before
+    @activity_status = :moved_before
+  end
+
+  def not_moved_before?
+    !moved_before?
+  end
+
+  def moved_before?
+    activity_status == :moved_before
   end
 
   def same_color_as?(other)
@@ -30,4 +43,8 @@ class Piece
       raise "Foul color input. The piece color must be either :black or :white, not #{color}"
     end
   end
+
+  private
+  
+  attr_reader :activity_status
 end
