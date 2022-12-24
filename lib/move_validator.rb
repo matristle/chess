@@ -1,4 +1,6 @@
 class MoveValidator
+  attr_reader :found_piece_coordinate
+
   def valid_move?(initial_coordinate, destination_coordinate, board)
     check_for_imminent_captured_king_on(destination_coordinate, board)
     check_for_imminent_ally_piece_capturing_from(initial_coordinate, destination_coordinate, board)
@@ -13,7 +15,53 @@ class MoveValidator
   end
 
   def castling_move?(board, initial_coordinate, destination_coordinate)
-    short_castling?(board, initial_coordinate, destination_coordinate) || long_castling?(board)
+    short_castling?(board, initial_coordinate, destination_coordinate) || long_castling?(board, initial_coordinate, destination_coordinate)
+  end
+
+  def short_castling?(board, initial_coordinate, destination_coordinate)
+    e1 = Coordinate.new(:e1); f1 = Coordinate.new(:f1); g1 = Coordinate.new(:g1); h1 = Coordinate.new(:h1)
+    e8 = Coordinate.new(:e8); f8 = Coordinate.new(:f8); g8 = Coordinate.new(:g8); h8 = Coordinate.new(:h8)
+
+    return false unless (initial_coordinate == e1 && destination_coordinate == g1) || (initial_coordinate == e8 && destination_coordinate == g8)
+
+    raise "The king can't castle because it has moved before"       if (board.piece_on?(e1) && board.piece_has_moved_before_on?(e1)) || (board.piece_on?(e8) && board.piece_has_moved_before_on?(e8))
+    raise "The king can't castle because the rook has moved before" if (board.piece_on?(h1) && board.piece_has_moved_before_on?(h1)) || (board.piece_on?(h8) && board.piece_has_moved_before_on?(h8))
+
+    if board.white_piece_on?(e1) && board.white_piece_on?(h1)
+      raise "The king can't castle through a guarded square" if guarding_piece_on?(f1, board, e1)
+      
+      board.king_on?(e1) && board.rook_on?(h1)
+    elsif board.black_piece_on?(e8) && board.black_piece_on?(h8)
+      raise "The king can't castle through a guarded square" if guarding_piece_on?(f8, board, e8)
+
+      board.king_on?(e8) && board.rook_on?(h8)
+    end
+  end
+
+  def long_castling?(board, initial_coordinate, destination_coordinate)
+    a1 = Coordinate.new(:a1); c1 = Coordinate.new(:c1); d1 = Coordinate.new(:d1); e1 = Coordinate.new(:e1)
+    a8 = Coordinate.new(:a8); c8 = Coordinate.new(:c8); d8 = Coordinate.new(:d8); e8 = Coordinate.new(:e8)
+
+    return false unless (initial_coordinate == e1 && destination_coordinate == c1) || (initial_coordinate == e8 && destination_coordinate == c8)
+
+    raise "The king can't castle because it has moved before"       if (board.piece_on?(e1) && board.piece_has_moved_before_on?(e1)) || (board.piece_on?(e8) && board.piece_has_moved_before_on?(e8))
+    raise "The king can't castle because the rook has moved before" if (board.piece_on?(a1) && board.piece_has_moved_before_on?(a1)) || (board.piece_on?(a8) && board.piece_has_moved_before_on?(a8))
+
+    if board.white_piece_on?(e1) && board.white_piece_on?(a1)
+      raise "The king can't castle through a guarded square" if guarding_piece_on?(d1, board, e1)
+      
+      board.king_on?(e1) && board.rook_on?(a1) 
+    elsif board.black_piece_on?(e8) && board.black_piece_on?(a8)
+      raise "The king can't castle through a guarded square" if guarding_piece_on?(d8, board, e8)
+
+      board.king_on?(e8) && board.rook_on?(a8)
+    end
+  end
+
+  def piece_seeing_a_king_from?(destination_coordinate, board, initial_coordinate)
+    if rook_move?(initial_coordinate, destination_coordinate)
+      seeing_opponent_king_on_file_or_rank?(destination_coordinate, board)
+    end
   end
 
   private
@@ -31,38 +79,6 @@ class MoveValidator
       check_for_guarding_piece_on(destination_coordinate, board, initial_coordinate) 
       return true if castling_move?(board, initial_coordinate, destination_coordinate)
       king_move?(initial_coordinate, destination_coordinate)
-    end
-  end
-
-  def short_castling?(board, initial_coordinate, destination_coordinate)
-    e1 = Coordinate.new(:e1); f1 = Coordinate.new(:f1); g1 = Coordinate.new(:g1); h1 = Coordinate.new(:h1)
-    e8 = Coordinate.new(:e8); f8 = Coordinate.new(:f8); g8 = Coordinate.new(:g8); h8 = Coordinate.new(:h8)
-
-    return false unless (initial_coordinate == e1 && destination_coordinate == g1) || (initial_coordinate == e8 && destination_coordinate == g8)
-
-    raise "The king can't castle because it has moved before" if board.piece_on?(e1) && board.piece_has_moved_before_on?(e1)
-    raise "The king can't castle because the rook has moved before" if board.piece_on?(h1) && board.piece_has_moved_before_on?(h1)
-
-    if board.white_piece_on?(e1) && board.white_piece_on?(h1)
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(f1, board, e1)
-      
-      board.king_on?(e1) && board.rook_on?(h1)
-    elsif board.black_piece_on?(e8) && board.black_piece_on?(h8)
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(f8, board, e8)
-
-      board.king_on?(e8) && board.rook_on?(h8)
-    end
-  end
-
-  def long_castling?(board)
-    if board.white_piece_on?(Coordinate.new(:e1)) && board.white_piece_on?(Coordinate.new(:a1))
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(Coordinate.new(:d1), board, Coordinate.new(:e1))
-      
-      board.king_on?(Coordinate.new(:e1)) && board.rook_on?(Coordinate.new(:a1)) 
-    elsif board.black_piece_on?(Coordinate.new(:e8)) && board.black_piece_on?(Coordinate.new(:a8))
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(Coordinate.new(:d8), board, Coordinate.new(:e8))
-
-      board.king_on?(Coordinate.new(:e8)) && board.rook_on?(Coordinate.new(:a8))
     end
   end
 
@@ -99,6 +115,44 @@ class MoveValidator
     raise "The king can't move into an opponent's piece moveset" if guarding_piece_on?(destination_coordinate, board, initial_coordinate)
   end
 
+  def seeing_opponent_king_on_file_or_rank?(destination_coordinate, board)
+    seeing_opponent_king_on_file?(destination_coordinate, board) || seeing_opponent_king_on_rank?(destination_coordinate, board)
+  end
+
+  def seeing_opponent_king_on_file?(destination_coordinate, board)
+    destination_file = board.coordinate_references_at(file: destination_coordinate.file)
+    split_point_index = destination_file.index(destination_coordinate)
+    leftside_file, rightside_file = destination_file[0...split_point_index], destination_file[split_point_index+1..-1]
+
+    found_piece_coordinate = leftside_file.find  { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = rightside_file.find { |coordinate| board.piece_on? coordinate } unless found_piece_coordinate
+
+    if found_piece_coordinate
+      @found_piece_coordinate = found_piece_coordinate
+      
+      return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
+
+      board.king_on?(found_piece_coordinate) 
+    end
+  end
+
+  def seeing_opponent_king_on_rank?(destination_coordinate, board)
+    destination_rank = board.coordinate_references_at(rank: destination_coordinate.rank)
+    split_point_index = destination_coordinate.rank.to_i - 1
+    leftside_rank, rightside_rank = destination_rank[0...split_point_index], destination_rank[split_point_index+1..-1]
+
+    found_piece_coordinate = leftside_rank.find  { |coordinate| board.piece_on? coordinate }
+    found_piece_coordinate = rightside_rank.find { |coordinate| board.piece_on? coordinate } unless found_piece_coordinate
+
+    if found_piece_coordinate
+      @found_piece_coordinate = found_piece_coordinate
+
+      return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
+      
+      board.king_on?(found_piece_coordinate)
+    end
+  end
+
   def guarding_piece_on?(destination_coordinate, board, initial_coordinate)
     guarding_piece_on_file_or_rank?(destination_coordinate, board, initial_coordinate) || guarding_piece_on_diagonals?(destination_coordinate, board, initial_coordinate) ||
     guarding_knight_on(destination_coordinate, board, initial_coordinate)
@@ -121,10 +175,8 @@ class MoveValidator
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
 
-      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate) 
+      board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate) 
     end
-
-    false
   end
 
   def guarding_piece_on_rank?(destination_coordinate, board, initial_coordinate)
@@ -140,10 +192,8 @@ class MoveValidator
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
-      return board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-    
-    false
   end
   
   def guarding_piece_on_diagonals?(destination_coordinate, board, initial_coordinate)
@@ -159,10 +209,8 @@ class MoveValidator
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
-      return board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-    
-    false
   end
   
   def guarding_piece_on_top_left_diagonal?(destination_coordinate, board, initial_coordinate)
@@ -173,10 +221,8 @@ class MoveValidator
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
-      return true if board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-    
-    false
   end
   
   def guarding_piece_on_bottom_right_diagonal?(destination_coordinate, board, initial_coordinate)
@@ -187,10 +233,8 @@ class MoveValidator
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
-      return board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-    
-    false
   end
   
   def guarding_piece_on_bottom_left_diagonal?(destination_coordinate, board, initial_coordinate)
@@ -201,24 +245,20 @@ class MoveValidator
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
-      return board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
+      board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
     end
-    
-    false
   end
   
   def guarding_knight_on(destination_coordinate, board, initial_coordinate)
-    l_shapes = board.l_shape_coordinates_from(destination_coordinate).compact
+    l_shapes = board.l_shape_coordinates_from(destination_coordinate)
     
     found_piece_coordinate = l_shapes.find { |coordinate| board.piece_on? coordinate }
     
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
-      return board.knight_on?(found_piece_coordinate)
+      board.knight_on?(found_piece_coordinate)
     end
-    
-    false
   end
 
   def discard_boundary_coordinates(traversal_coordinates, initial_coordinate, destination_coordinate)

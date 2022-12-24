@@ -96,24 +96,32 @@ class Board
       a1 = Coordinate.new(:a1); c1 = Coordinate.new(:c1); d1 = Coordinate.new(:d1); e1 = Coordinate.new(:e1); f1 = Coordinate.new(:f1); g1 = Coordinate.new(:g1); h1 = Coordinate.new(:h1)
       a8 = Coordinate.new(:a8); c8 = Coordinate.new(:c8); d8 = Coordinate.new(:d8); e8 = Coordinate.new(:e8); f8 = Coordinate.new(:f8); g8 = Coordinate.new(:g8); h8 = Coordinate.new(:h8)
 
-      if white_piece_on?(e1) && white_piece_on?(h1)
-        square_on(e1).move_piece_to(g1, self)
-        square_on(h1).move_piece_to(f1, self)
-      elsif black_piece_on?(e8) && black_piece_on?(h8)
-        square_on(e8).move_piece_to(g8, self)
-        square_on(h8).move_piece_to(f8, self)
-      elsif white_piece_on?(e1) && white_piece_on?(a1)
-        square_on(e1).move_piece_to(c1, self)
-        square_on(a1).move_piece_to(d1, self)
-      elsif black_piece_on?(e8) && black_piece_on?(a8)
-        square_on(e8).move_piece_to(c8, self)
-        square_on(a8).move_piece_to(d8, self)
+      if move_validator.short_castling?(self, initial_coordinate, destination_coordinate)
+        if white_piece_on?(e1) && white_piece_on?(h1)
+          square_on(e1).move_piece_to(g1, self)
+          square_on(h1).move_piece_to(f1, self)
+        elsif black_piece_on?(e8) && black_piece_on?(h8)
+          square_on(e8).move_piece_to(g8, self)
+          square_on(h8).move_piece_to(f8, self)
+        end
+      elsif move_validator.long_castling?(self, initial_coordinate, destination_coordinate)
+        if white_piece_on?(e1) && white_piece_on?(a1)
+          square_on(e1).move_piece_to(c1, self)
+          square_on(a1).move_piece_to(d1, self)
+        elsif black_piece_on?(e8) && black_piece_on?(a8)
+          square_on(e8).move_piece_to(c8, self)
+          square_on(a8).move_piece_to(d8, self)
+        end
       end
     else
       square_on(initial_coordinate).move_piece_to(destination_coordinate, self)
     end
 
-    square_on(destination_coordinate).mark_occupant_as_moved_before if piece_on? destination_coordinate
+    square_on(destination_coordinate).mark_occupant_as_moved_before
+    if move_validator.piece_seeing_a_king_from?(destination_coordinate, self, initial_coordinate)
+      found_king_coordinate = move_validator.find_checked_king_coordinate
+      square_on(move_validator.found_king_coordinate).mark_king_as_in_check
+    end
   end
 
   def coordinate_references_at(file: nil, rank: nil)
@@ -173,7 +181,7 @@ class Board
   end
 
   def l_shape_coordinates_from(starting_coordinate)
-    l_shape_variations.inject([]) { |result, l_shape_variation| result << starting_coordinate.change_coordinate_by(file_amount: l_shape_variation[0], rank_amount: l_shape_variation[1]) }
+    l_shape_variations.inject([]) { |result, l_shape_variation| result << starting_coordinate.change_coordinate_by(file_amount: l_shape_variation[0], rank_amount: l_shape_variation[1]) }.compact
   end
 
   def l_shape_variations

@@ -2189,7 +2189,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e1)
         king_destination_coordinate = Coordinate.new(:g1)
         rook_initial_coordinate      = Coordinate.new(:h1)
-        rook_destination_coordinate  = Coordinate.new(:f1)
         sniping_bishop_coordinate = Coordinate.new(:c5)
         castling_king = King.new(:white)
         castling_rook = Rook.new(:white)
@@ -2205,7 +2204,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e1)
         king_destination_coordinate = Coordinate.new(:g1)
         rook_initial_coordinate      = Coordinate.new(:h1)
-        rook_destination_coordinate  = Coordinate.new(:f1)
         sniping_bishop_coordinate = Coordinate.new(:a6)
         castling_king = King.new(:white)
         castling_rook = Rook.new(:white)
@@ -2221,7 +2219,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e8)
         king_destination_coordinate = Coordinate.new(:g8)
         rook_initial_coordinate      = Coordinate.new(:h8)
-        rook_destination_coordinate  = Coordinate.new(:f8)
         sniping_bishop_coordinate = Coordinate.new(:a2)
         castling_king = King.new(:black)
         castling_rook = Rook.new(:black)
@@ -2237,7 +2234,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e8)
         king_destination_coordinate = Coordinate.new(:g8)
         rook_initial_coordinate      = Coordinate.new(:h8)
-        rook_destination_coordinate  = Coordinate.new(:f8)
         sniping_bishop_coordinate = Coordinate.new(:a3)
         castling_king = King.new(:black)
         castling_rook = Rook.new(:black)
@@ -2249,11 +2245,10 @@ describe Board do
         expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
       end
 
-      it "can't short castle white king when it has moved before" do
+      it "can't short castle white king if it has moved before" do
         king_initial_coordinate     = Coordinate.new(:e1)
         king_destination_coordinate = Coordinate.new(:g1)
         rook_initial_coordinate      = Coordinate.new(:h1)
-        rook_destination_coordinate  = Coordinate.new(:f1)
         castle_restricting_coordinate = Coordinate.new(:e2)
         castling_king = King.new(:white)
         castling_rook = Rook.new(:white)
@@ -2265,12 +2260,41 @@ describe Board do
         expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
       end
 
-      it "can't short castle white king when its corresponding rook on h1 has moved before" do
+      it "can't short castle white king if its corresponding rook on h1 has moved before" do
         king_initial_coordinate     = Coordinate.new(:e1)
         king_destination_coordinate = Coordinate.new(:g1)
         rook_initial_coordinate      = Coordinate.new(:h1)
-        rook_destination_coordinate  = Coordinate.new(:f1)
         castle_restricting_coordinate = Coordinate.new(:h2)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+      end
+
+      it "can't short castle black king if it has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:g8)
+        rook_initial_coordinate      = Coordinate.new(:h8)
+        castle_restricting_coordinate = Coordinate.new(:e7)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+      end
+
+      it "can't short castle white king if its corresponding rook on h8 has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:g8)
+        rook_initial_coordinate      = Coordinate.new(:h8)
+        castle_restricting_coordinate = Coordinate.new(:h7)
         castling_king = King.new(:white)
         castling_rook = Rook.new(:white)
         board.place(castling_king, king_initial_coordinate)
@@ -2319,7 +2343,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e1)
         king_destination_coordinate = Coordinate.new(:c1)
         rook_initial_coordinate      = Coordinate.new(:a1)
-        rook_destination_coordinate  = Coordinate.new(:d1)
         sniping_bishop_coordinate = Coordinate.new(:f4)
         castling_king = King.new(:white)
         castling_rook = Rook.new(:white)
@@ -2335,7 +2358,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e1)
         king_destination_coordinate = Coordinate.new(:c1)
         rook_initial_coordinate      = Coordinate.new(:a1)
-        rook_destination_coordinate  = Coordinate.new(:d1)
         sniping_bishop_coordinate = Coordinate.new(:a4)
         castling_king = King.new(:white)
         castling_rook = Rook.new(:white)
@@ -2351,7 +2373,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e8)
         king_destination_coordinate = Coordinate.new(:c8)
         rook_initial_coordinate      = Coordinate.new(:a8)
-        rook_destination_coordinate  = Coordinate.new(:d8)
         sniping_bishop_coordinate = Coordinate.new(:e6)
         castling_king = King.new(:black)
         castling_rook = Rook.new(:black)
@@ -2367,7 +2388,6 @@ describe Board do
         king_initial_coordinate     = Coordinate.new(:e8)
         king_destination_coordinate = Coordinate.new(:c8)
         rook_initial_coordinate      = Coordinate.new(:a8)
-        rook_destination_coordinate  = Coordinate.new(:d8)
         sniping_bishop_coordinate = Coordinate.new(:h4)
         castling_king = King.new(:black)
         castling_rook = Rook.new(:black)
@@ -2377,6 +2397,102 @@ describe Board do
         board.place(sniping_bishop, sniping_bishop_coordinate)
 
         expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+      end
+
+      it "can't long castle white king if it has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:c1)
+        rook_initial_coordinate      = Coordinate.new(:a1)
+        castle_restricting_coordinate = Coordinate.new(:d2)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+      end
+
+      it "can't long castle white king if its corresponding rook on a1 has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:c1)
+        rook_initial_coordinate      = Coordinate.new(:a1)
+        castle_restricting_coordinate = Coordinate.new(:a4)
+        castling_king = King.new(:white)
+        castling_rook = Rook.new(:white)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+      end
+
+      it "can't long castle black king if it has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:c8)
+        rook_initial_coordinate      = Coordinate.new(:a8)
+        castle_restricting_coordinate = Coordinate.new(:f7)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+      end
+
+      it "can't long castle black king if its corresponding rook on a8 has moved before" do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:c8)
+        rook_initial_coordinate      = Coordinate.new(:a8)
+        castle_restricting_coordinate = Coordinate.new(:a6)
+        castling_king = King.new(:black)
+        castling_rook = Rook.new(:black)
+        board.place(castling_king, king_initial_coordinate)
+        board.place(castling_rook, rook_initial_coordinate)
+        board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
+        board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
+
+        expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+      end
+    end
+  end
+
+  context 'checks' do
+    context 'moving rooks' do
+      it 'can move king after being checked' do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:f2)
+        rook_initial_coordinate      = Coordinate.new(:h8)
+        rook_destination_coordinate  = Coordinate.new(:e8)
+        king = King.new(:white)
+        checking_rook = Rook.new(:black)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_rook, rook_initial_coordinate) 
+        board.move_piece(rook_initial_coordinate, rook_destination_coordinate)
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+  
+        expect(board).to have_a_king_on king_destination_coordinate
+      end
+
+      it "can't move another piece while king is in check" do
+        king_initial_coordinate = Coordinate.new(:e1)
+        irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
+        irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
+        rook_initial_coordinate      = Coordinate.new(:h8)
+        rook_destination_coordinate  = Coordinate.new(:e8)
+        king = King.new(:white)
+        checking_rook = Rook.new(:black)
+        irrelevant_knight = Knight.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_rook, rook_initial_coordinate)
+        board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
+        board.move_piece(rook_initial_coordinate, rook_destination_coordinate)
+
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while its king is in check")
       end
     end
   end
