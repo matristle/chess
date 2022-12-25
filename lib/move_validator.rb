@@ -1,10 +1,11 @@
 class MoveValidator
-  attr_reader :found_piece_coordinate
+  attr_reader :found_king_coordinate
 
   def valid_move?(initial_coordinate, destination_coordinate, board)
     check_for_imminent_captured_king_on(destination_coordinate, board)
     check_for_imminent_ally_piece_capturing_from(initial_coordinate, destination_coordinate, board)
     check_for_intervening_pieces_between(initial_coordinate, destination_coordinate, board)
+    check_for_pin(initial_coordinate, destination_coordinate, board)
     validate_based_on_piece(initial_coordinate, destination_coordinate, board)
   end
 
@@ -61,6 +62,10 @@ class MoveValidator
   def piece_seeing_a_king_from?(destination_coordinate, board, initial_coordinate)
     if rook_move?(initial_coordinate, destination_coordinate)
       seeing_opponent_king_on_file_or_rank?(destination_coordinate, board)
+    elsif bishop_move?(initial_coordinate, destination_coordinate)
+      seeing_opponent_king_on_diagonals?(destination_coordinate, board)
+    elsif knight_move?(initial_coordinate, destination_coordinate)
+      seeing_opponent_king_on_l_moves?(destination_coordinate, board)
     end
   end
 
@@ -115,6 +120,98 @@ class MoveValidator
     raise "The king can't move into an opponent's piece moveset" if guarding_piece_on?(destination_coordinate, board, initial_coordinate)
   end
 
+  def check_for_pin(initial_coordinate, destination_coordinate, board)
+  end
+
+  def pinned_piece_on?(coordinate, board)
+    pinned_on_file_or_rank?(initial_coordinate, destination_coordinate) || pinned_on_diagonals?(initial_coordinate, destination_coordinate)
+  end
+
+  def pinned_on_file_or_rank?
+    pinned_on_file?(initial_coordinate, destination_coordinate) || pinned_on_rank?(initial_coordinate, destination_coordinate) 
+  end
+
+  def pinned_on_file?(initial_coordinate, destination_coordinate)
+  end
+
+  def pinned_on_rank?(initial_coordinate, destination_coordinate)
+  end
+
+  def seeing_opponent_king_on_l_moves?(destination_coordinate, board)
+    l_shapes = board.l_shape_coordinates_from(destination_coordinate)
+    
+    found_piece_coordinate = l_shapes.find { |coordinate| board.piece_on? coordinate }
+    
+    if found_piece_coordinate
+      @found_king_coordinate = found_piece_coordinate
+
+      return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
+      
+      board.king_on?(found_piece_coordinate)
+    end
+  end
+
+  def seeing_opponent_king_on_diagonals?(destination_coordinate, board)
+    seeing_opponent_king_on_top_right_diagonal?(destination_coordinate, board)    || seeing_opponent_king_on_top_left_diagonal?(destination_coordinate, board) ||
+    seeing_opponent_king_on_bottom_right_diagonal?(destination_coordinate, board) || seeing_opponent_king_on_bottom_left_diagonal?(destination_coordinate, board)
+  end
+
+  def seeing_opponent_king_on_top_right_diagonal?(destination_coordinate, board)
+    top_right_diagonal = board.top_right_diagonal_references_from(destination_coordinate)
+    
+    found_piece_coordinate = top_right_diagonal.find { |coordinate| board.piece_on? coordinate }
+
+    if found_piece_coordinate
+      @found_king_coordinate = found_piece_coordinate
+
+      return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
+      
+      board.king_on?(found_piece_coordinate)
+    end
+  end
+
+  def seeing_opponent_king_on_top_left_diagonal?(destination_coordinate, board)
+    top_left_diagonal = board.top_left_diagonal_references_from(destination_coordinate)
+    
+    found_piece_coordinate = top_left_diagonal.find { |coordinate| board.piece_on? coordinate }
+
+    if found_piece_coordinate
+      @found_king_coordinate = found_piece_coordinate
+
+      return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
+      
+      board.king_on?(found_piece_coordinate)
+    end
+  end
+
+  def seeing_opponent_king_on_bottom_right_diagonal?(destination_coordinate, board)
+    bottom_right_diagonal = board.bottom_right_diagonal_references_from(destination_coordinate)
+    
+    found_piece_coordinate = bottom_right_diagonal.find { |coordinate| board.piece_on? coordinate }
+
+    if found_piece_coordinate
+      @found_king_coordinate = found_piece_coordinate
+
+      return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
+      
+      board.king_on?(found_piece_coordinate)
+    end
+  end
+
+  def seeing_opponent_king_on_bottom_left_diagonal?(destination_coordinate, board)
+    bottom_left_diagonal = board.bottom_left_diagonal_references_from(destination_coordinate)
+    
+    found_piece_coordinate = bottom_left_diagonal.find { |coordinate| board.piece_on? coordinate }
+
+    if found_piece_coordinate
+      @found_king_coordinate = found_piece_coordinate
+
+      return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
+      
+      board.king_on?(found_piece_coordinate)
+    end
+  end
+
   def seeing_opponent_king_on_file_or_rank?(destination_coordinate, board)
     seeing_opponent_king_on_file?(destination_coordinate, board) || seeing_opponent_king_on_rank?(destination_coordinate, board)
   end
@@ -128,8 +225,8 @@ class MoveValidator
     found_piece_coordinate = rightside_file.find { |coordinate| board.piece_on? coordinate } unless found_piece_coordinate
 
     if found_piece_coordinate
-      @found_piece_coordinate = found_piece_coordinate
-      
+      @found_king_coordinate = found_piece_coordinate
+
       return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
 
       board.king_on?(found_piece_coordinate) 
@@ -145,7 +242,7 @@ class MoveValidator
     found_piece_coordinate = rightside_rank.find { |coordinate| board.piece_on? coordinate } unless found_piece_coordinate
 
     if found_piece_coordinate
-      @found_piece_coordinate = found_piece_coordinate
+      @found_king_coordinate = found_piece_coordinate
 
       return false if board.same_piece_color_on?(destination_coordinate, found_piece_coordinate)
       

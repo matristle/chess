@@ -11,10 +11,9 @@ describe Board do
   include CustomMatchers
 
   subject(:board) { Board.new(board_maker:, piece_arranger:, move_validator:) }
-
-  let(:board_maker)    { BoardMaker.new }
-  let(:piece_arranger) { PieceArranger.new }
-  let(:move_validator) { MoveValidator.new }
+    let(:board_maker)    { BoardMaker.new }
+    let(:piece_arranger) { PieceArranger.new }
+    let(:move_validator) { MoveValidator.new }
   
   context 'when created' do
     it 'is empty' do
@@ -506,6 +505,24 @@ describe Board do
       board.place(rook, initial_coordinate)
       
       expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+    end
+
+    context 'when pinned' do
+      context "absolute pin -- can't move within pinning piece's moveset"
+      it "doesn't move from c2 to g2" do
+        pinning_bishop_coordinate = Coordinate.new(:b6)
+        pinned_rook_initial_coordinate     = Coordinate.new(:f2)
+        pinned_rook_destination_coordinate = Coordinate.new(:f1)
+        king_coordinate = Coordinate.new(:g1)
+        pinning_bishop = Bishop.new(:black)
+        pinned_rook = Rook.new(:white)
+        king = King.new(:white)
+        board.place(pinning_bishop, pinning_bishop_coordinate)
+        board.place(pinned_rook, pinned_rook_initial_coordinate)
+        board.place(king, king_coordinate)
+        
+        expect { board.move_piece(pinned_rook_initial_coordinate, pinned_rook_destination_coordinate) }.to raise_error("That piece is pinned to the king and can't be moved to #{pinned_rook_destination_coordinate.symbol}")
+      end
     end
   end
 
@@ -2492,7 +2509,141 @@ describe Board do
         board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
         board.move_piece(rook_initial_coordinate, rook_destination_coordinate)
 
-        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while its king is in check")
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+      end
+    end
+
+    context 'moving bishops' do
+      it 'can move king after being checked' do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:f7)
+        bishop_initial_coordinate      = Coordinate.new(:f1)
+        bishop_destination_coordinate  = Coordinate.new(:b5)
+        king = King.new(:black)
+        checking_bishop = Bishop.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_bishop, bishop_initial_coordinate) 
+        board.move_piece(bishop_initial_coordinate, bishop_destination_coordinate)
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+  
+        expect(board).to have_a_king_on king_destination_coordinate
+      end
+
+      it "can't move another piece while king is in check" do
+        king_initial_coordinate = Coordinate.new(:e1)
+        irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
+        irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
+        bishop_initial_coordinate      = Coordinate.new(:f6)
+        bishop_destination_coordinate  = Coordinate.new(:c3)
+        king = King.new(:white)
+        checking_bishop = Bishop.new(:black)
+        irrelevant_knight = Knight.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_bishop, bishop_initial_coordinate)
+        board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
+        board.move_piece(bishop_initial_coordinate, bishop_destination_coordinate)
+
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+      end
+    end
+
+    context 'moving queens' do
+      it 'can move king after being checked' do
+        king_initial_coordinate     = Coordinate.new(:e1)
+        king_destination_coordinate = Coordinate.new(:f2)
+        queen_initial_coordinate      = Coordinate.new(:h8)
+        queen_destination_coordinate  = Coordinate.new(:e8)
+        king = King.new(:white)
+        checking_queen = Queen.new(:black)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_queen, queen_initial_coordinate) 
+        board.move_piece(queen_initial_coordinate, queen_destination_coordinate)
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+  
+        expect(board).to have_a_king_on king_destination_coordinate
+      end
+
+      it "can't move another piece while king is in check" do
+        king_initial_coordinate = Coordinate.new(:e1)
+        irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
+        irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
+        queen_initial_coordinate      = Coordinate.new(:h8)
+        queen_destination_coordinate  = Coordinate.new(:e8)
+        king = King.new(:white)
+        checking_queen = Queen.new(:black)
+        irrelevant_knight = Knight.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_queen, queen_initial_coordinate)
+        board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
+        board.move_piece(queen_initial_coordinate, queen_destination_coordinate)
+
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+      end
+
+      it 'can move king after being checked' do
+        king_initial_coordinate     = Coordinate.new(:e8)
+        king_destination_coordinate = Coordinate.new(:f7)
+        queen_initial_coordinate      = Coordinate.new(:f1)
+        queen_destination_coordinate  = Coordinate.new(:b5)
+        king = King.new(:black)
+        checking_queen = Queen.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_queen, queen_initial_coordinate) 
+        board.move_piece(queen_initial_coordinate, queen_destination_coordinate)
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+  
+        expect(board).to have_a_king_on king_destination_coordinate
+      end
+
+      it "can't move another piece while king is in check" do
+        king_initial_coordinate = Coordinate.new(:e1)
+        irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
+        irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
+        queen_initial_coordinate      = Coordinate.new(:f6)
+        queen_destination_coordinate  = Coordinate.new(:c3)
+        king = King.new(:white)
+        checking_queen = Queen.new(:black)
+        irrelevant_knight = Knight.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_queen, queen_initial_coordinate)
+        board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
+        board.move_piece(queen_initial_coordinate, queen_destination_coordinate)
+
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+      end
+    end
+
+    context 'moving knights' do
+      it 'can move king after being checked' do
+        king_initial_coordinate     = Coordinate.new(:d5)
+        king_destination_coordinate = Coordinate.new(:d4)
+        knight_initial_coordinate      = Coordinate.new(:f5)
+        knight_destination_coordinate  = Coordinate.new(:h6)
+        king = King.new(:black)
+        checking_knight = Knight.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_knight, knight_initial_coordinate) 
+        board.move_piece(knight_initial_coordinate, knight_destination_coordinate)
+        board.move_piece(king_initial_coordinate, king_destination_coordinate)
+  
+        expect(board).to have_a_king_on king_destination_coordinate
+      end
+
+      it "can't move another piece while king is in check" do
+        king_initial_coordinate = Coordinate.new(:f2)
+        irrelevant_bishop_initial_coordinate     = Coordinate.new(:h7)
+        irrelevant_bishop_destination_coordinate = Coordinate.new(:b1)
+        knight_initial_coordinate      = Coordinate.new(:f6)
+        knight_destination_coordinate  = Coordinate.new(:g4)
+        king = King.new(:white)
+        checking_knight = Knight.new(:black)
+        irrelevant_bishop = Bishop.new(:white)
+        board.place(king, king_initial_coordinate) 
+        board.place(checking_knight, knight_initial_coordinate)
+        board.place(irrelevant_bishop, irrelevant_bishop_initial_coordinate)
+        board.move_piece(knight_initial_coordinate, knight_destination_coordinate)
+
+        expect { board.move_piece(irrelevant_bishop_initial_coordinate, irrelevant_bishop_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
       end
     end
   end
