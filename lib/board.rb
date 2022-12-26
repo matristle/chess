@@ -60,7 +60,7 @@ class Board
   end
 
   def white_piece_on?(coordinate)
-    square_on(coordinate).white_piece_here?
+    piece_on?(coordinate) && square_on(coordinate).white_piece_here?
   end
 
   def black_piece_on?(coordinate)
@@ -88,18 +88,19 @@ class Board
   def piece_has_moved_before_on?(coordinate)
     square_on(coordinate).occupant_has_moved_before?
   end
-  
-  def king_in_check?
-    squares.any? { |square| square.king_in_check? }
+
+  def white_king_coordinate
+    coordinates.find { |coordinate| square_on(coordinate).king_here? && square_on(coordinate).white_piece_here? }
   end
-
-  def pinned_piece_on?(coordinate)
-
+  
+  def black_king_coordinate
+    coordinates.find { |coordinate| square_on(coordinate).king_here? && square_on(coordinate).black_piece_here? }
   end
 
   def move_piece(initial_coordinate, destination_coordinate)
     invalid_move_error_message(destination_coordinate) unless move_validator.valid_move?(initial_coordinate, destination_coordinate, self)
-    raise "Another piece can't be moved while the king is in check" if king_in_check? && !king_on?(initial_coordinate)
+    raise "Another piece can't be moved while the king is in check" if move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && !king_on?(initial_coordinate)
+    raise "The king can't castle because it's in check" if move_validator.castling_move?(self, initial_coordinate, destination_coordinate) && move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && king_on?(initial_coordinate)
 
     if move_validator.castling_move?(self, initial_coordinate, destination_coordinate)
       a1 = Coordinate.new(:a1); c1 = Coordinate.new(:c1); d1 = Coordinate.new(:d1); e1 = Coordinate.new(:e1); f1 = Coordinate.new(:f1); g1 = Coordinate.new(:g1); h1 = Coordinate.new(:h1)
@@ -127,7 +128,6 @@ class Board
     end
 
     square_on(destination_coordinate).mark_occupant_as_moved_before
-    square_on(move_validator.found_king_coordinate).mark_king_as_in_check if move_validator.piece_seeing_a_king_from?(destination_coordinate, self, initial_coordinate)
   end
 
   def coordinate_references_at(file: nil, rank: nil)

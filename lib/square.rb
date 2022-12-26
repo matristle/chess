@@ -40,16 +40,6 @@ class Square
     piece.mark_as_moved_before
   end
 
-  def king_in_check?
-    return false if empty?
-
-    king_here? && piece.in_check?
-  end
-
-  def mark_king_as_in_check
-    piece.mark_as_in_check
-  end
-
   def host(piece)
     foul_piece_input_guard(piece)
 
