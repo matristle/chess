@@ -2741,6 +2741,80 @@ describe Board do
           expect { board.move_piece(pinned_rook_initial_coordinate, pinned_rook_destination_coordinate) }.to raise_error("That piece is pinned to the king and can't be moved to #{pinned_rook_destination_coordinate.symbol}")
         end
       end
+
+      context "partial pin -- can only move with moveset that coincides with the pinning piece's moveset" do
+        it "can move a horizontally pinned rook to capture its pinning queen" do
+          pinning_queen_coordinate = Coordinate.new(:d3)
+          pinned_rook_initial_coordinate     = Coordinate.new(:g3)
+          pinned_rook_destination_coordinate = pinning_queen_coordinate
+          king_coordinate = Coordinate.new(:h3)
+          pinning_queen = Queen.new(:white)
+          pinned_rook = Rook.new(:black)
+          king = King.new(:black)
+          board.place(pinning_queen, pinning_queen_coordinate)
+          board.place(pinned_rook, pinned_rook_initial_coordinate)
+          board.place(king, king_coordinate)
+          board.move_piece(pinned_rook_initial_coordinate, pinned_rook_destination_coordinate)
+
+          expect(board).to have_a_rook_on pinned_rook_destination_coordinate
+        end
+      end
+    end
+
+    context 'moving bishops' do
+      context "absolute pin -- can't move within pinning piece's moveset" do
+        it "doesn't move a horizontally pinned rook from c4 to f7" do
+          pinning_rook_coordinate = Coordinate.new(:g4)
+          pinned_bishop_initial_coordinate     = Coordinate.new(:c4)
+          pinned_bishop_destination_coordinate = Coordinate.new(:f7)
+          king_coordinate = Coordinate.new(:b4)
+          pinning_rook = Rook.new(:black)
+          pinned_bishop = Bishop.new(:white)
+          king = King.new(:white)
+          board.place(pinning_rook, pinning_rook_coordinate)
+          board.place(pinned_bishop, pinned_bishop_initial_coordinate)
+          board.place(king, king_coordinate)
+          
+          expect { board.move_piece(pinned_bishop_initial_coordinate, pinned_bishop_destination_coordinate) }.to raise_error("That piece is pinned to the king and can't be moved to #{pinned_bishop_destination_coordinate.symbol}")
+        end
+      end
+    end
+
+    context 'moving queens' do
+      context "partial pin" do
+        it "doesn't move a vertically pinned rook from f5 to c2" do
+          pinning_rook_coordinate = Coordinate.new(:f1)
+          pinned_queen_initial_coordinate     = Coordinate.new(:f5)
+          pinned_queen_destination_coordinate = Coordinate.new(:c2)
+          king_coordinate = Coordinate.new(:f8)
+          pinning_rook = Rook.new(:black)
+          pinned_queen = Queen.new(:white)
+          king = King.new(:white)
+          board.place(pinning_rook, pinning_rook_coordinate)
+          board.place(pinned_queen, pinned_queen_initial_coordinate)
+          board.place(king, king_coordinate)
+          
+          expect { board.move_piece(pinned_queen_initial_coordinate, pinned_queen_destination_coordinate) }.to raise_error("That piece is pinned to the king and can't be moved to #{pinned_queen_destination_coordinate.symbol}")
+        end
+      end
+    end
+
+    context 'moving kings' do
+      it "can move a pseudo-pinned king" do
+        pinning_queen_coordinate = Coordinate.new(:e7)
+        pseudopinned_king_initial_coordinate     = Coordinate.new(:e4)
+        pseudopinned_king_destination_coordinate = Coordinate.new(:f5)
+        king_coordinate = Coordinate.new(:e2)
+        pinning_queen = Queen.new(:black)
+        pseudopinned_king = King.new(:white)
+        king = King.new(:black)
+        board.place(pinning_queen, pinning_queen_coordinate)
+        board.place(pseudopinned_king, pseudopinned_king_initial_coordinate)
+        board.place(king, king_coordinate)
+        board.move_piece(pseudopinned_king_initial_coordinate, pseudopinned_king_destination_coordinate)
+
+        expect(board).to have_a_king_on pseudopinned_king_destination_coordinate
+      end
     end
   end
 end

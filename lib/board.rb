@@ -99,8 +99,7 @@ class Board
 
   def move_piece(initial_coordinate, destination_coordinate)
     invalid_move_error_message(destination_coordinate) unless move_validator.valid_move?(initial_coordinate, destination_coordinate, self)
-    raise "Another piece can't be moved while the king is in check" if move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && !king_on?(initial_coordinate)
-    raise "The king can't castle because it's in check" if move_validator.castling_move?(self, initial_coordinate, destination_coordinate) && move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && king_on?(initial_coordinate)
+    raise "Another piece can't be moved while the king is in check" if move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && !king_on?(initial_coordinate) && !move_validator.partially_pinned_piece_on?(initial_coordinate, destination_coordinate, self)
 
     if move_validator.castling_move?(self, initial_coordinate, destination_coordinate)
       a1 = Coordinate.new(:a1); c1 = Coordinate.new(:c1); d1 = Coordinate.new(:d1); e1 = Coordinate.new(:e1); f1 = Coordinate.new(:f1); g1 = Coordinate.new(:g1); h1 = Coordinate.new(:h1)
