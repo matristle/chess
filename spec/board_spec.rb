@@ -2586,6 +2586,28 @@ describe Board do
 
         expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
       end
+
+      context 'discovered checks' do
+        it "can't move another piece while king is in check" do
+          king_coordinate = Coordinate.new(:c1)
+          irrelevant_bishop_initial_coordinate     = Coordinate.new(:h3)
+          irrelevant_bishop_destination_coordinate = Coordinate.new(:g2)
+          queen_coordinate = Coordinate.new(:g5)
+          path_clearing_knight_initial_coordinate     = Coordinate.new(:e3)
+          path_clearing_knight_destination_coordinate = Coordinate.new(:g2)
+          king = King.new(:white)
+          irrelevant_bishop = Bishop.new(:white)
+          checking_queen = Queen.new(:black)
+          path_clearing_knight = Knight.new(:black)
+          board.place(king, king_coordinate) 
+          board.place(irrelevant_bishop, irrelevant_bishop_initial_coordinate) 
+          board.place(checking_queen, queen_coordinate)
+          board.place(path_clearing_knight, path_clearing_knight_initial_coordinate)
+          board.move_piece(path_clearing_knight_initial_coordinate, path_clearing_knight_destination_coordinate)
+  
+          expect { board.move_piece(irrelevant_bishop_initial_coordinate, irrelevant_bishop_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+        end
+      end
     end
 
     context 'moving bishops' do
@@ -2815,6 +2837,39 @@ describe Board do
 
         expect(board).to have_a_king_on pseudopinned_king_destination_coordinate
       end
+    end
+  end
+
+  context 'wins' do
+    # possibly the responsibility of a GameArbiter or similar
+
+    it "declares a win when the opponent king has no legal moves" do
+       checkmating_rook_initial_coordinate     = Coordinate.new(:g2)
+       checkmating_rook_destination_coordinate = Coordinate.new(:h2)
+       companion_guarding_rook_coordinate = Coordinate.new(:g1)
+       checkmated_king_coordinate = Coordinate.new(:h7)
+       checkmating_rook        = Rook.new(:white)
+       companion_guarding_rook = Rook.new(:white)
+       checkmated_king = King.new(:black)
+       board.place(checkmating_rook, checkmating_rook_initial_coordinate)
+       board.place(companion_guarding_rook, companion_guarding_rook_coordinate)
+       board.place(checkmated_king, checkmated_king_coordinate)
+       board.move_piece(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)
+
+       expect(board.win?(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)).to be(true)
+    end
+
+    it "doesn't declare a win when the opponent has legal moves" do
+       checkmating_rook_initial_coordinate     = Coordinate.new(:g2)
+       checkmating_rook_destination_coordinate = Coordinate.new(:h2)
+       checkmated_king_coordinate = Coordinate.new(:h7)
+       checkmating_rook = Rook.new(:white)
+       checkmated_king = King.new(:black)
+       board.place(checkmating_rook, checkmating_rook_initial_coordinate)
+       board.place(checkmated_king, checkmated_king_coordinate)
+       board.move_piece(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)
+
+       expect(board.win?(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)).to be(false)
     end
   end
 end

@@ -1,4 +1,21 @@
 class Board
+  class InvalidMoveError < StandardError
+    attr_reader :destination_coordinate
+
+    def initialize(destination_coordinate)
+      @destination_coordinate = destination_coordinate
+    end
+
+    def message
+      "That piece can't move to #{destination_coordinate.symbol}"
+    end
+  end
+  class AnotherPieceMovedWhenKingInCheckError < StandardError
+    def message
+      "Another piece can't be moved while the king is in check"
+    end
+  end
+
   def initialize(board_maker:, piece_arranger:, move_validator:)
     @board_maker    = board_maker
     @piece_arranger = piece_arranger
@@ -7,6 +24,10 @@ class Board
     @structure = board_maker.make
   end
   
+  def win?(initial_coordinate, destination_coordinate)
+    move_validator.no_legal_king_moves_left?(initial_coordinate, destination_coordinate, self)
+  end
+
   def empty?
     squares.all?(&:empty?)
   end
@@ -98,8 +119,8 @@ class Board
   end
 
   def move_piece(initial_coordinate, destination_coordinate)
-    invalid_move_error_message(destination_coordinate) unless move_validator.valid_move?(initial_coordinate, destination_coordinate, self)
-    raise "Another piece can't be moved while the king is in check" if move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && !king_on?(initial_coordinate) && !move_validator.partially_pinned_piece_on?(initial_coordinate, destination_coordinate, self)
+    raise InvalidMoveError.new(destination_coordinate) unless move_validator.valid_move?(initial_coordinate, destination_coordinate, self)
+    raise AnotherPieceMovedWhenKingInCheckError if move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && !king_on?(initial_coordinate) && !move_validator.partially_pinned_piece_on?(initial_coordinate, destination_coordinate, self)
 
     if move_validator.castling_move?(self, initial_coordinate, destination_coordinate)
       a1 = Coordinate.new(:a1); c1 = Coordinate.new(:c1); d1 = Coordinate.new(:d1); e1 = Coordinate.new(:e1); f1 = Coordinate.new(:f1); g1 = Coordinate.new(:g1); h1 = Coordinate.new(:h1)
@@ -215,10 +236,6 @@ class Board
   private
   
   attr_reader :structure, :board_maker, :piece_arranger, :move_validator
-
-  def invalid_move_error_message(destination_coordinate)
-    raise "That piece can't move to #{destination_coordinate.symbol}" 
-  end
 
   def square_on(coordinate)
     structure[coordinate]

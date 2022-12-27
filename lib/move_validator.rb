@@ -1,4 +1,71 @@
 class MoveValidator
+  class IntoMovesetError < StandardError
+    def message
+      "The king can't move into an opponent's piece moveset"
+    end
+  end
+  class CapturedKingError < StandardError
+    def message
+      "The king can't be captured/replaced"
+    end
+  end
+  class CapturedAllyError < StandardError
+    attr_reader :initial_coordinate, :destination_coordinate
+    
+    def initialize(initial_coordinate, destination_coordinate)
+      @initial_coordinate     = initial_coordinate
+      @destination_coordinate = destination_coordinate
+    end
+    
+    def message
+      "The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it"
+    end
+  end
+  class InterveningPieceError < StandardError
+    attr_reader :initial_coordinate, :destination_coordinate
+    
+    def initialize(initial_coordinate, destination_coordinate)
+      @initial_coordinate     = initial_coordinate
+      @destination_coordinate = destination_coordinate
+    end
+    
+    def message
+      "The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}"
+    end
+  end
+  class MovedPinnedPieceError < StandardError
+    attr_reader :destination_coordinate
+    
+    def initialize(destination_coordinate)
+      @destination_coordinate = destination_coordinate
+    end
+    
+    def message
+      "That piece is pinned to the king and can't be moved to #{destination_coordinate.symbol}"
+    end
+  end
+  class CastlingWhenInCheckError < StandardError
+    def message
+      "The king can't castle because it's in check"
+    end
+  end
+  class PreviouslyMovedKingCastlingError < StandardError
+    def message
+      "The king can't castle because it has moved before" 
+    end
+  end
+  class PreviouslyMovedRookCastlingError < StandardError
+    def message
+      "The king can't castle because the rook has moved before"
+    end
+  end
+  class CastlingThroughGuardedSquareError < StandardError
+    def message
+      "The king can't castle through a guarded square"
+    end
+  end
+  
+
   def valid_move?(initial_coordinate, destination_coordinate, board)
     check_for_imminent_captured_king_on(destination_coordinate, board)
     check_for_imminent_ally_piece_capturing_from(initial_coordinate, destination_coordinate, board)
@@ -24,6 +91,23 @@ class MoveValidator
     coinciding_moveset?(initial_coordinate, destination_coordinate, board) && king_in_check?(initial_coordinate, destination_coordinate, board) && ( any_intervening_piece_between?(board.white_king_coordinate, found_piece_coordinate, board) || any_intervening_piece_between?(board.black_king_coordinate, found_piece_coordinate, board) )
   end
 
+  def no_legal_king_moves_left?(initial_coordinate, destination_coordinate, board)
+    if board.white_piece_on?(destination_coordinate)
+      king_traversal_coordinates(board.black_king_coordinate, board).none? do |traversal_coordinate|
+        valid_move?(board.black_king_coordinate, traversal_coordinate, board)
+
+      rescue IntoMovesetError, CapturedKingError, CapturedAllyError, InterveningPieceError, MovedPinnedPieceError, CastlingWhenInCheckError, PreviouslyMovedKingCastlingError, PreviouslyMovedRookCastlingError, CastlingThroughGuardedSquareError
+        false
+      end
+    elsif board.black_piece_on?(destination_coordinate)
+      king_traversal_coordinates(board.white_king_coordinate, board).none? do |traversal_coordinate|
+        valid_move?(board.white_king_coordinate, traversal_coordinate, board)
+
+      rescue IntoMovesetError, CapturedKingError, CapturedAllyError, InterveningPieceError, MovedPinnedPieceError, CastlingWhenInCheckError, PreviouslyMovedKingCastlingError, PreviouslyMovedRookCastlingError, CastlingThroughGuardedSquareError
+        false
+      end
+    end
+  end
 
   def castling_move?(board, initial_coordinate, destination_coordinate)
     short_castling?(board, initial_coordinate, destination_coordinate) || long_castling?(board, initial_coordinate, destination_coordinate)
@@ -35,15 +119,15 @@ class MoveValidator
 
     return false unless (initial_coordinate == e1 && destination_coordinate == g1) || (initial_coordinate == e8 && destination_coordinate == g8)
 
-    raise "The king can't castle because it has moved before"       if (initial_coordinate == e1 && board.white_piece_on?(e1) && board.king_on?(e1) && board.piece_has_moved_before_on?(e1)) || (initial_coordinate == e8 && board.black_piece_on?(e8) && board.king_on?(e8) && board.piece_has_moved_before_on?(e8))
-    raise "The king can't castle because the rook has moved before" if (initial_coordinate == e1 && board.white_piece_on?(h1) && board.rook_on?(h1) && board.piece_has_moved_before_on?(h1)) || (initial_coordinate == e8 && board.black_piece_on?(h8) && board.rook_on?(h8) && board.piece_has_moved_before_on?(h8))
+    raise PreviouslyMovedKingCastlingError if (initial_coordinate == e1 && board.white_piece_on?(e1) && board.king_on?(e1) && board.piece_has_moved_before_on?(e1)) || (initial_coordinate == e8 && board.black_piece_on?(e8) && board.king_on?(e8) && board.piece_has_moved_before_on?(e8))
+    raise PreviouslyMovedRookCastlingError if (initial_coordinate == e1 && board.white_piece_on?(h1) && board.rook_on?(h1) && board.piece_has_moved_before_on?(h1)) || (initial_coordinate == e8 && board.black_piece_on?(h8) && board.rook_on?(h8) && board.piece_has_moved_before_on?(h8))
 
     if board.white_piece_on?(e1) && board.white_piece_on?(h1)
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(f1, board, e1)
+      raise CastlingThroughGuardedSquareError if guarding_piece_on?(f1, board, e1)
       
       board.king_on?(e1) && board.rook_on?(h1)
     elsif board.black_piece_on?(e8) && board.black_piece_on?(h8)
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(f8, board, e8)
+      raise CastlingThroughGuardedSquareError if guarding_piece_on?(f8, board, e8)
 
       board.king_on?(e8) && board.rook_on?(h8)
     end
@@ -55,15 +139,15 @@ class MoveValidator
 
     return false unless (initial_coordinate == e1 && destination_coordinate == c1) || (initial_coordinate == e8 && destination_coordinate == c8)
 
-    raise "The king can't castle because it has moved before"       if (board.piece_on?(e1) && board.piece_has_moved_before_on?(e1)) || (board.piece_on?(e8) && board.piece_has_moved_before_on?(e8))
-    raise "The king can't castle because the rook has moved before" if (board.piece_on?(a1) && board.piece_has_moved_before_on?(a1)) || (board.piece_on?(a8) && board.piece_has_moved_before_on?(a8))
+    raise PreviouslyMovedKingCastlingError if (board.piece_on?(e1) && board.piece_has_moved_before_on?(e1)) || (board.piece_on?(e8) && board.piece_has_moved_before_on?(e8))
+    raise PreviouslyMovedRookCastlingError if (board.piece_on?(a1) && board.piece_has_moved_before_on?(a1)) || (board.piece_on?(a8) && board.piece_has_moved_before_on?(a8))
 
     if board.white_piece_on?(e1) && board.white_piece_on?(a1)
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(d1, board, e1)
+      raise CastlingThroughGuardedSquareError if guarding_piece_on?(d1, board, e1)
       
       board.king_on?(e1) && board.rook_on?(a1) 
     elsif board.black_piece_on?(e8) && board.black_piece_on?(a8)
-      raise "The king can't castle through a guarded square" if guarding_piece_on?(d8, board, e8)
+      raise CastlingThroughGuardedSquareError if guarding_piece_on?(d8, board, e8)
 
       board.king_on?(e8) && board.rook_on?(a8)
     end
@@ -103,11 +187,11 @@ class MoveValidator
   end
   
   def check_for_castling_when_king_is_in_check(initial_coordinate, destination_coordinate, board)
-    raise "The king can't castle because it's in check" if castling_move?(board, initial_coordinate, destination_coordinate) && king_in_check?(initial_coordinate, destination_coordinate, board) && board.king_on?(initial_coordinate) 
+    raise CastlingWhenInCheckError if castling_move?(board, initial_coordinate, destination_coordinate) && king_in_check?(initial_coordinate, destination_coordinate, board) && board.king_on?(initial_coordinate) 
   end
 
   def check_for_pinned_piece(initial_coordinate, destination_coordinate, board)
-    raise "That piece is pinned to the king and can't be moved to #{destination_coordinate.symbol}" if absolutely_pinned_piece_on?(initial_coordinate, destination_coordinate, board)
+    raise MovedPinnedPieceError.new(destination_coordinate) if absolutely_pinned_piece_on?(initial_coordinate, destination_coordinate, board)
   end
 
   def traversal_coordinates(initial_coordinate, destination_coordinate, board)
@@ -127,20 +211,26 @@ class MoveValidator
     end
   end
 
+  def king_traversal_coordinates(initial_coordinate, board)
+    variations = [0, -1, 1].repeated_permutation(2).to_a - [0, 0]
+
+    result = variations.map { |variation| initial_coordinate.change_coordinate_by(file_amount: variation[0], rank_amount: variation[1]) }.compact
+  end
+
   def check_for_imminent_captured_king_on(destination_coordinate, board)
-    raise "The king can't be captured/replaced" if board.king_on? destination_coordinate
+    raise CapturedKingError if board.king_on? destination_coordinate
   end
 
   def check_for_imminent_ally_piece_capturing_from(initial_coordinate, destination_coordinate, board)
-    raise "The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it" if board.same_piece_color_on?(initial_coordinate, destination_coordinate)
+    raise CapturedAllyError.new(initial_coordinate, destination_coordinate) if board.same_piece_color_on?(initial_coordinate, destination_coordinate)
   end
 
   def check_for_intervening_pieces_between(initial_coordinate, destination_coordinate, board)
-    raise "The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}" if any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)
+    raise InterveningPieceError.new(initial_coordinate, destination_coordinate) if any_intervening_piece_between?(initial_coordinate, destination_coordinate, board)
   end
 
   def check_for_guarding_piece_on(destination_coordinate, board, initial_coordinate)
-    raise "The king can't move into an opponent's piece moveset" if guarding_piece_on?(destination_coordinate, board, initial_coordinate)
+    raise IntoMovesetError if guarding_piece_on?(destination_coordinate, board, initial_coordinate)
   end
 
   def coinciding_moveset?(initial_coordinate, destination_coordinate, board)
