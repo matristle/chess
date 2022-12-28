@@ -1,5 +1,10 @@
 class MoveValidator
-  class IntoMovesetError < StandardError
+  class StationaryMoveError < StandardError
+    def message
+      "That move doesn't go anywhere else"
+    end
+  end
+  class IntoOpponentMovesetError < StandardError
     def message
       "The king can't move into an opponent's piece moveset"
     end
@@ -67,6 +72,7 @@ class MoveValidator
   
 
   def valid_move?(initial_coordinate, destination_coordinate, board)
+    check_for_stationary_move(initial_coordinate, destination_coordinate)
     check_for_imminent_captured_king_on(destination_coordinate, board)
     check_for_imminent_ally_piece_capturing_from(initial_coordinate, destination_coordinate, board)
     check_for_intervening_pieces_between(initial_coordinate, destination_coordinate, board)
@@ -96,14 +102,14 @@ class MoveValidator
       king_traversal_coordinates(board.black_king_coordinate, board).none? do |traversal_coordinate|
         valid_move?(board.black_king_coordinate, traversal_coordinate, board)
 
-      rescue IntoMovesetError, CapturedKingError, CapturedAllyError, InterveningPieceError, MovedPinnedPieceError, CastlingWhenInCheckError, PreviouslyMovedKingCastlingError, PreviouslyMovedRookCastlingError, CastlingThroughGuardedSquareError
+      rescue IntoOpponentMovesetError, CapturedKingError, CapturedAllyError, InterveningPieceError, MovedPinnedPieceError, CastlingWhenInCheckError, PreviouslyMovedKingCastlingError, PreviouslyMovedRookCastlingError, CastlingThroughGuardedSquareError, StationaryMoveError
         false
       end
     elsif board.black_piece_on?(destination_coordinate)
       king_traversal_coordinates(board.white_king_coordinate, board).none? do |traversal_coordinate|
         valid_move?(board.white_king_coordinate, traversal_coordinate, board)
 
-      rescue IntoMovesetError, CapturedKingError, CapturedAllyError, InterveningPieceError, MovedPinnedPieceError, CastlingWhenInCheckError, PreviouslyMovedKingCastlingError, PreviouslyMovedRookCastlingError, CastlingThroughGuardedSquareError
+      rescue IntoOpponentMovesetError, CapturedKingError, CapturedAllyError, InterveningPieceError, MovedPinnedPieceError, CastlingWhenInCheckError, PreviouslyMovedKingCastlingError, PreviouslyMovedRookCastlingError, CastlingThroughGuardedSquareError, StationaryMoveError
         false
       end
     end
@@ -185,7 +191,15 @@ class MoveValidator
       king_move?(initial_coordinate, destination_coordinate)
     end
   end
+
+  def check_for_stationary_move(initial_coordinate, destination_coordinate)
+    raise StationaryMoveError if stationary_move?(initial_coordinate, destination_coordinate)
+  end
   
+  def stationary_move?(initial_coordinate, destination_coordinate)
+    initial_coordinate == destination_coordinate
+  end
+
   def check_for_castling_when_king_is_in_check(initial_coordinate, destination_coordinate, board)
     raise CastlingWhenInCheckError if castling_move?(board, initial_coordinate, destination_coordinate) && king_in_check?(initial_coordinate, destination_coordinate, board) && board.king_on?(initial_coordinate) 
   end
@@ -212,7 +226,7 @@ class MoveValidator
   end
 
   def king_traversal_coordinates(initial_coordinate, board)
-    variations = [0, -1, 1].repeated_permutation(2).to_a - [0, 0]
+    variations = [0, -1, 1].repeated_permutation(2).to_a - [ [0, 0] ]
 
     result = variations.map { |variation| initial_coordinate.change_coordinate_by(file_amount: variation[0], rank_amount: variation[1]) }.compact
   end
@@ -230,7 +244,7 @@ class MoveValidator
   end
 
   def check_for_guarding_piece_on(destination_coordinate, board, initial_coordinate)
-    raise IntoMovesetError if guarding_piece_on?(destination_coordinate, board, initial_coordinate)
+    raise IntoOpponentMovesetError if guarding_piece_on?(destination_coordinate, board, initial_coordinate)
   end
 
   def coinciding_moveset?(initial_coordinate, destination_coordinate, board)
@@ -275,7 +289,7 @@ class MoveValidator
 
   def guarding_piece_on_rank?(destination_coordinate, board, initial_coordinate)
     destination_rank = board.coordinate_references_at(rank: destination_coordinate.rank)
-    split_point_index = destination_coordinate.rank.to_i - 1
+    split_point_index = destination_rank.index(destination_coordinate)
     leftside_rank, rightside_rank = destination_rank[0...split_point_index], destination_rank[split_point_index+1..-1]
     leftside_rank.delete(initial_coordinate)
     rightside_rank.delete(initial_coordinate)

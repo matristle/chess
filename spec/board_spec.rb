@@ -335,6 +335,16 @@ describe Board do
     end
   end
   
+  context "stationary move -- same initial and destination coordinate" do
+    it "raises an error when move is from c2 to c2" do
+      initial_coordinate     = Coordinate.new(:c2)
+      destination_coordinate = initial_coordinate
+      rook = Rook.new(:black)
+      board.place(rook, initial_coordinate)
+        
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That move doesn't go anywhere else")
+    end
+  end
   context 'moving rooks' do
     context 'without any other piece on the board' do
       it 'moves rook from f5 to f6 -- upwards on the same file' do
@@ -1823,7 +1833,21 @@ describe Board do
             guarding_queen = Queen.new(:black)
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
-    
+            
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          end
+        end
+        
+        context 'queen next to the king' do
+          it "raises an error when a queen is holding the square from bottom left diagonal" do
+            initial_coordinate     = Coordinate.new(:g8)
+            destination_coordinate = Coordinate.new(:f7)
+            guarding_queen_coordinate = Coordinate.new(:g7)
+            moving_king = King.new(:white)
+            guarding_queen = Queen.new(:black)
+            board.place(moving_king, initial_coordinate)
+            board.place(guarding_queen, guarding_queen_coordinate)
+            
             expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
           end
         end
@@ -2840,10 +2864,10 @@ describe Board do
     end
   end
 
-  context 'wins' do
+  context 'checkmates' do
     # possibly the responsibility of a GameArbiter or similar
 
-    it "declares a win when the opponent king has no legal moves" do
+    it "declares checkmate when the opponent king has no legal moves" do
        checkmating_rook_initial_coordinate     = Coordinate.new(:g2)
        checkmating_rook_destination_coordinate = Coordinate.new(:h2)
        companion_guarding_rook_coordinate = Coordinate.new(:g1)
@@ -2856,10 +2880,10 @@ describe Board do
        board.place(checkmated_king, checkmated_king_coordinate)
        board.move_piece(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)
 
-       expect(board.win?(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)).to be(true)
+       expect(board.checkmate?(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)).to be(true)
     end
 
-    it "doesn't declare a win when the opponent has legal moves" do
+    it "doesn't declare checkmate when the opponent has legal moves" do
        checkmating_rook_initial_coordinate     = Coordinate.new(:g2)
        checkmating_rook_destination_coordinate = Coordinate.new(:h2)
        checkmated_king_coordinate = Coordinate.new(:h7)
@@ -2869,7 +2893,85 @@ describe Board do
        board.place(checkmated_king, checkmated_king_coordinate)
        board.move_piece(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)
 
-       expect(board.win?(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)).to be(false)
+       expect(board.checkmate?(checkmating_rook_initial_coordinate, checkmating_rook_destination_coordinate)).to be(false)
+    end
+
+    it "doesn't declare checkmate when the opponent isn't in check i.e. in stalemate" do
+      stalemating_queen_initial_coordinate     = Coordinate.new(:d3)
+      stalemating_queen_destination_coordinate = Coordinate.new(:f1)
+      stalemated_king_coordinate = Coordinate.new(:h2)
+      companion_guarding_rook_coordinate = Coordinate.new(:g7)
+      stalemating_queen       = Queen.new(:black)
+      companion_guarding_rook = Rook.new(:black)
+      stalemated_king = King.new(:white)
+      board.place(stalemating_queen, stalemating_queen_initial_coordinate)
+      board.place(stalemated_king, stalemated_king_coordinate)
+      board.place(companion_guarding_rook, companion_guarding_rook_coordinate)
+      board.move_piece(stalemating_queen_initial_coordinate, stalemating_queen_destination_coordinate)
+
+      expect(board.checkmate?(stalemating_queen_destination_coordinate, stalemating_queen_destination_coordinate)).to be(false)
+    end
+  end
+
+  context 'draws' do
+    context 'stalemates' do
+      it "declares stalemate if king has no legal moves but in not check" do
+        stalemating_queen_initial_coordinate     = Coordinate.new(:b1)
+        stalemating_queen_destination_coordinate = Coordinate.new(:b6)
+        stalemated_king_coordinate = Coordinate.new(:a8)
+        stalemating_queen = Queen.new(:black)
+        stalemated_king = King.new(:white)
+        board.place(stalemating_queen, stalemating_queen_initial_coordinate)
+        board.place(stalemated_king, stalemated_king_coordinate)
+        board.move_piece(stalemating_queen_initial_coordinate, stalemating_queen_destination_coordinate)
+
+        expect(board.stalemate?(stalemating_queen_destination_coordinate, stalemating_queen_destination_coordinate)).to be(true)
+      end
+
+      it "doesn't declare stalemate when the king has no legal moves but it's in check i.e. the king is in checkmate" do
+        checkmating_queen_initial_coordinate     = Coordinate.new(:c3)
+        checkmating_queen_destination_coordinate = Coordinate.new(:g7)
+        companion_guarding_bishop_coordinate = Coordinate.new(:b2)
+        checkmated_king_coordinate = Coordinate.new(:g8)
+        checkmating_queen = Queen.new(:black)
+        companion_guarding_bishop = Bishop.new(:black)
+        checkmated_king = King.new(:white)
+        board.place(checkmating_queen, checkmating_queen_initial_coordinate)
+        board.place(companion_guarding_bishop, companion_guarding_bishop_coordinate)
+        board.place(checkmated_king, checkmated_king_coordinate)
+        board.move_piece(checkmating_queen_initial_coordinate, checkmating_queen_destination_coordinate)
+
+        expect(board.stalemate?(checkmating_queen_initial_coordinate, checkmating_queen_destination_coordinate)).to be(false)
+      end
+
+      it "doesn't declare stalemate when the king is not in check but it has legal moves" do
+        erratically_moving_queen_initial_coordinate     = Coordinate.new(:c3)
+        erratically_moving_queen_destination_coordinate = Coordinate.new(:h3)
+        companion_guarding_bishop_coordinate = Coordinate.new(:b2)
+        unchallenged_king_coordinate = Coordinate.new(:f8)
+        erratically_moving_queen = Queen.new(:black)
+        companion_guarding_bishop = Bishop.new(:black)
+        unchallenged_king = King.new(:white)
+        board.place(erratically_moving_queen, erratically_moving_queen_initial_coordinate)
+        board.place(companion_guarding_bishop, companion_guarding_bishop_coordinate)
+        board.place(unchallenged_king, unchallenged_king_coordinate)
+        board.move_piece(erratically_moving_queen_initial_coordinate, erratically_moving_queen_destination_coordinate)
+
+        expect(board.stalemate?(erratically_moving_queen_initial_coordinate, erratically_moving_queen_destination_coordinate)).to be(false)
+      end
+
+      it "doesn't declare stalemate when the king is only in check" do
+        checking_queen_initial_coordinate     = Coordinate.new(:h1)
+        checking_queen_destination_coordinate = Coordinate.new(:c6)
+        checked_king_coordinate = Coordinate.new(:g6)
+        checking_queen = Queen.new(:white)
+        checked_king = King.new(:black)
+        board.place(checking_queen, checking_queen_initial_coordinate)
+        board.place(checked_king, checked_king_coordinate)
+        board.move_piece(checking_queen_initial_coordinate, checking_queen_destination_coordinate)
+
+        expect(board.stalemate?(checking_queen_initial_coordinate, checking_queen_destination_coordinate)).to be(false)
+      end
     end
   end
 end

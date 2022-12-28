@@ -24,8 +24,12 @@ class Board
     @structure = board_maker.make
   end
   
-  def win?(initial_coordinate, destination_coordinate)
-    move_validator.no_legal_king_moves_left?(initial_coordinate, destination_coordinate, self)
+  def checkmate?(initial_coordinate, destination_coordinate)
+    move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && move_validator.no_legal_king_moves_left?(initial_coordinate, destination_coordinate, self)
+  end
+
+  def stalemate?(initial_coordinate, destination_coordinate)
+    move_validator.no_legal_king_moves_left?(initial_coordinate, destination_coordinate, self) && !move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) 
   end
 
   def empty?
