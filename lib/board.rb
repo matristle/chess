@@ -104,6 +104,10 @@ class Board
     square_on(coordinate).light?
   end
 
+  def allies?(initial_coordinate, destination_coordinate)
+    same_piece_color_on?(initial_coordinate, destination_coordinate)
+  end
+
   def same_piece_color_on?(initial_coordinate, destination_coordinate)
     return false if square_on(initial_coordinate).empty? || square_on(destination_coordinate).empty?
 
