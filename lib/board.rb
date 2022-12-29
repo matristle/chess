@@ -25,7 +25,7 @@ class Board
   end
   
   def checkmate?(initial_coordinate, destination_coordinate)
-    move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && move_validator.no_legal_king_moves_left?(initial_coordinate, destination_coordinate, self)
+    move_validator.king_in_check?(initial_coordinate, destination_coordinate, self) && move_validator.no_legal_king_moves_left?(initial_coordinate, destination_coordinate, self) && !move_validator.guarding_piece_to?(destination_coordinate, self, initial_coordinate)
   end
 
   def stalemate?(initial_coordinate, destination_coordinate)

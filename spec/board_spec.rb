@@ -1941,16 +1941,30 @@ describe Board do
           end
   
           it "raises an error when a king is holding the square from bottom left diagonal" do
-            initial_coordinate     = Coordinate.new(:f6)
+            initial_coordinate     = Coordinate.new(:g7)
             destination_coordinate = Coordinate.new(:f7)
-            guarding_queen_coordinate = Coordinate.new(:d5)
+            guarding_queen_coordinate = Coordinate.new(:e6)
             moving_king = King.new(:white)
             guarding_queen = King.new(:black)
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
-    
+
             expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
           end
+        end
+
+        it "can move to the destination square if the nearest piece isn't guarding it" do
+          initial_coordinate     = Coordinate.new(:b1)
+          destination_coordinate = Coordinate.new(:a2)
+          not_guarding_king_coordinate = Coordinate.new(:a5)
+          moving_king = King.new(:white)
+          not_guarding_king = King.new(:black)
+          board.place(moving_king, initial_coordinate)
+          board.place(not_guarding_king, not_guarding_king_coordinate)
+
+          board.move_piece(initial_coordinate, destination_coordinate)
+
+          expect(board).to have_a_king_on destination_coordinate
         end
       end
 
@@ -2924,7 +2938,24 @@ describe Board do
       expect(board.checkmate?(checkmating_queen_initial_coordinate, checkmating_queen_destination_coordinate)).to be(false)
     end
     
-    it "doesn't declare checkmate when the piece inducing checkmate can be captured by another piece"
+    it "doesn't declare checkmate when the piece inducing checkmate can be captured by another piece" do
+      supporting_bishop_coordinate = Coordinate.new(:b7)
+      checkmating_queen_initial_coordinate     = Coordinate.new(:g5)
+      checkmating_queen_destination_coordinate = Coordinate.new(:g2)
+      checkmated_king_coordinate = Coordinate.new(:h2)
+      defending_queen_coordinate = Coordinate.new(:f1)
+      supporting_bishop = Bishop.new(:black)
+      checkmating_queen = Queen.new(:black)
+      defending_queen = Queen.new(:white)
+      checkmated_king = King.new(:white)
+      board.place(supporting_bishop, supporting_bishop_coordinate)
+      board.place(checkmating_queen, checkmating_queen_initial_coordinate)
+      board.place(checkmated_king, checkmated_king_coordinate)
+      board.place(defending_queen, defending_queen_coordinate)
+      board.move_piece(checkmating_queen_initial_coordinate, checkmating_queen_destination_coordinate)
+
+      expect(board.checkmate?(checkmating_queen_initial_coordinate, checkmating_queen_destination_coordinate)).to be(false)
+    end
   end
 
   context 'draws' do

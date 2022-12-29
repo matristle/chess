@@ -91,6 +91,13 @@ class MoveValidator
     board.piece_on?(destination_coordinate) && guarding_piece_to?(destination_coordinate, board, initial_coordinate) && board.allies?(initial_coordinate, destination_coordinate)
   end
 
+  def guarding_piece_to?(destination_coordinate, board, initial_coordinate)
+    return false unless destination_coordinate
+    
+    guarding_piece_to_file_or_rank?(destination_coordinate, board, initial_coordinate) || guarding_piece_to_diagonals?(destination_coordinate, board, initial_coordinate) ||
+    guarding_knight_on(destination_coordinate, board, initial_coordinate)
+  end
+
   def absolutely_pinned_piece_on?(initial_coordinate, destination_coordinate, board)
     return false if coinciding_moveset?(initial_coordinate, destination_coordinate, board)
 
@@ -210,6 +217,7 @@ class MoveValidator
   end
 
   def check_for_pinned_piece(initial_coordinate, destination_coordinate, board)
+    return false if board.king_on?(initial_coordinate)
     raise MovedPinnedPieceError.new(destination_coordinate) if absolutely_pinned_piece_on?(initial_coordinate, destination_coordinate, board)
   end
 
@@ -261,13 +269,6 @@ class MoveValidator
     ( bishop_move?(initial_coordinate, destination_coordinate) && board.bishop_on?(found_piece_coordinate) ) || ( bishop_move?(initial_coordinate, destination_coordinate) && board.queen_on?(found_piece_coordinate) ) &&
     ( rook_move?(initial_coordinate, destination_coordinate)   && board.rook_on?(found_piece_coordinate)   ) || ( rook_move?(initial_coordinate, destination_coordinate)   && board.queen_on?(found_piece_coordinate) )
   end
-
-  def guarding_piece_to?(destination_coordinate, board, initial_coordinate)
-    return false unless destination_coordinate
-    
-    guarding_piece_to_file_or_rank?(destination_coordinate, board, initial_coordinate) || guarding_piece_to_diagonals?(destination_coordinate, board, initial_coordinate) ||
-    guarding_knight_on(destination_coordinate, board, initial_coordinate)
-  end
   
   def guarding_piece_to_file_or_rank?(destination_coordinate, board, initial_coordinate)
     guarding_piece_to_file?(destination_coordinate, board, initial_coordinate) || guarding_piece_to_rank?(destination_coordinate, board, initial_coordinate) 
@@ -286,8 +287,22 @@ class MoveValidator
     @found_piece_coordinate = rightside_file.find { |coordinate| board.piece_on? coordinate } unless found_piece_coordinate
 
     if found_piece_coordinate
-      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+      if board.rook_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless rook_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.knight_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless knight_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.bishop_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless bishop_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.queen_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless queen_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.king_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless king_move?(found_piece_coordinate, destination_coordinate)
+      end
+    end
 
+    if found_piece_coordinate     
+      return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
+      
       board.rook_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate) 
     end
   end
@@ -303,6 +318,20 @@ class MoveValidator
 
     @found_piece_coordinate = leftside_rank.find  { |coordinate| board.piece_on? coordinate }
     @found_piece_coordinate = rightside_rank.find { |coordinate| board.piece_on? coordinate } unless found_piece_coordinate
+
+    if found_piece_coordinate
+      if board.rook_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless rook_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.knight_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless knight_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.bishop_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless bishop_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.queen_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless queen_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.king_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless king_move?(found_piece_coordinate, destination_coordinate)
+      end
+    end
 
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
@@ -322,6 +351,20 @@ class MoveValidator
     @found_piece_coordinate = top_right_diagonal.find { |coordinate| board.piece_on? coordinate }
 
     if found_piece_coordinate
+      if board.rook_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless rook_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.knight_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless knight_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.bishop_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless bishop_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.queen_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless queen_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.king_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless king_move?(found_piece_coordinate, destination_coordinate)
+      end
+    end
+
+    if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
       board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
@@ -334,6 +377,20 @@ class MoveValidator
     @found_piece_coordinate = top_left_diagonal.find { |coordinate| board.piece_on? coordinate }
 
     if found_piece_coordinate
+      if board.rook_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless rook_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.knight_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless knight_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.bishop_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless bishop_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.queen_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless queen_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.king_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless king_move?(found_piece_coordinate, destination_coordinate)
+      end
+    end
+
+    if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
       board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
@@ -344,6 +401,20 @@ class MoveValidator
     bottom_right_diagonal = board.bottom_right_diagonal_references_from(destination_coordinate)
     bottom_right_diagonal.delete(initial_coordinate)
     @found_piece_coordinate = bottom_right_diagonal.find { |coordinate| board.piece_on? coordinate }
+    
+    if found_piece_coordinate
+      if board.rook_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless rook_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.knight_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless knight_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.bishop_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless bishop_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.queen_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless queen_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.king_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless king_move?(found_piece_coordinate, destination_coordinate)
+      end
+    end
 
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
@@ -358,6 +429,20 @@ class MoveValidator
     @found_piece_coordinate = bottom_left_diagonal.find { |coordinate| board.piece_on? coordinate }
 
     if found_piece_coordinate
+      if board.rook_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless rook_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.knight_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless knight_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.bishop_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless bishop_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.queen_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless queen_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.king_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless king_move?(found_piece_coordinate, destination_coordinate)
+      end
+    end
+
+    if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
       board.bishop_on?(found_piece_coordinate) || board.queen_on?(found_piece_coordinate) || board.king_on?(found_piece_coordinate)
@@ -367,7 +452,21 @@ class MoveValidator
   def guarding_knight_on(destination_coordinate, board, initial_coordinate)
     l_shapes = board.l_shape_coordinates_from(destination_coordinate)
     @found_piece_coordinate = l_shapes.find { |coordinate| board.piece_on? coordinate }
-    
+  
+    if found_piece_coordinate
+      if board.rook_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless rook_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.knight_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless knight_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.bishop_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless bishop_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.queen_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless queen_move?(found_piece_coordinate, destination_coordinate)
+      elsif board.king_on?(found_piece_coordinate)
+        @found_piece_coordinate = nil unless king_move?(found_piece_coordinate, destination_coordinate)
+      end
+    end
+
     if found_piece_coordinate
       return false if board.same_piece_color_on?(initial_coordinate, found_piece_coordinate)
       
