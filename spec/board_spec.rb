@@ -341,9 +341,16 @@ describe Board do
       rook = Rook.new(:black)
       board.place(rook, initial_coordinate)
         
-      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That move doesn't go anywhere else")
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::StationaryMoveError)
     end
   end
+
+  context "move from an empty square" do
+    it "raise an error" do
+      expect { board.move_piece(Coordinate.new(:b6), Coordinate.new(:b8)) }.to raise_error(MoveValidator::NoPieceFromStartError)
+    end
+  end
+
   context 'moving rooks' do
     context 'without any other piece on the board' do
       it 'moves rook from f5 to f6 -- upwards on the same file' do
@@ -469,7 +476,7 @@ describe Board do
         board.place(capturing_rook, initial_coordinate)
         board.place(ally_knight, destination_coordinate)
 
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedAllyError)
       end
       
       it "doesn't capture a king" do
@@ -480,7 +487,7 @@ describe Board do
         board.place(capturing_rook, initial_coordinate)
         board.place(uncaptureable_opponent_king, destination_coordinate)
         
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't be captured/replaced")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedKingError)
       end
 
       it "doesn't capture when there's an intervening piece between the move" do
@@ -494,7 +501,7 @@ describe Board do
         board.place(target_opponent_knight, destination_coordinate)
         board.place(intervening_bishop, intervening_bishop_coordinate)
 
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The move is invalid since there's an intervening piece between #{initial_coordinate.symbol} and #{destination_coordinate.symbol}")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::InterveningPieceError)
       end
     end
 
@@ -504,7 +511,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, initial_coordinate)
       
-      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(Board::InvalidMoveError)
     end
     
     it "doesn't move rook from a4 to e1" do
@@ -513,7 +520,7 @@ describe Board do
       rook = Rook.new(:white)
       board.place(rook, initial_coordinate)
       
-      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(Board::InvalidMoveError)
     end
   end
 
@@ -729,7 +736,7 @@ describe Board do
         board.place(capturing_knight, initial_coordinate)
         board.place(ally_knight, destination_coordinate)
 
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedAllyError)
       end
 
       it "doesn't capture a king" do
@@ -740,7 +747,7 @@ describe Board do
         board.place(capturing_knight, initial_coordinate)
         board.place(uncaptureable_opponent_king, destination_coordinate)
         
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't be captured/replaced")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedKingError)
       end
     end
     
@@ -750,7 +757,7 @@ describe Board do
       knight = Knight.new(:white)
       board.place(knight, initial_coordinate)
 
-      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(Board::InvalidMoveError)
     end
   end
 
@@ -866,7 +873,7 @@ describe Board do
         board.place(capturing_bishop, initial_coordinate)
         board.place(ally_knight, destination_coordinate)
 
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedAllyError)
       end
 
       it "doesn't capture a king" do
@@ -877,7 +884,7 @@ describe Board do
         board.place(capturing_bishop, initial_coordinate)
         board.place(uncaptureable_opponent_king, destination_coordinate)
         
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't be captured/replaced")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedKingError)
       end
     end
 
@@ -887,7 +894,7 @@ describe Board do
       bishop = Bishop.new(:white)
       board.place(bishop, initial_coordinate)
       
-      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(Board::InvalidMoveError)
     end
   end
 
@@ -1111,7 +1118,7 @@ describe Board do
         board.place(capturing_queen, initial_coordinate)
         board.place(ally_knight, destination_coordinate)
 
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedAllyError)
       end
 
       it "doesn't capture a king" do
@@ -1122,7 +1129,7 @@ describe Board do
         board.place(capturing_queen, initial_coordinate)
         board.place(uncaptureable_opponent_king, destination_coordinate)
         
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't be captured/replaced")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedKingError)
       end
     end
 
@@ -1132,7 +1139,7 @@ describe Board do
       queen = Queen.new(:white)
       board.place(queen, initial_coordinate)
 
-      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(Board::InvalidMoveError)
     end
   end
 
@@ -1370,7 +1377,7 @@ describe Board do
         board.place(capturing_king, initial_coordinate)
         board.place(ally_knight, destination_coordinate)
 
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The piece on #{destination_coordinate.symbol} is an ally, so the piece at #{initial_coordinate.symbol} can't replace it")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedAllyError)
       end
 
       it "doesn't capture an opponent king" do
@@ -1381,7 +1388,7 @@ describe Board do
         board.place(capturing_king, initial_coordinate)
         board.place(uncaptureable_opponent_king, destination_coordinate)
         
-        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't be captured/replaced")
+        expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::CapturedKingError)
       end
     end
     
@@ -1458,7 +1465,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_rook, guarding_rook_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a rook is holding the rank from the right side" do
@@ -1470,7 +1477,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_rook, guarding_rook_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a rook is holding the file from upwards" do
@@ -1482,7 +1489,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_rook, guarding_rook_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a rook is holding the file from downwards" do
@@ -1494,7 +1501,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_rook, guarding_rook_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
       end
       
@@ -1570,7 +1577,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_bishop, guarding_bishop_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a bishop is holding the square from top left diagonal" do
@@ -1582,7 +1589,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_bishop, guarding_bishop_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a bishop is holding the square from bottom right diagonal" do
@@ -1594,7 +1601,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_bishop, guarding_bishop_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a bishop is holding the square from bottom left diagonal" do
@@ -1606,7 +1613,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_bishop, guarding_bishop_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
       end
 
@@ -1747,7 +1754,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a queen is holding the rank from the right side" do
@@ -1759,7 +1766,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a queen is holding the file from upwards" do
@@ -1771,7 +1778,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a rook is holding the file from downwards" do
@@ -1783,7 +1790,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_rook, guarding_rook_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
         end
 
@@ -1797,7 +1804,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a queen is holding the square from top left diagonal" do
@@ -1809,7 +1816,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a queen is holding the square from bottom right diagonal" do
@@ -1821,7 +1828,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a queen is holding the square from bottom left diagonal" do
@@ -1833,7 +1840,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
             
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
         end
         
@@ -1847,7 +1854,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
             
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
         end
       end
@@ -1863,7 +1870,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_king, guarding_king_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a queen is holding the rank from the right side" do
@@ -1875,7 +1882,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_king, guarding_king_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a queen is holding the file from upwards" do
@@ -1887,7 +1894,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a rook is holding the file from downwards" do
@@ -1899,7 +1906,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_rook, guarding_rook_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
         end
 
@@ -1913,7 +1920,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a king is holding the square from top left diagonal" do
@@ -1925,7 +1932,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a king is holding the square from bottom right diagonal" do
@@ -1937,7 +1944,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
     
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
   
           it "raises an error when a king is holding the square from bottom left diagonal" do
@@ -1949,7 +1956,7 @@ describe Board do
             board.place(moving_king, initial_coordinate)
             board.place(guarding_queen, guarding_queen_coordinate)
 
-            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+            expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
           end
         end
 
@@ -2100,7 +2107,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_knight, guarding_knight_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a knight is holding the square from an upper-right wide L" do
@@ -2112,7 +2119,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_knight, guarding_knight_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a knight is holding the square from an upper-left narrow L" do
@@ -2124,7 +2131,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_knight, guarding_knight_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a knight is holding the square from an upper-left wide L" do
@@ -2136,7 +2143,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_knight, guarding_knight_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a knight is holding the square from an lower-right narrow L" do
@@ -2148,7 +2155,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_knight, guarding_knight_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a knight is holding the square from an lower-right wide L" do
@@ -2160,7 +2167,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_knight, guarding_knight_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
 
         it "raises an error when a knight is holding the square from an lower-left narrow L" do
@@ -2172,7 +2179,7 @@ describe Board do
           board.place(moving_king, initial_coordinate)
           board.place(guarding_knight, guarding_knight_coordinate)
   
-          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
       end
     end
@@ -2183,7 +2190,7 @@ describe Board do
       king = King.new(:black)
       board.place(king, initial_coordinate)
 
-      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error("That piece can't move to #{destination_coordinate.symbol}")
+      expect { board.move_piece(initial_coordinate, destination_coordinate) }.to raise_error(Board::InvalidMoveError)
     end
   end
 
@@ -2218,7 +2225,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
   
         it "can't short castle white king when the squares before its destination square covered by another piece" do
@@ -2233,7 +2240,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingThroughGuardedSquareError)
         end
 
         it "can't short castle white king if it has moved before" do
@@ -2248,7 +2255,7 @@ describe Board do
           board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedKingCastlingError)
         end
   
         it "can't short castle white king if its corresponding rook on h1 has moved before" do
@@ -2263,7 +2270,7 @@ describe Board do
           board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedRookCastlingError)
         end
 
         it "can't short castle white king if it's in check" do
@@ -2278,7 +2285,7 @@ describe Board do
           board.place(castling_rook, castling_rook_coordinate)
           board.place(checking_rook, checking_rook_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it's in check")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingWhenInCheckError)
         end
       end
 
@@ -2311,7 +2318,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
   
         it "can't short castle black king when the squares before its destination square covered by another piece" do
@@ -2326,7 +2333,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingThroughGuardedSquareError)
         end
 
         it "can't short castle black king if it has moved before" do
@@ -2341,7 +2348,7 @@ describe Board do
           board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedKingCastlingError)
         end
 
         it "can't short castle black king if its corresponding rook on h8 has moved before" do
@@ -2356,7 +2363,7 @@ describe Board do
           board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedRookCastlingError)
         end
 
         it "can't short castle black king if it's in check" do
@@ -2371,7 +2378,7 @@ describe Board do
           board.place(castling_rook, castling_rook_coordinate)
           board.place(checking_rook, checking_rook_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it's in check")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingWhenInCheckError)
         end
       end
     end
@@ -2406,7 +2413,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
   
         it "can't long castle white king when the square before its destination square covered by another piece" do
@@ -2421,7 +2428,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingThroughGuardedSquareError)
         end
 
         it "can't long castle white king if it has moved before" do
@@ -2436,7 +2443,7 @@ describe Board do
           board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedKingCastlingError)
         end
   
         it "can't long castle white king if its corresponding rook on a1 has moved before" do
@@ -2451,7 +2458,7 @@ describe Board do
           board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedRookCastlingError)
         end
 
         it "can't long castle white king if there are intervening piece between the castling king and its destination square" do
@@ -2464,7 +2471,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(Bishop.new(:white), Coordinate.new(:d1))
 
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The move is invalid since there's an intervening piece between #{king_initial_coordinate.symbol} and #{king_destination_coordinate.symbol}")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::InterveningPieceError)
         end
 
         it "can't long castle white king if its corresponding rook is not on a1" do
@@ -2476,7 +2483,7 @@ describe Board do
           board.place(castling_king, king_initial_coordinate)
           board.place(wandering_rook, wandering_rook_coordinate)
 
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("That piece can't move to #{king_destination_coordinate.symbol}")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(Board::InvalidMoveError)
         end
 
         it "can't long castle white king if it's in check" do
@@ -2491,7 +2498,7 @@ describe Board do
           board.place(castling_rook, castling_rook_coordinate)
           board.place(checking_rook, checking_rook_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it's in check")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingWhenInCheckError)
         end
       end
 
@@ -2524,7 +2531,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't move into an opponent's piece moveset")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::IntoOpponentMovesetError)
         end
   
         it "can't long castle black king when the square before its destination square covered by another piece" do
@@ -2539,7 +2546,7 @@ describe Board do
           board.place(castling_rook, rook_initial_coordinate)
           board.place(sniping_bishop, sniping_bishop_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle through a guarded square")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingThroughGuardedSquareError)
         end
 
         it "can't long castle black king if it has moved before" do
@@ -2554,7 +2561,7 @@ describe Board do
           board.move_piece(king_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, king_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedKingCastlingError)
         end
   
         it "can't long castle black king if its corresponding rook on a8 has moved before" do
@@ -2569,7 +2576,7 @@ describe Board do
           board.move_piece(rook_initial_coordinate, castle_restricting_coordinate)
           board.move_piece(castle_restricting_coordinate, rook_initial_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because the rook has moved before")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::PreviouslyMovedRookCastlingError)
         end
 
         it "can't long castle black king if it's in check" do
@@ -2584,7 +2591,7 @@ describe Board do
           board.place(castling_rook, castling_rook_coordinate)
           board.place(checking_rook, checking_rook_coordinate)
   
-          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error("The king can't castle because it's in check")
+          expect { board.move_piece(king_initial_coordinate, king_destination_coordinate) }.to raise_error(MoveValidator::CastlingWhenInCheckError)
         end
       end
     end
@@ -2607,31 +2614,44 @@ describe Board do
         expect(board).to have_a_king_on king_destination_coordinate
       end
 
-      it "can't move another piece while king is in check" do
+      it "can't move another piece that's not capturing the only checking piece while king is in check" do
         king_initial_coordinate = Coordinate.new(:e1)
         irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
         irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
-        rook_initial_coordinate      = Coordinate.new(:h8)
-        rook_destination_coordinate  = Coordinate.new(:e8)
+        checking_rook_coordinate  = Coordinate.new(:e8)
         king = King.new(:white)
         checking_rook = Rook.new(:black)
         irrelevant_knight = Knight.new(:white)
         board.place(king, king_initial_coordinate) 
-        board.place(checking_rook, rook_initial_coordinate)
+        board.place(checking_rook, checking_rook_coordinate)
         board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
-        board.move_piece(rook_initial_coordinate, rook_destination_coordinate)
 
-        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error(Board::AnotherPieceMovedWhenKingInCheckError)
+      end
+
+      it "can capture the only checking piece with a piece other than the king" do
+        king_coordinate = Coordinate.new(:d7)
+        checking_rook_coordinate = Coordinate.new(:d4)
+        capturing_bishop_initial_coordinate = Coordinate.new(:f6)
+        capturing_bishop_destination_coordinate = checking_rook_coordinate
+        king = King.new(:black)
+        checking_rook = Rook.new(:white)
+        capturing_bishop = Bishop.new(:black)
+        board.place(king, king_coordinate)
+        board.place(checking_rook, checking_rook_coordinate)
+        board.place(capturing_bishop, capturing_bishop_initial_coordinate)
+        board.move_piece(capturing_bishop_initial_coordinate, capturing_bishop_destination_coordinate)
+
+        expect(board).to have_a_bishop_on capturing_bishop_destination_coordinate
       end
 
       context 'discovered checks' do
-        it "can't move another piece while king is in check" do
+        it "can't move another piece that's not capturing the only checking piece while king is in check" do
           king_coordinate = Coordinate.new(:c1)
           irrelevant_bishop_initial_coordinate     = Coordinate.new(:h3)
           irrelevant_bishop_destination_coordinate = Coordinate.new(:g2)
           queen_coordinate = Coordinate.new(:g5)
-          path_clearing_knight_initial_coordinate     = Coordinate.new(:e3)
-          path_clearing_knight_destination_coordinate = Coordinate.new(:g2)
+          path_clearing_knight_coordinate = Coordinate.new(:g2)
           king = King.new(:white)
           irrelevant_bishop = Bishop.new(:white)
           checking_queen = Queen.new(:black)
@@ -2639,10 +2659,29 @@ describe Board do
           board.place(king, king_coordinate) 
           board.place(irrelevant_bishop, irrelevant_bishop_initial_coordinate) 
           board.place(checking_queen, queen_coordinate)
-          board.place(path_clearing_knight, path_clearing_knight_initial_coordinate)
-          board.move_piece(path_clearing_knight_initial_coordinate, path_clearing_knight_destination_coordinate)
-  
-          expect { board.move_piece(irrelevant_bishop_initial_coordinate, irrelevant_bishop_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+          board.place(path_clearing_knight, path_clearing_knight_coordinate)
+
+          expect { board.move_piece(irrelevant_bishop_initial_coordinate, irrelevant_bishop_destination_coordinate) }.to raise_error(Board::AnotherPieceMovedWhenKingInCheckError)
+        end
+      end
+
+      context 'double checks' do
+        it "raises an error when captures one of the checking pieces" do
+          king_coordinate = Coordinate.new(:f2)
+          checking_knight_coordinate = Coordinate.new(:d3)
+          checking_bishop_coordinate = Coordinate.new(:b6)
+          illegally_capturing_sniper_bishop_initial_coordinate     = Coordinate.new(:f5)
+          illegally_capturing_sniper_bishop_destination_coordinate = checking_knight_coordinate
+          king = King.new(:white)
+          checking_knight = Knight.new(:black)
+          checking_bishop = Bishop.new(:black)
+          illegally_capturing_sniper_bishop = Bishop.new(:white)
+          board.place(king, king_coordinate)
+          board.place(checking_knight, checking_knight_coordinate)
+          board.place(checking_bishop, checking_bishop_coordinate)
+          board.place(illegally_capturing_sniper_bishop, illegally_capturing_sniper_bishop_initial_coordinate)
+
+          expect { board.move_piece(illegally_capturing_sniper_bishop_initial_coordinate, illegally_capturing_sniper_bishop_destination_coordinate) }.to raise_error(Board::AnotherPieceMovedWhenKingInCheckError)
         end
       end
     end
@@ -2663,7 +2702,7 @@ describe Board do
         expect(board).to have_a_king_on king_destination_coordinate
       end
 
-      it "can't move another piece while king is in check" do
+      it "can't move another piece that's not capturing the only checking piece while king is in check" do
         king_initial_coordinate = Coordinate.new(:e1)
         irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
         irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
@@ -2677,7 +2716,7 @@ describe Board do
         board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
         board.move_piece(bishop_initial_coordinate, bishop_destination_coordinate)
 
-        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error(Board::AnotherPieceMovedWhenKingInCheckError)
       end
     end
 
@@ -2697,7 +2736,7 @@ describe Board do
         expect(board).to have_a_king_on king_destination_coordinate
       end
 
-      it "can't move another piece while king is in check" do
+      it "can't move another piece that's not capturing the only checking piece while king is in check" do
         king_initial_coordinate = Coordinate.new(:e1)
         irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
         irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
@@ -2711,7 +2750,7 @@ describe Board do
         board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
         board.move_piece(queen_initial_coordinate, queen_destination_coordinate)
 
-        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error(Board::AnotherPieceMovedWhenKingInCheckError)
       end
 
       it 'can move king after being checked' do
@@ -2729,7 +2768,7 @@ describe Board do
         expect(board).to have_a_king_on king_destination_coordinate
       end
 
-      it "can't move another piece while king is in check" do
+      it "can't move another piece that's not capturing the only checking piece while king is in check" do
         king_initial_coordinate = Coordinate.new(:e1)
         irrelevant_knight_initial_coordinate     = Coordinate.new(:c5)
         irrelevant_knight_destination_coordinate = Coordinate.new(:b7)
@@ -2743,7 +2782,7 @@ describe Board do
         board.place(irrelevant_knight, irrelevant_knight_initial_coordinate)
         board.move_piece(queen_initial_coordinate, queen_destination_coordinate)
 
-        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+        expect { board.move_piece(irrelevant_knight_initial_coordinate, irrelevant_knight_destination_coordinate) }.to raise_error(Board::AnotherPieceMovedWhenKingInCheckError)
       end
     end
 
@@ -2763,7 +2802,7 @@ describe Board do
         expect(board).to have_a_king_on king_destination_coordinate
       end
 
-      it "can't move another piece while king is in check" do
+      it "can't move another piece that's not capturing the only checking piece while king is in check" do
         king_initial_coordinate = Coordinate.new(:f2)
         irrelevant_bishop_initial_coordinate     = Coordinate.new(:h7)
         irrelevant_bishop_destination_coordinate = Coordinate.new(:b1)
@@ -2777,7 +2816,7 @@ describe Board do
         board.place(irrelevant_bishop, irrelevant_bishop_initial_coordinate)
         board.move_piece(knight_initial_coordinate, knight_destination_coordinate)
 
-        expect { board.move_piece(irrelevant_bishop_initial_coordinate, irrelevant_bishop_destination_coordinate) }.to raise_error("Another piece can't be moved while the king is in check")
+        expect { board.move_piece(irrelevant_bishop_initial_coordinate, irrelevant_bishop_destination_coordinate) }.to raise_error(Board::AnotherPieceMovedWhenKingInCheckError)
       end
     end
   end
@@ -2797,7 +2836,7 @@ describe Board do
           board.place(pinned_rook, pinned_rook_initial_coordinate)
           board.place(king, king_coordinate)
           
-          expect { board.move_piece(pinned_rook_initial_coordinate, pinned_rook_destination_coordinate) }.to raise_error("That piece is pinned to the king and can't be moved to #{pinned_rook_destination_coordinate.symbol}")
+          expect { board.move_piece(pinned_rook_initial_coordinate, pinned_rook_destination_coordinate) }.to raise_error(MoveValidator::MovedPinnedPieceError)
         end
       end
 
@@ -2834,7 +2873,7 @@ describe Board do
           board.place(pinned_bishop, pinned_bishop_initial_coordinate)
           board.place(king, king_coordinate)
           
-          expect { board.move_piece(pinned_bishop_initial_coordinate, pinned_bishop_destination_coordinate) }.to raise_error("That piece is pinned to the king and can't be moved to #{pinned_bishop_destination_coordinate.symbol}")
+          expect { board.move_piece(pinned_bishop_initial_coordinate, pinned_bishop_destination_coordinate) }.to raise_error(MoveValidator::MovedPinnedPieceError)
         end
       end
     end
@@ -2853,7 +2892,7 @@ describe Board do
           board.place(pinned_queen, pinned_queen_initial_coordinate)
           board.place(king, king_coordinate)
           
-          expect { board.move_piece(pinned_queen_initial_coordinate, pinned_queen_destination_coordinate) }.to raise_error("That piece is pinned to the king and can't be moved to #{pinned_queen_destination_coordinate.symbol}")
+          expect { board.move_piece(pinned_queen_initial_coordinate, pinned_queen_destination_coordinate) }.to raise_error(MoveValidator::MovedPinnedPieceError)
         end
       end
     end
