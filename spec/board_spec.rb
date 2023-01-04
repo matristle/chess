@@ -3058,4 +3058,25 @@ describe Board do
       end
     end
   end
+
+  describe 'position information encoding' do
+    context 'piece placement information encoding' do
+      it 'returns a FEN sequence representing piece placement for an empty board' do
+        empty_board_fen_sequence = board.to_fen
+
+        expect(empty_board_fen_sequence).to eq("8/8/8/8/8/8/8/8")
+      end
+
+      it 'returns a FEN sequence representing piece placement for a board with 1 white pawn on the edge' do
+        white_rook = Rook.new(:white)
+        e2 = Coordinate.new(:h1)
+        board.place(white_rook, e2)
+
+        one_white_rook_board_fen_sequence = board.to_fen
+
+        expect(one_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/7R")
+      end
+    end
+  end
+
 end
