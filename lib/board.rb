@@ -1,45 +1,4 @@
 class Board
-  def to_fen
-    rank_separator = "/"
-    empty_square_count = 0
-    fen_sequence = ""
-
-    sorted_coordinates = ("1".."8").to_a.reverse.inject([]) do |memo, rank_number|
-      memo << coordinate_references_at(rank: rank_number)
-    end
-
-    sorted_coordinates.each do |rank|
-      rank.each do |coordinate|
-        if no_piece_on?(coordinate)
-          empty_square_count += 1
-        else
-          fen_sequence << empty_square_count.to_s
-          empty_square_count = 0
-  
-          piece_symbol = "R" if rook_on?(coordinate)
-  
-          fen_sequence << piece_symbol
-        end
-  
-        if coordinate.file == "h"
-          if empty_square_count == 8
-            fen_sequence << empty_square_count.to_s << rank_separator
-          end
-  
-          empty_square_count = 0
-        end
-      end
-    end
-
-    if fen_sequence.start_with?("/")
-      fen_sequence.delete_prefix!("/")
-    elsif fen_sequence.end_with?("/")
-      fen_sequence.delete_suffix!("/")
-    else
-      fen_sequence
-    end
-  end
-
   class InvalidMoveError < StandardError
     attr_reader :destination_coordinate
 
@@ -284,6 +243,55 @@ class Board
     end
 
     result << destination_coordinate
+  end
+
+  def to_fen
+    rank_separator = "/"
+    empty_square_count = 0
+    fen_sequence = ""
+
+    sorted_coordinates = ("1".."8").to_a.reverse.inject([]) do |memo, rank_number|
+      memo << coordinate_references_at(rank: rank_number)
+    end
+
+    sorted_coordinates.each do |rank|
+      rank.each do |coordinate|
+        if no_piece_on?(coordinate)
+          empty_square_count += 1
+        else
+          piece_symbol = "R" if rook_on?(coordinate)
+
+          if coordinate.file == "a"
+            fen_sequence << piece_symbol
+          else
+            fen_sequence << empty_square_count.to_s 
+            fen_sequence << piece_symbol
+          end
+        end
+        
+        
+        if coordinate.file == "h"
+          if empty_square_count == 8
+            fen_sequence << empty_square_count.to_s << rank_separator
+          else
+            current_rank_info = fen_sequence.split("/")[-1]
+            current_rank_info = "" unless current_rank_info
+            
+            fen_sequence << empty_square_count.to_s << rank_separator unless current_rank_info.include? empty_square_count.to_s
+          end
+
+          empty_square_count = 0
+        end
+      end
+    end
+
+    if fen_sequence.start_with?("/")
+      fen_sequence.delete_prefix!("/")
+    elsif fen_sequence.end_with?("/")
+      fen_sequence.delete_suffix!("/")
+    else
+      fen_sequence
+    end
   end
 
   private

@@ -3067,14 +3067,34 @@ describe Board do
         expect(empty_board_fen_sequence).to eq("8/8/8/8/8/8/8/8")
       end
 
-      it 'returns a FEN sequence representing piece placement for a board with 1 white pawn on the edge' do
+      it 'returns a FEN sequence representing piece placement for a board with 1 white rook on the h-file' do
         white_rook = Rook.new(:white)
-        e2 = Coordinate.new(:h1)
-        board.place(white_rook, e2)
+        h1 = Coordinate.new(:h1)
+        board.place(white_rook, h1)
 
-        one_white_rook_board_fen_sequence = board.to_fen
+        edge_white_rook_board_fen_sequence = board.to_fen
 
-        expect(one_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/7R")
+        expect(edge_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/7R")
+      end
+
+      it 'returns a FEN sequence representing piece placement for a board with 1 white rook on the a-file' do
+        white_rook = Rook.new(:white)
+        a1 = Coordinate.new(:a1)
+        board.place(white_rook, a1)
+
+        edge_white_rook_board_fen_sequence = board.to_fen
+
+        expect(edge_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/R7")
+      end
+
+      xit 'returns a FEN sequence representing piece placement for a board with a white rook in between empty squares' do
+        white_rook = Rook.new(:white)
+        e1 = Coordinate.new(:e1)
+        board.place(white_rook, e1)
+        
+        center_white_rook_board_fen_sequence = board.to_fen
+
+        expect(center_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/4R3")
       end
     end
   end
