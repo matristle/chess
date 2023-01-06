@@ -1,3 +1,5 @@
+require_relative "fen"
+
 class Board
   class InvalidMoveError < StandardError
     attr_reader :destination_coordinate
@@ -22,6 +24,7 @@ class Board
     @move_validator = move_validator
     
     @structure = board_maker.make
+
   end
   
   def checkmate?(initial_coordinate, destination_coordinate)
@@ -246,57 +249,139 @@ class Board
   end
 
   def to_fen
-    rank_separator = "/"
-    empty_square_count = 0
-    fen_sequence = ""
+    @empty_square_count    = 0
+    @occupied_square_count = 0
+    @piece_placement_data       = ""
+    @castling_availability_data = ""
 
-    sorted_coordinates = ("1".."8").to_a.reverse.inject([]) do |memo, rank_number|
-      memo << coordinate_references_at(rank: rank_number)
-    end
+    collect_piece_placement_data
+    collect_castling_availability_data
 
-    sorted_coordinates.each do |rank|
-      rank.each do |coordinate|
-        if no_piece_on?(coordinate)
-          empty_square_count += 1
-        else
-          piece_symbol = "R" if rook_on?(coordinate)
+    FEN.new(piece_placement_data, castling_availability_data)
+  end
 
-          if coordinate.file == "a"
-            fen_sequence << piece_symbol
-          else
-            fen_sequence << empty_square_count.to_s 
-            fen_sequence << piece_symbol
-          end
-        end
-        
-        
-        if coordinate.file == "h"
-          if empty_square_count == 8
-            fen_sequence << empty_square_count.to_s << rank_separator
-          else
-            current_rank_info = fen_sequence.split("/")[-1]
-            current_rank_info = "" unless current_rank_info
-            
-            fen_sequence << empty_square_count.to_s << rank_separator unless current_rank_info.include? empty_square_count.to_s
-          end
+  def checker_color_values
+    board.collect_checker_color_values
+  end
 
-          empty_square_count = 0
-        end
+  def collect_checker_color_values
+    fen_coordinates.collect do |rank|
+      rank.collect do |coordinate|
+        square_on(coordinate).light? ? :light : :dark 
       end
-    end
-
-    if fen_sequence.start_with?("/")
-      fen_sequence.delete_prefix!("/")
-    elsif fen_sequence.end_with?("/")
-      fen_sequence.delete_suffix!("/")
-    else
-      fen_sequence
     end
   end
 
   private
   
-  attr_reader :structure, :board_maker, :piece_arranger, :move_validator
+  attr_reader :structure, :board_maker, :piece_arranger, :move_validator, :fen_sequence, :empty_square_count, :occupied_square_count, :piece_placement_data, :castling_availability_data
+
+  def fen_coordinates
+    ("1".."8").to_a.reverse.map do |rank_number|
+      coordinate_references_at(rank: rank_number)
+    end
+  end
+
+  def collect_piece_placement_data
+    fen_coordinates.each do |rank|
+      rank.each do |coordinate|
+        if no_piece_on?(coordinate)
+          @empty_square_count += 1
+        else
+          @occupied_square_count += 1
+
+          if rook_on?(coordinate)
+            if white_piece_on?(coordinate)
+              piece_symbol = "R"
+            else
+              piece_symbol = "r"
+            end
+          elsif knight_on?(coordinate)
+            if white_piece_on?(coordinate)
+              piece_symbol = "N"
+            else
+              piece_symbol = "n"
+            end
+          elsif bishop_on?(coordinate)
+            if white_piece_on?(coordinate)
+              piece_symbol = "B"
+            else
+              piece_symbol = "b"
+            end
+          elsif queen_on?(coordinate)
+            if white_piece_on?(coordinate)
+              piece_symbol = "Q"
+            else
+              piece_symbol = "q"
+            end
+          elsif king_on?(coordinate)
+            if white_piece_on?(coordinate)
+              piece_symbol = "K"
+            else
+              piece_symbol = "k"
+            end
+          end
+
+          if coordinate.file == "a"
+            @piece_placement_data << piece_symbol
+          else
+            @piece_placement_data << empty_square_count.to_s unless empty_square_count == 0
+            @piece_placement_data << piece_symbol
+
+            @empty_square_count = 0
+          end
+        end
+        
+        if coordinate.file == "h"
+          if empty_square_count == 8
+            @piece_placement_data << empty_square_count.to_s << rank_separator
+          else
+            current_rank_info = piece_placement_data.split("/")[-1]
+            current_rank_info = "" unless current_rank_info
+
+            @piece_placement_data << empty_square_count.to_s << rank_separator unless empty_square_count == 0
+
+            @piece_placement_data << rank_separator if empty_square_count == 0
+          end
+
+          @empty_square_count = 0
+        end
+      end
+    end
+
+    eliminate_extra_slashes_in_piece_placement_data
+  end
+
+  def collect_castling_availability_data
+    c8 = Coordinate.new(:c8); e8 = Coordinate.new(:e8); g8 = Coordinate.new(:g8)
+    c1 = Coordinate.new(:c1); e1 = Coordinate.new(:e1); g1 = Coordinate.new(:g1)
+
+    @castling_availability_data << "K" if move_validator.short_castling?(self , e1, g1)  && white_piece_on?(e1)
+    @castling_availability_data << "Q" if move_validator.long_castling?( self , e1, c1)  && white_piece_on?(e1)
+    @castling_availability_data << "k" if move_validator.short_castling?(self , e8, g8)  && black_piece_on?(e8)
+    @castling_availability_data << "q" if move_validator.long_castling?( self , e8, c8)  && black_piece_on?(e8)
+    @castling_availability_data << "-" unless (move_validator.short_castling?(self , e1, g1)  && white_piece_on?(e1)) || (move_validator.long_castling?( self , e1, c1)  && white_piece_on?(e1)) || (move_validator.short_castling?(self , e8, g8)  && black_piece_on?(e8)) || (move_validator.long_castling?( self , e8, c8)  && black_piece_on?(e8))
+
+    eliminate_extra_whitespace_in_castling_availability_data
+  end
+
+  def eliminate_extra_whitespace_in_castling_availability_data
+    if castling_availability_data.end_with?(" ")
+      castling_availability_data.delete_suffix!(" ")
+    end
+  end
+
+  def eliminate_extra_slashes_in_piece_placement_data
+    if piece_placement_data.start_with?("/")
+      piece_placement_data.delete_prefix!("/")
+    elsif piece_placement_data.end_with?("/")
+      piece_placement_data.delete_suffix!("/")
+    end
+  end
+
+  def rank_separator
+    "/"
+  end
 
   def square_on(coordinate)
     structure[coordinate]

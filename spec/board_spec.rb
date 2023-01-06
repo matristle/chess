@@ -3062,40 +3062,361 @@ describe Board do
   describe 'position information encoding' do
     context 'piece placement information encoding' do
       it 'returns a FEN sequence representing piece placement for an empty board' do
-        empty_board_fen_sequence = board.to_fen
+        empty_board_fen_sequence = board.to_fen.to_s
 
-        expect(empty_board_fen_sequence).to eq("8/8/8/8/8/8/8/8")
+        expect(empty_board_fen_sequence).to eq("8/8/8/8/8/8/8/8 -")
       end
 
-      it 'returns a FEN sequence representing piece placement for a board with 1 white rook on the h-file' do
-        white_rook = Rook.new(:white)
-        h1 = Coordinate.new(:h1)
-        board.place(white_rook, h1)
+      context "white pieces" do
+        it 'returns a FEN sequence representing piece placement for a board with 1 white rook on the h-file' do
+          white_rook = Rook.new(:white)
+          h1 = Coordinate.new(:h1)
+          board.place(white_rook, h1)
+  
+          edge_white_rook_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/7R -")
+        end
 
-        edge_white_rook_board_fen_sequence = board.to_fen
+        it 'returns a FEN sequence representing piece placement for a board with 1 white knight on the h-file' do
+          white_knight = Knight.new(:white)
+          h1 = Coordinate.new(:h1)
+          board.place(white_knight, h1)
+  
+          edge_white_knight_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_white_knight_board_fen_sequence).to eq("8/8/8/8/8/8/8/7N -")
+        end
 
-        expect(edge_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/7R")
+        it 'returns a FEN sequence representing piece placement for a board with 1 white bishop on the h-file' do
+          white_bishop = Bishop.new(:white)
+          h1 = Coordinate.new(:h1)
+          board.place(white_bishop, h1)
+  
+          edge_white_bishop_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_white_bishop_board_fen_sequence).to eq("8/8/8/8/8/8/8/7B -")
+        end
+
+        it 'returns a FEN sequence representing piece placement for a board with 1 white queen on the h-file' do
+          white_queen = Queen.new(:white)
+          h1 = Coordinate.new(:h1)
+          board.place(white_queen, h1)
+  
+          edge_white_queen_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_white_queen_board_fen_sequence).to eq("8/8/8/8/8/8/8/7Q -")
+        end
+
+        it 'returns a FEN sequence representing piece placement for a board with 1 white king on the h-file' do
+          white_king = King.new(:white)
+          h1 = Coordinate.new(:h1)
+          board.place(white_king, h1)
+  
+          edge_white_king_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_white_king_board_fen_sequence).to eq("8/8/8/8/8/8/8/7K -")
+        end
+
+        it 'returns a FEN sequence representing piece placement for a board with 1 white piece on the a-file' do
+          white_rook = Rook.new(:white)
+          a1 = Coordinate.new(:a1)
+          board.place(white_rook, a1)
+  
+          edge_white_rook_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/R7 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with a white piece in between empty squares' do
+          white_rook = Rook.new(:white)
+          e1 = Coordinate.new(:e1)
+          board.place(white_rook, e1)
+          
+          center_white_rook_board_fen_sequence = board.to_fen.to_s
+  
+          expect(center_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/4R3 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 white pieces in between empty squares of 2 consecutive ranks' do
+          first_white_rook  = Rook.new(:white)
+          second_white_rook = Rook.new(:white)
+          c4 = Coordinate.new(:c4)
+          d5 = Coordinate.new(:d5)
+          board.place(first_white_rook, c4)
+          board.place(second_white_rook, d5)
+          
+          two_white_rooks_in_consecutive_ranks_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_white_rooks_in_consecutive_ranks_board_fen_sequence).to eq("8/8/8/3R4/2R5/8/8/8 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 white pieces in between empty squares of 2 non-consecutive ranks' do
+          first_white_rook  = Rook.new(:white)
+          second_white_rook = Rook.new(:white)
+          e2 = Coordinate.new(:e2)
+          f6 = Coordinate.new(:f6)
+          board.place(first_white_rook, e2)
+          board.place(second_white_rook, f6)
+          
+          two_white_rooks_in_consecutive_ranks_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_white_rooks_in_consecutive_ranks_board_fen_sequence).to eq("8/8/5R2/8/8/8/4R3/8 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 consecutive white pieces on a rank' do
+          first_white_rook  = Rook.new(:white)
+          second_white_rook = Rook.new(:white)
+          f7 = Coordinate.new(:f7)
+          g7 = Coordinate.new(:g7)
+          board.place(first_white_rook, f7)
+          board.place(second_white_rook, g7)
+          
+          two_consecutive_white_rooks_on_one_rank_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_consecutive_white_rooks_on_one_rank_board_fen_sequence).to eq("8/5RR1/8/8/8/8/8/8 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 non-consecutive white pieces on a rank' do
+          first_white_rook  = Rook.new(:white)
+          second_white_rook = Rook.new(:white)
+          b3 = Coordinate.new(:b3)
+          h3 = Coordinate.new(:h3)
+          board.place(first_white_rook, b3)
+          board.place(second_white_rook, h3)
+          
+          two_non_consecutive_white_rooks_on_one_rank_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_non_consecutive_white_rooks_on_one_rank_board_fen_sequence).to eq("8/8/8/8/8/1R5R/8/8 -")
+        end
       end
 
-      it 'returns a FEN sequence representing piece placement for a board with 1 white rook on the a-file' do
-        white_rook = Rook.new(:white)
-        a1 = Coordinate.new(:a1)
-        board.place(white_rook, a1)
+      context "black pieces" do
+        it 'returns a FEN sequence representing piece placement for a board with 1 black piece on the h-file' do
+          black_rook = Rook.new(:black)
+          h1 = Coordinate.new(:h1)
+          board.place(black_rook, h1)
+  
+          edge_black_rook_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_black_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/7r -")
+        end
 
-        edge_white_rook_board_fen_sequence = board.to_fen
+        it 'returns a FEN sequence representing piece placement for a board with 1 black knight on the h-file' do
+          black_knight = Knight.new(:black)
+          h1 = Coordinate.new(:h1)
+          board.place(black_knight, h1)
+  
+          edge_black_knight_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_black_knight_board_fen_sequence).to eq("8/8/8/8/8/8/8/7n -")
+        end
 
-        expect(edge_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/R7")
+        it 'returns a FEN sequence representing piece placement for a board with 1 black bishop on the h-file' do
+          black_bishop = Bishop.new(:black)
+          h1 = Coordinate.new(:h1)
+          board.place(black_bishop, h1)
+  
+          edge_black_bishop_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_black_bishop_board_fen_sequence).to eq("8/8/8/8/8/8/8/7b -")
+        end
+
+        it 'returns a FEN sequence representing piece placement for a board with 1 black queen on the h-file' do
+          black_queen = Queen.new(:black)
+          h1 = Coordinate.new(:h1)
+          board.place(black_queen, h1)
+  
+          edge_black_queen_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_black_queen_board_fen_sequence).to eq("8/8/8/8/8/8/8/7q -")
+        end
+
+        it 'returns a FEN sequence representing piece placement for a board with 1 black king on the h-file' do
+          black_king = King.new(:black)
+          h1 = Coordinate.new(:h1)
+          board.place(black_king, h1)
+  
+          edge_black_king_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_black_king_board_fen_sequence).to eq("8/8/8/8/8/8/8/7k -")
+        end
+
+        it 'returns a FEN sequence representing piece placement for a board with 1 black piece on the a-file' do
+          black_rook = Rook.new(:black)
+          a1 = Coordinate.new(:a1)
+          board.place(black_rook, a1)
+  
+          edge_black_rook_board_fen_sequence = board.to_fen.to_s
+  
+          expect(edge_black_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/r7 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with a black piece in between empty squares' do
+          black_rook = Rook.new(:black)
+          e1 = Coordinate.new(:e1)
+          board.place(black_rook, e1)
+          
+          center_black_rook_board_fen_sequence = board.to_fen.to_s
+  
+          expect(center_black_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/4r3 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 black pieces in between empty squares of 2 consecutive ranks' do
+          first_black_rook  = Rook.new(:black)
+          second_black_rook = Rook.new(:black)
+          c4 = Coordinate.new(:c4)
+          d5 = Coordinate.new(:d5)
+          board.place(first_black_rook, c4)
+          board.place(second_black_rook, d5)
+          
+          two_black_rooks_in_consecutive_ranks_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_black_rooks_in_consecutive_ranks_board_fen_sequence).to eq("8/8/8/3r4/2r5/8/8/8 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 black pieces in between empty squares of 2 non-consecutive ranks' do
+          first_black_rook  = Rook.new(:black)
+          second_black_rook = Rook.new(:black)
+          e2 = Coordinate.new(:e2)
+          f6 = Coordinate.new(:f6)
+          board.place(first_black_rook, e2)
+          board.place(second_black_rook, f6)
+          
+          two_black_rooks_in_consecutive_ranks_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_black_rooks_in_consecutive_ranks_board_fen_sequence).to eq("8/8/5r2/8/8/8/4r3/8 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 consecutive black pieces on a rank' do
+          first_black_rook  = Rook.new(:black)
+          second_black_rook = Rook.new(:black)
+          f7 = Coordinate.new(:f7)
+          g7 = Coordinate.new(:g7)
+          board.place(first_black_rook, f7)
+          board.place(second_black_rook, g7)
+          
+          two_consecutive_black_rooks_on_one_rank_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_consecutive_black_rooks_on_one_rank_board_fen_sequence).to eq("8/5rr1/8/8/8/8/8/8 -")
+        end
+  
+        it 'returns a FEN sequence representing piece placement for a board with 2 non-consecutive black pieces on a rank' do
+          first_black_rook  = Rook.new(:black)
+          second_black_rook = Rook.new(:black)
+          b3 = Coordinate.new(:b3)
+          h3 = Coordinate.new(:h3)
+          board.place(first_black_rook, b3)
+          board.place(second_black_rook, h3)
+          
+          two_non_consecutive_black_rooks_on_one_rank_board_fen_sequence = board.to_fen.to_s
+  
+          expect(two_non_consecutive_black_rooks_on_one_rank_board_fen_sequence).to eq("8/8/8/8/8/1r5r/8/8 -")
+        end
       end
 
-      xit 'returns a FEN sequence representing piece placement for a board with a white rook in between empty squares' do
-        white_rook = Rook.new(:white)
-        e1 = Coordinate.new(:e1)
-        board.place(white_rook, e1)
-        
-        center_white_rook_board_fen_sequence = board.to_fen
+      it 'returns a FEN sequence representing piece placement for a set-up first rank' do
+        board.place( Rook.new(:white)  , Coordinate.new(:a1) )
+        board.place( Rook.new(:white)  , Coordinate.new(:h1) )
+        board.place( Knight.new(:white), Coordinate.new(:b1) )
+        board.place( Knight.new(:white), Coordinate.new(:g1) )
+        board.place( Bishop.new(:white), Coordinate.new(:c1) )
+        board.place( Bishop.new(:white), Coordinate.new(:f1) )
+        board.place( Queen.new(:white) , Coordinate.new(:d1) )
+        board.place( King.new(:white)  , Coordinate.new(:e1) )
 
-        expect(center_white_rook_board_fen_sequence).to eq("8/8/8/8/8/8/8/4R3")
+        empty_board_fen_sequence = board.to_fen.to_s
+
+        expect(empty_board_fen_sequence).to eq("8/8/8/8/8/8/8/RNBQKBNR KQ")
       end
+
+      it 'returns a FEN sequence representing piece placement for a set-up eighth rank' do
+        board.place( Rook.new(:black)  , Coordinate.new(:a8) )
+        board.place( Rook.new(:black)  , Coordinate.new(:h8) )
+        board.place( Knight.new(:black), Coordinate.new(:b8) )
+        board.place( Knight.new(:black), Coordinate.new(:g8) )
+        board.place( Bishop.new(:black), Coordinate.new(:c8) )
+        board.place( Bishop.new(:black), Coordinate.new(:f8) )
+        board.place( Queen.new(:black) , Coordinate.new(:d8) )
+        board.place( King.new(:black)  , Coordinate.new(:e8) )
+
+        empty_board_fen_sequence = board.to_fen.to_s
+
+        expect(empty_board_fen_sequence).to eq("rnbqkbnr/8/8/8/8/8/8/8 kq")
+      end
+    end
+
+    context 'castling availability encoding' do
+      it 'returns a FEN sequence representing castling availability when white is able to castle kingside' do
+        board.place( King.new(:white), Coordinate.new(:e1) )
+        board.place( Rook.new(:white), Coordinate.new(:h1) )
+
+        white_with_kingside_castling_move_fen_sequence = board.to_fen.to_s
+
+        expect(white_with_kingside_castling_move_fen_sequence).to eq("8/8/8/8/8/8/8/4K2R K")
+      end
+
+      it 'returns a FEN sequence representing castling availability when white is able to castle queenside' do
+        board.place( King.new(:white), Coordinate.new(:e1) )
+        board.place( Rook.new(:white), Coordinate.new(:a1) )
+
+        white_with_queenside_castling_move_fen_sequence = board.to_fen.to_s
+
+        expect(white_with_queenside_castling_move_fen_sequence).to eq("8/8/8/8/8/8/8/R3K3 Q")
+      end
+
+      it 'returns a FEN sequence representing castling availability when black is able to castle kingside' do
+        board.place( King.new(:black), Coordinate.new(:e8) )
+        board.place( Rook.new(:black), Coordinate.new(:h8) )
+
+        black_with_kingside_castling_move_fen_sequence = board.to_fen.to_s
+
+        expect(black_with_kingside_castling_move_fen_sequence).to eq("4k2r/8/8/8/8/8/8/8 k")
+      end
+
+      it 'returns a FEN sequence representing castling availability when black is able to castle queenside' do
+        board.place( King.new(:black), Coordinate.new(:e8) )
+        board.place( Rook.new(:black), Coordinate.new(:a8) )
+
+        black_with_queenside_castling_move_fen_sequence = board.to_fen.to_s
+
+        expect(black_with_queenside_castling_move_fen_sequence).to eq("r3k3/8/8/8/8/8/8/8 q")
+      end
+
+      it 'returns a FEN sequence representing castling availability when black and white are able to castle kingside' do
+        board.place( King.new(:white), Coordinate.new(:e1) )
+        board.place( Rook.new(:white), Coordinate.new(:h1) )
+        board.place( King.new(:black), Coordinate.new(:e8) )
+        board.place( Rook.new(:black), Coordinate.new(:h8) )
+
+        white_and_black_with_kingside_castling_move_fen_sequence = board.to_fen.to_s
+
+        expect(white_and_black_with_kingside_castling_move_fen_sequence).to eq("4k2r/8/8/8/8/8/8/4K2R Kk")
+      end
+
+      it 'returns a FEN sequence representing castling availability when black and white are able to castle queenside' do
+        board.place( King.new(:white), Coordinate.new(:e1) )
+        board.place( Rook.new(:white), Coordinate.new(:a1) )
+        board.place( King.new(:black), Coordinate.new(:e8) )
+        board.place( Rook.new(:black), Coordinate.new(:a8) )
+
+        white_and_black_with_queenside_castling_move_fen_sequence = board.to_fen.to_s
+
+        expect(white_and_black_with_queenside_castling_move_fen_sequence).to eq("r3k3/8/8/8/8/8/8/R3K3 Qq")
+      end
+
+      it 'returns a FEN sequence representing castling availability when neither black and white are able to castle either side' do
+        board.place( King.new(:white), Coordinate.new(:e2) )
+        board.place( Rook.new(:white), Coordinate.new(:a1) )
+        board.place( King.new(:black), Coordinate.new(:e7) )
+        board.place( Rook.new(:black), Coordinate.new(:a8) )
+
+        no_castling_move_fen_sequence = board.to_fen.to_s
+
+        expect(no_castling_move_fen_sequence).to eq("r7/4k3/8/8/8/8/4K3/R7 -")
+      end
+
+
     end
   end
 
